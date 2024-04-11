@@ -1,0 +1,75 @@
+{% extends 'layout/public.html' %}
+{% block title %}USeP - ARDS{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static',filename='css/public.css')}}" /> {% endblock %}
+
+{% block content %}
+<section class=" w-full my-4">
+    <div class="d-flex justify-content-between">
+        <div class="p-2 flex-fill">
+            <div class="mt-4">
+                <img src="{{url_for('static', filename='images/login_cover.png')}}" class="" alt="ARDS"
+                    style="object-fit:fill; max-height:500PX;">
+            </div>
+        </div>
+        <div class="p-5 flex rounded-4 border shadow-sm">
+            <div class="mx-4" id="login_container">
+                <div class="form-title-container mb-5">
+                    <h2 class="fw-medium " id="form-title">Sign in as {% if role == 1 %}Admin{% elif
+                        role== 2 %}Staff{% else
+                        %}Staff{% endif %}!</h2>
+                    <h5 class="fw-thin">Please login to get started.</h5>
+                </div>
+                <form action="{{ url_for('login')}}" method="POST" id="login_form">
+                    <div id="inputs-forms">
+                        <div class="form-item my-4">
+                            <input type="text" id="username" name="username" class="w-full form-control {{ error }}"
+                                autocomplete="on" required>
+                            <label for="username">Username</label>
+                        </div>
+                        <div class="form-item mt-4 mb-1">
+                            <input type="password" id="password" name="password" class="w-full form-control {{ error }}"
+                                autocomplete="off" required>
+                            <label for="password">Password</label>
+                            <span id="toggle-password" style="position:absolute; top:0.5rem; right:1rem"><i
+                                    class="fa-regular fa-eye"></i></span>
+                        </div>
+                        <select id="user_role" name="role" value="{% if role == 1 or 2 %}{{role}}{% else %}{% endif%}"
+                            style="display: none;" required>
+                            <option value="2"> Staff</option>
+                            <option value="1"> Admin</option>
+                        </select>
+
+                        <div class="my-2 form-item d-flex justify-content-between">
+                            {{ captcha() }} 
+                            <input type="text" id="captcha" name="captcha" class="w-full  ms-2" required>
+                        </div>
+
+                        <div id="error_message" class="text-danger {% if error_message %}mb-2 {% else %} d.none; {% endif %}">
+                            {{ error_message }}
+                        </div>
+
+                    </div>
+                    <button type="submit" class="w-100 fw-bold btn-red" id="signin">SIGN IN</button>
+                </form>
+                <div class="divider-login d-flex align-items-center my-3">
+                    <span class="fs-small text-center fw-bold mx-3 mb-0">OR</span>
+                </div>
+
+                <button id="switch_roles" class="w-100 fw-bold">Sign in as {% if role== 1 %}Staff{%
+                    elif
+                    role == 2
+                    %}ADMIN{% else %}Admin{% endif %}</button>
+
+                <div class="fs-medium mt-5 mb-2 text-center">
+                    <span class="me-1"> Having trouble signing in? </span>
+                    <span><a class="text-decoration-underline fc-dark" href="">Forgot password</a></span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+<script src="{{url_for('static',filename='js/switch_account.js')}}"></script>
+
+{% endblock %}

@@ -1,0 +1,451 @@
+@import url(../node_modules/@fontsource/quicksand/400.css);
+@import url(../node_modules/@fontsource/quicksand/500.css);
+@import url(../node_modules/@fontsource/quicksand/600.css);
+@import url(../node_modules/@fontsource/quicksand/700.css);
+
+:root {
+    /* Font Sizes */
+    --fs-default: 16px;
+    --fs-smallest: 10px;
+    --fs-small: 12px;
+    --fs-medium: 14px;
+    --fs-large: 18px;
+    --fs-xl: 24px;
+    /* Line Heights */
+    --lh-small: 1rem;
+    --lh-medium: 1.25rem;
+    --lh-large: 1.5rem;
+    /* Text Colors */
+    --fc-red: #973939;
+    --fc-orange: #e59c24;
+    --fc-green: #29cc0e;
+    --fc-default: #575757;
+    --fc-gray: #979797;
+    --fc-light: #ffffff;
+    --fc-dark: #333333;
+    --fc-darker: #121212;
+    /* Colors */
+    --color-default: #575757;
+    --color-red: #dc7171;
+    --color-orange: #ffc464;
+    --color-green: #29cc0e;
+    --color-red-gradient: linear-gradient(275.52deg, #973939 0.28%, #dc7171 100%);
+    --color-orange-gradient: linear-gradient(90.06deg, #ffc464 0%, #ff9f00 100%);
+    --color-green-gradient: linear-gradient(275.52deg,
+            #1a9f04 0.28%,
+            #29cc0e 100%);
+    /* Active Colors */
+    --color-red-active: #973939;
+    --color-orange-active: #e59c24;
+    --color-green-active: #29cc0e;
+    --color-red-gradient-active: linear-gradient(275.52deg,
+            #752d2d 0.28%,
+            #be4949 100%);
+    --color-orange-gradient-active: linear-gradient(90.06deg,
+            #ffa81c 0%,
+            #e18000 100%);
+    --color-green-gradient-active: linear-gradient(275.52deg,
+            #147703 0.28%,
+            #24ac0c 100%);
+    /* background Colors */
+    --bg-dark: #121212;
+    --bg-light: #ffffff;
+    --bg-light-gray: #979797;
+    --bg-gray: #575757;
+    --bg-red-gradient: linear-gradient(275.52deg, #973939 0.28%, #dc7171 100%);
+    --bg-orange-gradient: linear-gradient(90.06deg, #ffc464 0%, #ff9f00 100%);
+    --bg-green-gradient: linear-gradient(275.52deg, #1a9f04 0.28%, #29cc0e 100%);
+    /* Padding */
+    --p-smallest: 0.25rem;
+    --p-small: 0.5rem;
+    --p-medium: 1rem;
+    --p-large: 1.5rem;
+    --p-largest: 2rem;
+    /* Borders */
+    --border-default: #575757;
+    --border-darker: #333333;
+    --border-black: #242424;
+    --border-light: #eeeeee;
+    --border-red: #dc7171;
+    --border-orange: #ffc464;
+    --border-green: #29cc0e;
+    /* Border Roundness */
+    --roundness-default: 0.5rem;
+    --roundness-medium: 0.75rem;
+    --roundness-large: 1rem;
+    --roundness-full: 100%;
+    /* Button Padding */
+    --button-p-default: 0.5rem 1rem;
+    --button-p-medium: 1rem 2rem;
+    /* Button Backgrounds */
+    --button-bg-default: #575757;
+    --button-bg-light: #ffffff;
+    --button-bg-red: #dc7171;
+    --button-bg-orange: #ffc464;
+    --button-bg-green: #29cc0e;
+    --button-bg-red-gradient: linear-gradient(275.52deg,
+            #973939 0.28%,
+            #dc7171 100%);
+    --button-bg-orange-gradient: linear-gradient(90.06deg,
+            #ffc464 0%,
+            #ff9f00 100%);
+    --button-bg-green-gradient: linear-gradient(275.52deg,
+            #1a9f04 0.28%,
+            #29cc0e 100%);
+    /* Active Button Backgrounds */
+    --button-bg-default-active: #333333;
+    --button-bg-light-active: #e2e2e2;
+    --button-bg-red-active: #973939;
+    --button-bg-orange-active: #e59c24;
+    --button-bg-green-active: #29cc0e;
+    --button-bg-red-gradient-active: linear-gradient(275.52deg,
+            #752d2d 0.28%,
+            #be4949 100%);
+    --button-bg-orange-gradient-active: linear-gradient(90.06deg,
+            #ffa81c 0%,
+            #e18000 100%);
+    --button-bg-green-gradient-active: linear-gradient(275.52deg,
+            #147703 0.28%,
+            #24ac0c 100%);
+    /* Navigation bar */
+    --header-height: 53px;
+    --sidebar-width-open: 13rem;
+    --animation-duration: 350ms;
+    --animation-timing-curve: ease-in-out;
+    --sidebar-list-active: #e3e5eb;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    color: var(--fc-default) !important;
+    font-family: "Quicksand", sans-serif;
+    font-size: var(--fs-default) !important;
+    font-weight: 500;
+}
+p{
+    line-height: normal;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+/* font size */
+.fs-def {
+    font-size: var(--fs-default);
+}
+
+.fs-xsmall {
+    font-size: var(--fs-smallest);
+}
+
+.fs-small {
+    font-size: var(--fs-small);
+}
+
+.fs-medium {
+    font-size: var(--fs-medium);
+}
+
+.fs-large {
+    font-size: var(--fs-large);
+}
+
+.fs-xlarge {
+    font-size: var(--fs-xl);
+}
+
+.fw-thin {
+    font-weight: 400 !important;
+}
+
+.fw-medium {
+    font-weight: 600 !important;
+}
+
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+
+/* font color */
+.fc-default {
+    color: var(--fc);
+}
+
+.fc-red {
+    color: var(--fc-red);
+}
+
+.fc-orange {
+    color: var(--fc-orange);
+}
+
+.fc-green {
+    color: var(--fc-green);
+}
+
+.fc-light {
+    color: var(--fc-light);
+}
+
+.fc-gray {
+    color: var(--fc-gray);
+}
+
+.fc-dark {
+    color: var(--fc-dark);
+}
+
+.fc-darker {
+    color: var(--fc-darker);
+}
+
+/* line heigt */
+.lh-none {
+    line-height: 0rem;
+}
+
+.lh-small {
+    line-height: var(--lh-small);
+}
+
+.lh-medium {
+    line-height: var(--lh-medium);
+}
+
+.lh-large {
+    line-height: var(--lh-large);
+}
+
+/*  padding */
+
+.p-1,
+.py-1,
+.pt-1 {
+    padding-top: var(--p-smallest) !important;
+}
+
+.pb-1,
+.py-1,
+.p-1 {
+    padding-bottom: var(--p-smallest) !important;
+}
+
+.ps-1,
+.px-1,
+.p-1 {
+    padding-left: var(--p-smallest) !important;
+}
+
+.pe-1,
+.px-1,
+.p-1 {
+    padding-right: var(--p-smallest) !important;
+}
+
+.p-2,
+.py-2,
+.pt-2 {
+    padding-top: var(--p-small) !important;
+}
+
+.pb-2,
+.py-2,
+.p-2 {
+    padding-bottom: var(--p-small) !important;
+}
+
+.ps-2,
+.px-2,
+.p-2 {
+    padding-left: var(--p-small) !important;
+}
+
+.pe-2,
+.px-2,
+.p-2 {
+    padding-right: var(--p-small) !important;
+}
+
+.p-3,
+.py-3,
+.pt-3 {
+    padding-top: var(--p-medium) !important;
+}
+
+.pb-3,
+.py-3,
+.p-3 {
+    padding-bottom: var(--p-medium) !important;
+}
+
+.ps-3,
+.px-3,
+.p-3 {
+    padding-left: var(--p-medium) !important;
+}
+
+.pe-3,
+.px-3,
+.p-3 {
+    padding-right: var(--p-medium) !important;
+}
+
+.p-4,
+.py-4,
+.pt-4 {
+    padding-top: var(--p-large) !important;
+}
+
+.pb-4,
+.py-4,
+.p-4 {
+    padding-bottom: var(--p-large) !important;
+}
+
+.ps-4,
+.px-4,
+.p-4 {
+    padding-left: var(--p-large) !important;
+}
+
+.pe-4,
+.px-4,
+.p-4 {
+    padding-right: var(--p-large) !important;
+}
+
+.p-5,
+.py-5,
+.pt-5 {
+    padding-top: var(--p-largest) !important;
+}
+
+.pb-5,
+.py-5,
+.p-5 {
+    padding-bottom: var(--p-largest) !important;
+}
+
+.ps-5,
+.px-5,
+.p-5 {
+    padding-left: var(--p-largest) !important;
+}
+
+.pe-5,
+.px-5,
+.p-5 {
+    padding-right: var(--p-largest) !important;
+}
+
+/* border color */
+.border-def {
+    border: 1px solid var(--border-default);
+}
+
+.border-dark {
+    border: 1px solid var(--border-darker);
+}
+
+.border-black {
+    border: 1px solid var(--border-black);
+}
+
+.border-light {
+    border: 1px solid var(--border-light);
+}
+
+/* icons */
+.logo-small {
+    height: 18px;
+    background-color: white;
+    border: 1px solid white;
+}
+
+.logo-medium {
+    height: 24px;
+    background-color: white;
+    border: 1px solid white;
+}
+
+.logo-large {
+    height: 36px;
+    background-color: white;
+    border: 1px solid white;
+}
+
+/* input */
+input {
+    padding: var(--p-small) var(--p-medium);
+    border-radius: var(--roundness-default);
+}
+
+/* background Colors */
+.bg-red-gradient {
+    background: var(--bg-red-gradient);
+}
+
+.bg-orange-gradient {
+    background: var(--bg-orange-gradient);
+}
+
+.bg-green-gradient {
+    background: var(--bg-green-gradient);
+}
+
+.bg-gray {
+    background-color: var(--bg-gray);
+}
+
+.bg-light-gray {
+    background-color: var(--bg-light-gray);
+}
+
+.bg-light {
+    background-color: var(--bg-light);
+}
+
+.bg-dark {
+    background-color: var(--bg-dark);
+}
+
+/* buttons */
+button {
+    padding: var(--button-p-default);
+    background-color: var(--button-bg-light);
+    border-radius: var(--roundness-default);
+    border: solid 1px var(--border-darker);
+    color: var(--fc-default);
+}
+
+.btn-red{
+    background: var(--button-bg-red-gradient);
+    border:none;
+    color: var(--fc-light);
+    padding: calc(0.5rem + 1px) calc(1rem + 1px);
+}
+.btn-red:hover{
+    background: var(--button-bg-red-gradient-active);
+}
+
+.btn-orange{
+    background: var(--button-bg-orange-gradient);
+    border:none;
+    color: var(--fc-light);
+    padding: calc(0.5rem + 1px) calc(1rem + 1px);
+}
+.btn-orange:hover{
+    background: var(--button-bg-orange-gradient-active);
+}
+
+.btn-green{
+    background: var(--button-bg-green-gradient);
+    border:none;
+    color: var(--fc-light);
+    padding: calc(0.5rem + 1px) calc(1rem + 1px);
+}
+.btn-green:hover{
+    background: var(--button-bg-green-gradient-active);
+}
