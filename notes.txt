@@ -1,0 +1,11 @@
+-----------add to staged
+git add . 
+git add <filename.type>
+
+-----------Update the file content-version of the repository
+git commit
+
+
+list all installed files 
+.venv/Scripts/activate
+pip freeze > requirements.txt
