@@ -1,22 +1,25 @@
-from flask import Flask,render_template, redirect, url_for, request, flash, jsonify, json
-from flask_argon2 import Argon2
+from flask import Flask, session, render_template, redirect, url_for, request, flash, jsonify, json
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SelectField, SubmitField
+from wtforms.validators import DataRequired
+from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from . import config
 from app.Blueprints.admin import admin_bp
 from app.Blueprints.staff import staff_bp
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create Flask app
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = "ABCDEFG12345"
-app.config['CAPTCHA_ENABLE'] = True
-# Set 6 as character length in captcha 
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(minutes=20)
+
+app.config['CAPTCHA_ENABLE'] = True 
 app.config['CAPTCHA_LENGTH'] = 6
-# Set the captcha height and width 
 app.config['CAPTCHA_WIDTH'] = 200
 app.config['CAPTCHA_HEIGHT'] = 60
-
 captcha = FlaskSessionCaptcha(app)
 
 login_manager = LoginManager()
@@ -24,8 +27,11 @@ login_manager.init_app(app)
 login_manager.session_protection = "strong"
 login_manager.refresh_view = 'index'
 login_manager.login_view = 'login'
-argon2 = Argon2(app)
 
+csrf = CSRFProtect() 
+csrf.init_app(app)
+
+argon2 = Argon2(app)
 class User(UserMixin):
     def __init__(self, id, username, role):
         self.id = id
@@ -37,54 +43,57 @@ def load_user(user_id):
     cursor = config.conn.cursor()
     cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
     user = cursor.fetchone()
-    if user['role'] == 1:
-        role = 'admin'
-    elif user['role'] == 2:
-        role = 'staff'
-    
-    if not user:
-        return
+
+    select_role = {1: 'admin', 2: 'staff'}
+    role = select_role.get(user['role'])
+        
     return User(user_id, user['username'], role)
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    role = SelectField('Role', choices=[('1', 'Admin'), ('2', 'Staff')], validators=[DataRequired()])
+    captcha = StringField('Captcha', validators=[DataRequired()])
+    submit = SubmitField('Sign In')
 
 #Login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    invalidError = 'User not Found or Invalid Password - Please Try Again'
+
+    form = LoginForm()
     role = ''
-    if request.method == 'POST':
+    invalidError = 'User not Found or Invalid Password - Please Try Again'
+    
+    if form.validate_on_submit():
         username = request.form.get('username')
         password = request.form.get('password')
         role = request.form.get('role')
         input_captcha = request.form.get('captcha')
-        
-        if role == 1:
-            user_role = 'admin'
-        elif role == 2:
-            user_role = 'staff'
-        else:
-            user_role = 'error'
-        
+
+        role_dict = {1: 'admin', 2: 'staff'}
+        user_role = role_dict.get(role, 'error')
+
         #authentication for login
         cursor = config.conn.cursor()
         cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
         user = cursor.fetchone()
-        
-        current_time = datetime.now().strftime("%H:%M:%S")
     
         if captcha.get_answer() == input_captcha:
             if user and argon2.check_password_hash(user['password'], password) and user['status'] == 1:
                     
-                login_user(User(user['user_id'], username, user_role))#add user info on session
-                flash('You are successfully logged in')
-                
+                login_user(User(user['user_id'], username, user_role), remember=False)#add user info on session
+                session.permanent = True
+
+                #login logs
                 browser_uuid = request.headers.get('User-Agent')
                 cursor.execute('INSERT INTO login_history (user_id, browser_uuid) VALUES (%s, %s)', (user['user_id'], browser_uuid))
                 config.conn.commit()
-                
-                if user['role'] == 1: #role is admin
-                    return redirect(url_for('admin.dashboard'))
-                elif user['role'] == 2: #role is staff
-                    return redirect(url_for('staff.records'))
+
+                role_redirect = {1: 'admin.dashboard', 2: 'staff.records'}
+                redirect_url = role_redirect.get(user['role'])
+
+                if redirect_url:
+                    return redirect(url_for(redirect_url))
                 else:
                     flash(invalidError)
             else:
@@ -92,7 +101,7 @@ def login():
         else:
             flash('Please be a human!')
             
-    return render_template('public/index.html', error_message=invalidError, error = 'is-invalid', role = role)
+    return render_template('public/index.html', error_message=invalidError, role = role, form=form)
 
 #Logout route
 @app.route('/logout', methods=['GET', 'POST'])
@@ -121,28 +130,28 @@ app.register_blueprint(staff_bp)
 @app.route('/account')
 @login_required
 def account():
-    if current_user.role == 'admin':
-        return redirect(url_for('admin.account', user = current_user.user))
-    elif current_user.role == 'staff':
-        return redirect(url_for('staff.account', user = current_user.user))
+    
+    role_redirect = {'admin': 'admin.account', 'staff': 'staff.account'}
+    redirect_url = role_redirect.get(current_user.role)
+    return redirect(url_for(redirect_url, user = current_user.user))
 
 #Records page route
 @app.route('/records')
 @login_required
 def records():
-    if current_user.role == 'admin':
-        return redirect(url_for('admin.records'))
-    elif current_user.role == 'staff':
-        return redirect(url_for('staff.records'))
+    
+    role_redirect = {'admin': 'admin.records', 'staff': 'staff.records'}
+    redirect_url = role_redirect.get(current_user.role)
+    return redirect(url_for(redirect_url))
 
 #Documents page route
 @app.route('/documents')
 @login_required
 def documents():
-    if current_user.role == 'admin':
-        return redirect(url_for('admin.documents'))
-    elif current_user.role == 'staff':
-        return redirect(url_for('staff.documents'))
+    
+    role_redirect = {'admin': 'admin.documents', 'staff': 'staff.documents'}
+    redirect_url = role_redirect.get(current_user.role)
+    return redirect(url_for(redirect_url))
 
 #Upload page route
 @app.route('/upload')
@@ -174,7 +183,8 @@ def index():
 
 @app.route('/ards')
 def home():
-    return render_template('public/index.html' )
+    form = LoginForm()
+    return render_template('public/index.html', form=form)
 
 @app.route('/records_data', methods=['GET', 'POST'])
 def records_data():
@@ -231,3 +241,4 @@ def records_data():
             }
 
         return jsonify(response)
+
