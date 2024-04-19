@@ -1,4 +1,6 @@
 import re
+
+StudentNamesList = []
 class student_names:
     def __init__ (self, surname, firstname, middlename, suffix):
         self.surname = surname
@@ -23,9 +25,11 @@ def detectNameFormat(unstructured_nameformat):
     array_name = unstructured_nameformat.split()
 
     # Check if the last element is a suffix and update accordingly
-    if array_name[-1] in suffixList:
-        structured_nameformat["suffix"] = array_name[-1]
-        array_name = array_name[:-1]
+    for i in range(len(array_name)-1, -1, -1):
+        if array_name[i] in suffixList:
+            structured_nameformat["suffix"] = array_name[i]
+            array_name = array_name[:i] + array_name[i+1:]
+            break 
 
     # Locate for middle name indicated by a period 
     for i in range(len(array_name)-1, -1, -1):
@@ -76,10 +80,12 @@ def detectStudentNames(RawDataString):
 RawInput =  ["01823737__&&%^$$Moe----, -309 Lester=93287272-Kha", " Moe Jhonson , Lester  ", "_$%//Damian--Elinor001,--Reymond-Ferdinand210192MA.-10928A.@@@#11#23V.", "01823737__&&%^$$Ymir----, -309 Lester=93287272--moe"]
 newRawInput =  ["01823737__&&%^$$Andrew-Bruh---D. -309 Hoelster=Niqqers", " Moe Lester MA. Jr. "]
 
-StudentNamesList = []
+
 
 detectStudentNames(RawInput)
 detectStudentNames(newRawInput)
 
 for student in StudentNamesList:
     print(f"Surname: {student.surname} \nFirstname: {student.firstname} \nMiddlename: {student.middlename} \nSuffix: {student.suffix} \n")
+
+print(type(StudentNamesList))
