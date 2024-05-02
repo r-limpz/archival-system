@@ -14,18 +14,23 @@ button:focus,
     position: relative;
 }
 
-.form-item input {
+.form-item input{
     display: block;
     width: 100%;
     height: 40px;
     background: white;
     border: solid 1px #868686;
     transition: all 0.3s ease;
-    padding-left: 32px;
     line-height: 0rem !important;
     font-size: 16px;
 }
 
+.form-item input:not(.captcha) {
+    padding-left: 32px;
+}
+.form-item input .captcha{
+    padding-left: 16px;
+}
 .form-item label {
     position: absolute;
     cursor: text;
