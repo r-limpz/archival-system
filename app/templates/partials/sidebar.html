@@ -73,10 +73,10 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('account')}}"
-                    class="sidebar-link {% if request.path == url_for('staff.account', user = current_user.user) or request.path == url_for('admin.account', user = current_user.user) %} active {% endif %}">
+                    class="sidebar-link {% if request.path == url_for('staff.account', user = current_user.username) or request.path == url_for('admin.account', user = current_user.username) %} active {% endif %}">
                     <span
                         class="sidebar-icon fa-solid {% if current_user.role == 'staff' %} fa-user {% elif current_user.role == 'admin' %}fa-solid fa-user-tie {% endif %}"></span>
-                    <span class="hidden-sidebar">{{current_user.user}}</span>
+                    <span class="hidden-sidebar">{{current_user.username}}</span>
                 </a>
             </li>
 
