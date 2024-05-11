@@ -94,9 +94,7 @@
         <span id="toggle-icon" class="fa-solid fa-chevron-right"></span>
     </a>
 </aside>
-
-
-
+<div style="display: none;" id="heartbeat" class="{{ url_for('auth.heartbeat') }}"> </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggle_navbar = document.getElementById("toggle_navbar");
