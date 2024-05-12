@@ -1,6 +1,5 @@
-from flask import render_template, redirect, url_for, request, Blueprint, jsonify
+from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session, make_response
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
-from flask_session import Session
 import bcrypt
 import hmac
 import secrets
@@ -9,7 +8,7 @@ from . import config, login_manager, argon2, captcha
 from flask import current_app as app
 from .forms import LoginForm
 
-auth = Blueprint('auth', __name__,url_prefix='/ards')
+auth = Blueprint('auth', __name__)
 
 def generate_id(length=256):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -39,7 +38,7 @@ class User(UserMixin):
                 user_session = cursor.fetchone()
 
                 if user_session:
-                    cursor.execute('SELECT status FROM user WHERE user_id = %s', (user_session['user_id'],))
+                    cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
                     return cursor.fetchone()
                 else:
                     return None
@@ -50,14 +49,14 @@ class User(UserMixin):
     def is_authenticated(self):
         with config.conn.cursor() as cursor:
             user = self.get_User()
-
             if user:
-                if check_token(self.token, user['password'], user['key'],self.id):
+                if check_token(self.token, user['password'], user['key'], self.id):
                     isvalid = True
                 else:
                     isvalid = False
             else:
                 isvalid = False
+                print('user not exist')
 
         return isvalid
 
@@ -79,11 +78,16 @@ def load_user(session_id):
                 cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
                 user = cursor.fetchone()
                 
-                if user and user_session['status'] == 1:
+                if user:
                     token = generate_token(user['password'], user['key'], session_id)
 
                     return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
+                
+                else:
+                    print('session no user')
+                    return None
             else:
+                print('session ', session_id ,'- not exist in db')
                 return None
             
     except Exception as e:
@@ -116,32 +120,27 @@ def login():
                 if captcha.get_answer() == input_captcha:#validate captcha input
                     if user and argon2.check_password_hash(user['password'], password) and user['status'] == 1:#authentication for login
 
-                        cursor.execute('SELECT * FROM session WHERE user_id = %s AND username = %s AND role = %s', (user['user_id'], username, role,))
+                        cursor.execute('SELECT * FROM session WHERE user_id = %s', (user['user_id']))
                         session_data = cursor.fetchone()
 
                         if session_data and len(session_data['session_id']) == 256:
-                            cursor.execute('UPDATE session SET status = 1, active_time = NOW(),last_active = NULL  WHERE session_id = %s', 
-                                    (session_data['session_id'],))
-                            config.conn.commit()
-                            
                             session_id = session_data['session_id']
                         else:
                             session_id = generate_id()
-                            cursor.execute('INSERT INTO session(session_id, user_id, username, role, status, active_time) VALUES (%s,%s,%s,%s,%s,NOW())', 
-                                                (session_id, user['user_id'], username, role, 1))
+                            cursor.execute('INSERT INTO session(session_id, user_id, username, role) VALUES (%s,%s,%s,%s)', (session_id, user['user_id'], username, role))
                             config.conn.commit()
                         
                         if session_id:
                             #generate token for session creation on cookies
                             token = generate_token(user['password'], user['key'], session_id)
                             login_user(User(session_id, username, user_role, token), remember=False)
-                        
-                            redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'])#setup the role-based accessible pages
-                            
-                            cursor.execute('UPDATE user SET online = 1, last_online = NULL WHERE user_id = %s', 
-                                        (user['user_id'],))
-                            config.conn.commit()
+                            session['uid'] = session_id
 
+                            redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
+
+                            cursor.execute('UPDATE user SET online = 1, last_online = NULL WHERE user_id = %s', (user['user_id'],))
+                            config.conn.commit()
+                        
                             if redirect_url:#redirect if user is authenicated and authorized
                                 return redirect(url_for(redirect_url))
                             else:
@@ -154,7 +153,7 @@ def login():
                     error = captchaError
 
     except Exception as e:
-        print(f"log in occurred: {e}")
+        print(f"log in error occurred: {e}")
 
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
@@ -173,15 +172,15 @@ def logout():
 
         except Exception as e:
             print(f"Sign out error occurred: {e}")
-        Session.clear()
+        session.clear()
         logout_user()
 
     return redirect(url_for('home'))
 
-@auth.route('/get-heartbeat')
+@auth.route('/get_heartbeat', endpoint='heartbeat')
 def heartbeat():
-    if current_user.is_authenticated:
-        return "User is logged in."
+    if 'uid' in session and current_user.is_authenticated and current_user.is_active:
+        return jsonify(session_Inactive = False)
     else:
-        return "User is not logged in."
+        return jsonify(session_Inactive = True)
 
