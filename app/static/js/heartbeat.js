@@ -32,7 +32,6 @@ function sendHeartbeat() {
         .catch(error => console.error('Error:', error));
 }
 
-sendHeartbeat();
 setInterval(() => sendHeartbeat(), 600000);
 
 window.onoffline = (event) => {
