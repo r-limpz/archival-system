@@ -3,22 +3,23 @@
 {% block style %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}
-
 {% block content %}
 
-<h1>Processed Names</h1>
+<section>
+    <h1>Processed Names</h1>
 
-<table id="studentsTable" class="table">
-    <tr>
-        <th>Surname</th>
-        <th>Firstname</th>
-        <th>Middlename</th>
-        <th>Suffix</th>
-    </tr>
-    <tbody>
+    <table id="studentsTable" class="table">
+        <tr>
+            <th>Surname</th>
+            <th>Firstname</th>
+            <th>Middlename</th>
+            <th>Suffix</th>
+        </tr>
+        <tbody>
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</section>
 
 <script>
     var table = document.getElementById('studentsTable');

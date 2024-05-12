@@ -1,13 +1,20 @@
 {% extends 'layout/users.html' %}
-{% block title %}USeP - ARDS{% endblock %}
+{% block title %}Upload | ARDS{% endblock %}
 {% block style %}
-<link rel="stylesheet" href="{{url_for('static',filename='css/table.css')}}" /> 
 {% endblock %}
 
 {% block content %}
 
-<div class="">
-asasas
-</div>
+<section class="p-2">
+    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+        <h4 class="fw-medium">Upload</h4>
+        <p>Lorem Ipsum</p>
+    </div>
+    <form action="/scanner" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="file" name="image">
+        <button type="submit">Upload</button>
+    </form>
+</section>
 
 {% endblock%}

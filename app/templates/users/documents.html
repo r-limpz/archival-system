@@ -1,13 +1,18 @@
 {% extends 'layout/users.html' %}
-{% block title %}USeP - ARDS{% endblock %}
+{% block title %}Documents | ARDS{% endblock %}
 {% block style %}
-<link rel="stylesheet" href="{{url_for('static',filename='css/table.css')}}" /> 
+<link href='https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 {% endblock %}
 
 {% block content %}
 
-<div class="">
-asasa
-</div>
+<section class="p-2">
+    <div class="page-header-title p-2 border-bottom border-1">
+        <h4 class="fw-medium">Documents Table</h4>
+        <p>Lorem Ipsum</p>
+    </div>
+</section>
 
 {% endblock%}

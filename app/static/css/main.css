@@ -75,8 +75,9 @@
     --roundness-large: 1rem;
     --roundness-full: 100%;
     /* Button Padding */
-    --button-p-default: 0.5rem 1rem;
-    --button-p-medium: 1rem 2rem;
+    --button-p-default: 0.25rem 1rem;
+    --button-p-medium: 0.5rem 1rem;
+    --button-p-large: 1rem 2rem;
     /* Button Backgrounds */
     --button-bg-default: #575757;
     --button-bg-light: #ffffff;
@@ -416,15 +417,19 @@ button {
     padding: var(--button-p-default);
     background-color: var(--button-bg-light);
     border-radius: var(--roundness-default);
-    border: solid 1px var(--border-darker);
+    border: solid 1px var(--border-default);
     color: var(--fc-default);
+}
+
+.button {
+    border-radius: var(--roundness-default);
+    padding: var(--button-p-default);
 }
 
 .btn-red{
     background: var(--button-bg-red-gradient);
     border:none;
     color: var(--fc-light);
-    padding: calc(0.5rem + 1px) calc(1rem + 1px);
 }
 .btn-red:hover{
     background: var(--button-bg-red-gradient-active);
@@ -434,7 +439,6 @@ button {
     background: var(--button-bg-orange-gradient);
     border:none;
     color: var(--fc-light);
-    padding: calc(0.5rem + 1px) calc(1rem + 1px);
 }
 .btn-orange:hover{
     background: var(--button-bg-orange-gradient-active);
@@ -444,7 +448,6 @@ button {
     background: var(--button-bg-green-gradient);
     border:none;
     color: var(--fc-light);
-    padding: calc(0.5rem + 1px) calc(1rem + 1px);
 }
 .btn-green:hover{
     background: var(--button-bg-green-gradient-active);

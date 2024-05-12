@@ -1,7 +1,7 @@
 {% extends 'layout/users.html' %}
-{% block title %}USeP - ARDS{% endblock %}
+{% block title %} {{ current_user.username }} | ARDS{% endblock %}
 {% block style %}
-<link rel="stylesheet" href="{{url_for('static',filename='css/table.css')}}" />
+
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
             </div>
             <div style="margin-left: 7rem;">
                 <h5 class="fw-bold">
-                    {{ current_user.user}}
+                    {{ current_user.username}}
                 </h5>
                 <h6>
                     {{ current_user.role }}
@@ -25,5 +25,4 @@
 
         </div>
 </section>
-
 {% endblock%}

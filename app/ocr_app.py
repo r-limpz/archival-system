@@ -122,7 +122,7 @@ def detectStudentNames(raw_data_string):
 @login_required
 def scanner():
     if not current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('upload'))
     else: 
         if 'image' not in request.files:
             return "No file uploaded"

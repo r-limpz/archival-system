@@ -8,10 +8,9 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="fw-bold" data-bs-dismiss="modal">Close</button>
-        <button type="button" href="{{url_for('logout')}}" class="btn-red fw-bold">Sign out</button>
+        <button type="button" data-bs-dismiss="modal">Close</button>
+          <a href="{{url_for('auth.logout')}}" id="logout_currentUser" class="btn-red fw-bold text-decoration-none button">Sign out</a>
       </div>
-
     </div>
   </div>
 </div>
