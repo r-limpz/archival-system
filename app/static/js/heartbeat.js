@@ -1,6 +1,6 @@
 var element = document.getElementById('heartbeat');
 var heartbeatUrl = element.className;
-var logoutUrl = element.getAttribute('data-logout-url');
+var timeoutUrl = '/authenticate-user/check-token/timeout/';
 
 const channel = new BroadcastChannel("sess_channel");
 
@@ -9,7 +9,7 @@ channel.onmessage = function (event) {
     switch (event.data) {
         case 'session timeout':
             alert("Session timeout");
-            window.location.href = logoutUrl;
+            window.location.href = timeoutUrl;
             channel.close()
             break;
         case 'offline alert':
@@ -19,13 +19,14 @@ channel.onmessage = function (event) {
             console.log( 'channel data ', event.data)
     }
 };
+
 function sendHeartbeat() {
     fetch(heartbeatUrl)
         .then(response => response.json())
         .then(data => {
             if (data.session_Inactive) {
                 channel.postMessage('session timeout');
-                window.location.href = logoutUrl;
+                window.location.href = timeoutUrl;
             }
         })
         .catch(error => console.error('Error:', error));

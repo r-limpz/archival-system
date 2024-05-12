@@ -184,3 +184,6 @@ def heartbeat():
     else:
         return jsonify(session_Inactive = True)
 
+@auth.route('/authenticate-user/check-token/timeout/')
+def user_timeout():
+    return redirect(url_for('auth.logout'))
