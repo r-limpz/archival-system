@@ -7,8 +7,8 @@ staff_bp = Blueprint('staff', __name__, url_prefix='/ards/staff')
 def staff_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.is_active and current_user.role != 'staff':
-                return redirect(url_for('home'))
+        if not current_user.is_authenticated() and current_user.is_active() and current_user.role != 'staff':
+            return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 

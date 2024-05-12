@@ -12,7 +12,7 @@ account_manager = Blueprint('user_controller', __name__,url_prefix='/ards/admin/
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.is_active and current_user.role != 'admin':
+        if not current_user.is_authenticated() and current_user.is_active() and current_user.role != 'admin':
                 return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function

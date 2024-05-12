@@ -1,7 +1,6 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session, make_response
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
-import bcrypt
-import hmac
+import hashlib
 import secrets
 import string
 from . import config, login_manager, argon2, captcha
@@ -16,13 +15,12 @@ def generate_id(length=256):
 
 def generate_token(data, key, key2):
     combined_data = str(data) + app.config['SECRET_KEY'] + key + key2
-    salt = bcrypt.gensalt()
-    hashcode = bcrypt.hashpw(combined_data.encode(), salt)
-    return hashcode.decode()
+    hashed_data = hashlib.sha256(combined_data.encode()).hexdigest()
+    return hashed_data
 
-def check_token(token, data, key , key2):
-    hashed = generate_token(data, key , key2)
-    return hmac.compare_digest(hashed, token)
+def check_token(token, data, key, key2):
+    expected_token = generate_token(data, key, key2)
+    return token == expected_token
 
 class User(UserMixin):
     def __init__(self, id, username, role, token):
@@ -41,6 +39,7 @@ class User(UserMixin):
                     cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
                     return cursor.fetchone()
                 else:
+                    print('no user')
                     return None
                 
         except Exception as e:
@@ -49,16 +48,12 @@ class User(UserMixin):
     def is_authenticated(self):
         with config.conn.cursor() as cursor:
             user = self.get_User()
-            if user:
-                if check_token(self.token, user['password'], user['key'], self.id):
-                    isvalid = True
-                else:
-                    isvalid = False
+            if user and check_token(self.token, user['password'], user['key'], self.id):
+                return True
             else:
-                isvalid = False
                 print('user not exist')
-
-        return isvalid
+                print(check_token(self.token, user['password'], user['key'], self.id))
+                return False
 
     def is_active(self):
         user = self.get_User()
@@ -71,9 +66,10 @@ class User(UserMixin):
 def load_user(session_id):
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id,))
-            user_session = cursor.fetchone()
 
+            cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
+            user_session = cursor.fetchone()
+            
             if user_session:
                 cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
                 user = cursor.fetchone()
@@ -82,12 +78,11 @@ def load_user(session_id):
                     token = generate_token(user['password'], user['key'], session_id)
 
                     return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
-                
                 else:
                     print('session no user')
                     return None
             else:
-                print('session not exist in db')
+                print('session not exist in db', session_id)
                 return None
             
     except Exception as e:
@@ -179,7 +174,7 @@ def logout():
 
 @auth.route('/get_heartbeat', endpoint='heartbeat')
 def heartbeat():
-    if 'uid' in session and current_user.is_authenticated and current_user.is_active:
+    if 'uid' in session and current_user.is_authenticated() and current_user.is_active():
         return jsonify(session_Inactive = False)
     else:
         return jsonify(session_Inactive = True)
