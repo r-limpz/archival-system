@@ -7,8 +7,8 @@ staff_bp = Blueprint('staff', __name__, url_prefix='/ards/staff')
 def staff_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'staff':
-            return redirect(url_for('login'))
+        if not current_user.is_authenticated and current_user.is_active and current_user.role != 'staff':
+                return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -24,14 +24,14 @@ def records():
 def documents():
     return render_template('users/documents.html')
 
-@staff_bp.route('upload')
+@staff_bp.route('/upload')
 @login_required
 @staff_required
 def upload():
     return render_template('users/upload.html')
 
-@staff_bp.route('/<user>')
-@login_required
+@staff_bp.route('/account/<user>')
 @staff_required
+@login_required
 def account(user):
     return render_template('users/account.html', user = user)
