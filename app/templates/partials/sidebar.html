@@ -89,12 +89,13 @@
 
         </ul>
     </div>
-    <a id="toggle_navbar"
-        class="border border-1 text-decoration-none position-absolute bg-white rounded-circle">
+    <a id="toggle_navbar" class="border border-1 text-decoration-none position-absolute bg-white rounded-circle">
         <span id="toggle-icon" class="fa-solid fa-chevron-right"></span>
     </a>
+    <div style="display: none;" id="heartbeat" class="{{ url_for('auth.heartbeat') }}"
+        data-logout-url="{{ url_for('auth.logout') }}"> </div>
 </aside>
-<div style="display: none;" id="heartbeat" class="{{ url_for('auth.heartbeat') }}"> </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggle_navbar = document.getElementById("toggle_navbar");

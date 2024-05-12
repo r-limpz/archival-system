@@ -1,7 +1,7 @@
 import pymysql
 
 conn = pymysql.connect(host='localhost',
-                       user='root',
-                       password='',
+                       user='ards',
+                       password='usep_20ards23//@-our',
                        database='rog',
                        cursorclass=pymysql.cursors.DictCursor)

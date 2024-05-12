@@ -19,15 +19,11 @@ channel.onmessage = function (event) {
             console.log( 'channel data ', event.data)
     }
 };
-
 function sendHeartbeat() {
     fetch(heartbeatUrl)
         .then(response => response.json())
         .then(data => {
-            channel.postMessage(data.session_Inactive);
-
             if (data.session_Inactive) {
-                // Send a logout message to the channel
                 channel.postMessage('session timeout');
                 window.location.href = logoutUrl;
             }
@@ -35,8 +31,8 @@ function sendHeartbeat() {
         .catch(error => console.error('Error:', error));
 }
 
-setInterval(() => sendHeartbeat(), 600000);
 sendHeartbeat();
+setInterval(() => sendHeartbeat(), 600000);
 
 window.onoffline = (event) => {
     alert("The network connection has been lost.");

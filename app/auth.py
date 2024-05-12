@@ -87,7 +87,7 @@ def load_user(session_id):
                     print('session no user')
                     return None
             else:
-                print('session ', session_id ,'- not exist in db')
+                print('session not exist in db')
                 return None
             
     except Exception as e:
