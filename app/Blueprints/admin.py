@@ -10,7 +10,8 @@ def admin_required(f):
         if not current_user.is_authenticated() and current_user.role != 'admin' or not current_user.is_active():
             return redirect(url_for('home'))
         elif current_user.is_authenticated() and current_user.is_active() and current_user.role == 'staff':
-            return redirect(url_for('records'))
+            
+            return redirect(url_for('staff.records'))
         return f(*args, **kwargs)
     return decorated_function
 
