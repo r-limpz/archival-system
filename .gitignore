@@ -1,5 +1,6 @@
 .venv/
 venv/
 __pycache__/
-static/node_modules/
-Blueprints/__pycache__/
+app/static/node_modules/
+app/Blueprints/__pycache__/
+
