@@ -1,18 +1,19 @@
 from flask import Flask, render_template, redirect, url_for, session, request
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from .forms import LoginForm
 from app.Blueprints.admin import admin_bp
 from app.Blueprints.staff import staff_bp
-from datetime import timedelta
+from datetime import timedelta, datetime
 import os
 
 # Create Flask app
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = "ABCDEFG12345"
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "strict"
 app.config["SESSION_COOKIE_SECURE"] = True
@@ -47,7 +48,7 @@ class Anonymous(AnonymousUserMixin):
 login_manager.anonymous_user = Anonymous
 
 @app.before_request
-def make_session_permanent():
+def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
         session.permanent = True
         session.modified = True
@@ -67,14 +68,21 @@ app.register_blueprint(staff_bp)
 #Register account_manager
 from .account_manager import account_manager as user_controlblueprint
 app.register_blueprint(user_controlblueprint)
-#error handling of pages
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('errors/404.html'), 404
 
-@app.errorhandler(500)
-def page_not_found(e):
-    return render_template('errors/500.html'), 500
+#error handling of pages
+from werkzeug.exceptions import HTTPException
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+        code_message = f"{code} {e.name}"
+        description = e.description
+    else:
+        code_message = "500 Internal Server Error"
+        description = str(e)
+    return render_template('errors/error.html', error_number=code_message, error_message=description), code
 
 #Non-authentication needed pages
 @app.route('/ards/')
