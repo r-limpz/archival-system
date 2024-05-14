@@ -80,10 +80,3 @@ button:focus,
     padding: 0px 62px;
 }
 
-.is-invalid {
-    border: red;
-}
-
-.is-invalid label {
-    color: red;
-}

@@ -421,6 +421,10 @@ button {
     color: var(--fc-default);
 }
 
+.button:hover{
+    font-weight: bold;    
+}
+
 .button {
     border-radius: var(--roundness-default);
     padding: var(--button-p-default);
@@ -451,4 +455,19 @@ button {
 }
 .btn-green:hover{
     background: var(--button-bg-green-gradient-active);
+}
+
+
+.form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: var(--fc-darker);
+}
+
+.is-invalid {
+    border: red solid 2px;
+}
+
+.is-invalid label {
+    color: red;
 }

@@ -49,7 +49,7 @@ class User(UserMixin):
     def is_authenticated(self):
         with config.conn.cursor() as cursor:
             user = self.get_User()
-            if user and check_token(self.token, user['password'], user['key'], self.id):
+            if user and check_token(self.token, user['password'], user['pass_key'], self.id):
                 return True
             else:
                 return False
@@ -73,7 +73,7 @@ def load_user(session_id):
                 user = cursor.fetchone()
                 
                 if user:
-                    token = generate_token(user['password'], user['key'], session_id)
+                    token = generate_token(user['password'], user['pass_key'], session_id)
                     return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
                 else:
                     return None
@@ -122,7 +122,7 @@ def login():
                         
                         if session_id:
                             #generate token for session creation on cookies
-                            token = generate_token(user['password'], user['key'], session_id)
+                            token = generate_token(user['password'], user['pass_key'], session_id)
                             login_user(User(session_id, username, user_role, token), remember=False)
 
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages

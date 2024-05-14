@@ -13,7 +13,7 @@ import os
 # Create Flask app
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = "ABCDEFG12345"
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "strict"
 app.config["SESSION_COOKIE_SECURE"] = True
@@ -82,6 +82,7 @@ def handle_error(e):
     else:
         code_message = "500 Internal Server Error"
         description = str(e)
+        
     return render_template('errors/error.html', error_number=code_message, error_message=description), code
 
 #Non-authentication needed pages

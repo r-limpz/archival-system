@@ -21,6 +21,9 @@
     </table>
 </section>
 
+{% endblock%}
+
+{% block scripts %}
 <script>
     var table = document.getElementById('studentsTable');
     var json_data = {{ students_json | tojson }};

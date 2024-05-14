@@ -1,8 +1,10 @@
 {% extends 'layout/users.html' %}
 {% block title %} Users Manager | ARDS{% endblock %}
+
 {% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/user_controller.css')}}">
 {% endblock %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/account.css')}}">
+
 {% block content %}
 
 <section class="p-2">
@@ -10,20 +12,30 @@
         <h4 class="fw-medium">Account Manager</h4>
         <p>Lorem Ipsum</p>
     </div>
-    <div>
-        <button> Add User</button>
+    <div class="d-flex justify-content-end">
+        <select class=' p-2 rounded-3 mx-3' id="changeDisplay">
+            <option value="all"> All Users </option>
+            <option value="active"> Active Users </option>
+            <option value="deactivated"> Deactivated Users </option>
+        </select>
+        <button class="button" data-bs-toggle="modal" data-bs-target="#addUser_modal"> Add User</button>
     </div>
 
-    <div class="d-flex" id="users_data"></div>
 
+
+    <div id="users_data"></div>
 </section>
+{% endblock %}
+
+{% block scripts %}
 <script>
-    function populateUsers() {
-        fetch('/ards/admin/account_manager/display_staff_users')
+    function populateUsers(toggle) {
+        fetch('/admin/account_manager/display_staff_users/' + toggle)
             .then(response => response.json())
             .then(users => {
 
                 let usersDataDiv = document.getElementById('users_data');
+                usersDataDiv.innerHTML = '';
                 users.forEach(user => {
                     let statusClass = user.status === 'deactivated' ? 'fc-red' : (user.online === 'online' ? 'fc-green' : 'fc-gray');
                     let card = `
@@ -67,9 +79,115 @@
             });
     }
 
+    let changeDisplay = document.getElementById('changeDisplay');
+
+    changeDisplay.addEventListener('change', event => {
+        var changestate_value = event.target.value;
+        populateUsers(changestate_value);
+    });
+
+
     window.onload = (event) => {
-           populateUsers();
+        populateUsers('all');
     };
-    
+
+    setInterval(() => populateUsers('all'), 600000);
 </script>
-{% endblock%}
+
+<script>
+    $('#signup_user').on('submit', function (event) {
+        event.preventDefault();
+
+        let fullname = $('#newuser_fullname').val();
+        let username = $('#newuser_username').val();
+        let role = $('#newuser_role').val();
+        let password = $('#newuser_password').val();
+        let repassword = $('#newuser_repassword').val();
+
+        let formData = {
+            'newuser_fullname': fullname,
+            'newuser_username': username,
+            'newuser_role': role,
+            'newuser_password': password,
+            'newuser_repassword': repassword
+        };
+
+        $.ajax({
+            url: '/admin/account_manager/manage/new_user',
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                console.log('message :' + data.update_query);
+                switch (event.data) {
+                    case 'success':
+                        populateUsers('active');
+                        break;
+                    case 'failed':
+                        
+                        break;
+                    case 'duplicate user':
+
+                        break;
+                    default:
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+
+    });
+</script>
+
+<script>
+    // Get the password input elements
+    let password = document.getElementById('newuser_password');
+    let repassword = document.getElementById('newuser_repassword');
+    let progressBar = document.querySelector('.progress-bar');
+    let strengthIndicator = document.getElementById('strength_indicator');
+    let submitButton = document.getElementById('newUser_submit');
+
+    // Define the width, color, and strength arrays
+    let widthPower = ["1%", "25%", "50%", "75%", "100%"];
+    let colorPower = ["#D73F40", "#DC6551", "#ff9f00", "#BDE952", "#29cc0e"];
+    let strength = ["Too Short", "Weak", "Fair", "Good", "Strong"];
+
+    // Add an input event listener to the password field
+    password.oninput = function () {
+        let point = 0;
+        let value = password.value;
+
+        // Check the password strength
+        if (value.length >= 6) {
+            let arrayTest = [/[0-9]/, /[a-z]/, /[A-Z]/, /[^0-9a-zA-Z]/];
+            arrayTest.forEach((item) => {
+                if (item.test(value)) {
+                    point += 1;
+                }
+            });
+        } else if (value.length > 0) {
+            point = 0;
+        }
+
+        // Update the progress bar and strength indicator
+        progressBar.style.width = widthPower[point];
+        progressBar.style.backgroundColor = colorPower[point];
+        progressBar.setAttribute('aria-valuenow', parseInt(widthPower[point]));
+        strengthIndicator.textContent = strength[point];
+
+        if (point < 4) { submitButton.disabled = true; } else { submitButton.disabled = false; }
+    }
+
+    repassword.oninput = function () {
+        if (password.value === repassword.value) {
+            password.classList.remove("is-invalid");
+            repassword.classList.remove("is-invalid");
+        }
+        else {
+            password.classList.add("is-invalid");
+            repassword.classList.add("is-invalid");
+        }
+    }
+</script>
+{% endblock %}

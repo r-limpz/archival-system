@@ -1,0 +1,16 @@
+@import url(main.css);
+
+.inputs-forms {
+    display: block;
+    margin: auto;
+}
+
+#newuser_role:hover {
+    font-weight: 600;
+}
+
+#newuser_role:focus {
+    outline: none;
+    box-shadow: none;
+    border: var(--fc-darker) solid 2px
+}

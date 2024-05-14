@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<section class="p-2" >
+<section class="p-2">
     <div class="page-header-title p-2 border-bottom border-1">
         <h4 class="fw-medium">Records Table</h4>
         <p>Lorem Ipsum</p>
@@ -33,50 +33,55 @@
             </tbody>
         </table>
 
-        <script>
-            $(document).ready(function () {
 
-                var recordsDataTable = $('#recordsTable').DataTable({
-                    'processing': true,
-                    'serverSide': true,
-                    'ajax': {
-                        url: '/records_data',
-                        type: 'POST'
-                    },
-                    'lengthMenu': [[10, 25, 50, 100], [10, 25, 50, "All"]],
-                    columns: [
-                        { data: 'id', orderable: true },
-                        { data: 'FullName', orderable: true },
-                        { data: 'College', orderable: true },
-                        { data: 'Course', orderable: true },
-                        { data: 'year_level', orderable: true },
-                        { data: 'Subject', orderable: true },
-                        { data: 'Semester', orderable: true },
-                        { data: 'SchoolYear', orderable: true },
-                        {
-                            'data': 'id',
-                            title: 'Action',
-                            wrap: true,
-                            "render": function(data, type, row) {
-                                const viewIcon = '<span class="fa-solid fa-eye"></span>'
-                                const editIcon = '<span class="fa-solid fa-pen"></span>'
-                                const deleteIcon = '<span class="fa-solid fa-trash"></span>'
-
-                                const viewLink = '<a id="viewThis" data-bs-toggle="modal" data-bs-target="#viewModal" class= "' + data + '">' + viewIcon + '</a>';
-                                const editLink = '<a id="editThis" data-bs-toggle="modal" data-bs-target="#editModal" class= "' + data + '">' + editIcon + '</a>';
-                                const deleteLink = '<a id="deleteThis" data-bs-toggle="modal" data-bs-target="#deleteModal" class= "' + data + '">' + deleteIcon + '</a>';
-    
-                                return viewLink + ' ' + editLink + ' ' + deleteLink;
-                            }
-    
-                        }
-                    ],
-                    'order': [[1, 'asc']]
-                });
-            });            
-        </script>
 
     </div>
 </section>
+
+{% endblock%}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+
+        var recordsDataTable = $('#recordsTable').DataTable({
+            'processing': true,
+            'serverSide': true,
+            'ajax': {
+                url: '/records_data',
+                type: 'POST'
+            },
+            'lengthMenu': [[10, 25, 50, 100], [10, 25, 50, "All"]],
+            columns: [
+                { data: 'id', orderable: true },
+                { data: 'FullName', orderable: true },
+                { data: 'College', orderable: true },
+                { data: 'Course', orderable: true },
+                { data: 'year_level', orderable: true },
+                { data: 'Subject', orderable: true },
+                { data: 'Semester', orderable: true },
+                { data: 'SchoolYear', orderable: true },
+                {
+                    'data': 'id',
+                    title: 'Action',
+                    wrap: true,
+                    "render": function (data, type, row) {
+                        const viewIcon = '<span class="fa-solid fa-eye"></span>'
+                        const editIcon = '<span class="fa-solid fa-pen"></span>'
+                        const deleteIcon = '<span class="fa-solid fa-trash"></span>'
+
+                        const viewLink = '<a id="viewThis" data-bs-toggle="modal" data-bs-target="#viewModal" class= "' + data + '">' + viewIcon + '</a>';
+                        const editLink = '<a id="editThis" data-bs-toggle="modal" data-bs-target="#editModal" class= "' + data + '">' + editIcon + '</a>';
+                        const deleteLink = '<a id="deleteThis" data-bs-toggle="modal" data-bs-target="#deleteModal" class= "' + data + '">' + deleteIcon + '</a>';
+
+                        return viewLink + ' ' + editLink + ' ' + deleteLink;
+                    }
+
+                }
+            ],
+            'order': [[1, 'asc']]
+        });
+    });            
+</script>
 
 {% endblock%}

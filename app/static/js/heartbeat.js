@@ -36,10 +36,7 @@ function sendHeartbeat() {
         .catch(error => console.error('Error:', error));
 }
 
-window.onload = (event) => {
-    setTimeout(sendHeartbeat, 10000);
-}
-
+setTimeout(sendHeartbeat, 10000);
 setInterval(() => sendHeartbeat(), 600000);
 
 window.onoffline = (event) => {
