@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title> {{ error_number }} | ARDS </title>
     <link rel="icon" type="image/x-icon" href="{{url_for('static',filename='logo/usep-logo.png')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='node_modules/bootstrap/dist/css/bootstrap.min.css')}}" />
     <link rel="stylesheet"
@@ -27,13 +27,29 @@
                 <p class="d-block m-auto" style="width: 500px;"> {{ error_message }} </p>
             </div>
             <a href=" {% if current_user and current_user.role == 'staff' %} {{url_for('records')}} {% elif current_user and current_user.role == 'admin' %} {{url_for('dashboard')}} {% else %} {{url_for('home')}} {% endif %}"
-                class="button btn-red text-decoration-none px-4 py-2 fw-bold"> Go Back to 
+                class="button btn-red text-decoration-none px-4 py-2 fw-bold"> Go Back to
                 {% if current_user.role== 'staff' %} Records
                 {% elif current_user.role == 'admin' %} Dashbord
                 {% else %} Home page {% endif %}
             </a>
         </div>
     </div>
+    <div style="display: none;" id="heartbeat" class="{{ url_for('auth.heartbeat') }}"> </div>
+    <script>
+        var timeoutUrl = '/authenticate-user/check-token/timeout/';
+        const channel = new BroadcastChannel("sess_channel");
+
+        channel.onmessage = function (event) {
+            if (event.data === 'session online'){
+                window.location.reload();
+            }   
+            else if (event.data === 'session timeout') {
+                console.log(event.data);
+                window.location.href = timeoutUrl;
+                channel.close()
+            }
+        }
+    </script>
 </body>
 
 </html>

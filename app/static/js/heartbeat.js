@@ -16,7 +16,7 @@ channel.onmessage = function (event) {
             alert("The network connection has been lost.");
             break;
         default:
-            console.log( 'channel data ', event.data)
+            console.log( 'channel data :', event.data)
     }
 };
 
@@ -28,8 +28,16 @@ function sendHeartbeat() {
                 channel.postMessage('session timeout');
                 window.location.href = timeoutUrl;
             }
+            else{
+                channel.postMessage('session online');
+                console.log('online')
+            }
         })
         .catch(error => console.error('Error:', error));
+}
+
+window.onload = (event) => {
+    setTimeout(sendHeartbeat, 10000);
 }
 
 setInterval(() => sendHeartbeat(), 600000);
@@ -42,4 +50,3 @@ window.onoffline = (event) => {
 document.getElementById('logout_currentUser').addEventListener('click', function () {
     channel.postMessage('session timeout');
 });
-

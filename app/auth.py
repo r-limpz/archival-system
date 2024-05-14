@@ -3,6 +3,7 @@ from flask_login import UserMixin, login_user, login_required, logout_user, curr
 import hashlib
 import secrets
 import string
+from datetime import datetime, timedelta
 from . import config, login_manager, argon2, captcha
 from flask import current_app as app
 from .forms import LoginForm
@@ -39,22 +40,20 @@ class User(UserMixin):
                     cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
                     return cursor.fetchone()
                 else:
-                    print('no user')
                     return None
                 
         except Exception as e:
-            print(f"search user error occurred: {e}")
+            print(f"usermixin-getuser : search user error occurred: {e}")
 
+    @property
     def is_authenticated(self):
         with config.conn.cursor() as cursor:
             user = self.get_User()
             if user and check_token(self.token, user['password'], user['key'], self.id):
                 return True
             else:
-                print('user not exist')
-                print(check_token(self.token, user['password'], user['key'], self.id))
                 return False
-
+    @property
     def is_active(self):
         user = self.get_User()
         if user and user['status'] == 1 and user['online'] == 1:
@@ -66,7 +65,6 @@ class User(UserMixin):
 def load_user(session_id):
     try:
         with config.conn.cursor() as cursor:
-
             cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
             user_session = cursor.fetchone()
             
@@ -76,13 +74,10 @@ def load_user(session_id):
                 
                 if user:
                     token = generate_token(user['password'], user['key'], session_id)
-
                     return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
                 else:
-                    print('session no user')
                     return None
             else:
-                print('session not exist in db', session_id)
                 return None
             
     except Exception as e:
@@ -106,12 +101,12 @@ def login():
             form.captcha.data = ''
             user_role = {'1': 'admin', '2': 'staff'}.get(role, 'error')
             role = int(role)
-           
+
             with config.conn.cursor() as cursor:
                 #Search for the user in the database
                 cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
                 user = cursor.fetchone()
-                
+
                 if captcha.get_answer() == input_captcha:#validate captcha input
                     if user and argon2.check_password_hash(user['password'], password) and user['status'] == 1:#authentication for login
 
@@ -129,23 +124,31 @@ def login():
                             #generate token for session creation on cookies
                             token = generate_token(user['password'], user['key'], session_id)
                             login_user(User(session_id, username, user_role, token), remember=False)
-                            session['uid'] = session_id
 
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
 
                             cursor.execute('UPDATE user SET online = 1, last_online = NULL WHERE user_id = %s', (user['user_id'],))
                             config.conn.commit()
-                        
+                            
+
                             if redirect_url:#redirect if user is authenicated and authorized
+                                session.permanent = True
+                                session['last_activity'] = datetime.now()
+
                                 return redirect(url_for(redirect_url))
+                                
                             else:
-                                error = 'route error login'
+                                error = invalidError
+                                print('login : route error login')
                         else:
-                            error = 'generating session data error'
+                            error = invalidError
+                            print('login : generating session data error')
                     else:
                         error = invalidError
+                        print('login :', error)
                 else:
                     error = captchaError
+                    print('login :', error)
 
     except Exception as e:
         print(f"log in error occurred: {e}")
@@ -155,7 +158,7 @@ def login():
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    if current_user and current_user.is_authenticated:
+    if current_user:
         try:
             with config.conn.cursor() as cursor:
                 cursor.execute('SELECT * FROM session WHERE session_id = %s', (current_user.id,))
@@ -174,7 +177,7 @@ def logout():
 
 @auth.route('/get_heartbeat', endpoint='heartbeat')
 def heartbeat():
-    if 'uid' in session and current_user.is_authenticated() and current_user.is_active():
+    if current_user.is_authenticated and current_user.is_active:
         return jsonify(session_Inactive = False)
     else:
         return jsonify(session_Inactive = True)
