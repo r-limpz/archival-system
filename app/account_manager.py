@@ -115,38 +115,70 @@ def updateAccount(user_id, fullname, role, status, password):
 @login_required
 @admin_required
 def users_list(active_status):
-    if active_status in ['active', 'deactivated', 'all']:
-        display = {'active': 1, 'deactivated': 0}.get(active_status)
+    if active_status:
+        inputstate = active_status
+        inputstate = inputstate.split('-')
+
+        def_status = inputstate[0]
+        def_role = inputstate[1]
+
+        status = {'active': 1, 'deactivated': 0, 'all': 99}.get(def_status)
+        role = {'admin': 1, 'staff': 2, 'any': 99}.get(def_role)
+
+        query = 'SELECT user_id, fullname, username, online, last_online, status, role FROM user WHERE 1=1'
+        params = []
+
+        if status != 99:
+            query += ' AND status = %s'
+            params.append(status)
+
+        if role != 99:
+            query += ' AND role = %s'
+            params.append(role)
+
         try:
             with config.conn.cursor() as cursor:
-                if display in [1, 0]:
-                    cursor.execute('SELECT user_id, fullname, username, online, last_online, status, role FROM user WHERE role = %s AND status = %s', (2, display))
-                else:
-                    cursor.execute('SELECT user_id, fullname, username, online, last_online, status, role FROM user WHERE role = %s', (2,))
-                    
+                cursor.execute(query, tuple(params))
                 users = cursor.fetchall()
-                users_list = []
-                for user in users:
-                    user_dict = {
-                        'user_id': user['user_id'],
-                        'fullname': user['fullname'],
-                        'username': user['username'],
-                        'last_online': get_currentTime(user['last_online']) if user['last_online'] else 'Now',
-                        'online': {1: 'online', 0: 'offline'}.get(user['online']),
-                        'status': {0: 'deactivated', 1: 'active'}.get(user['status']),
-                        'role': {1: 'admin', 2: 'staff'}.get(user['role'])
-                    }
-                    users_list.append(user_dict)
-            return jsonify(users_list)
-    
+
+                if users:
+                    users_list = []
+                    for user in users:
+                        user_dict = {
+                            'user_id': user['user_id'],
+                            'fullname': user['fullname'],
+                            'username': user['username'],
+                            'last_online': get_currentTime(user['last_online']) if user['last_online'] else 'Now',
+                            'online': {1: 'online', 0: 'offline'}.get(user['online']),
+                            'status': {0: 'deactivated', 1: 'active'}.get(user['status']),
+                            'role': {1: 'admin', 2: 'staff'}.get(user['role'])
+                        }
+                        users_list.append(user_dict)
+                    return jsonify(users_list)
+                else:
+                    return jsonify(None)
+        
         except Exception as e:
             print(f"display user error occurred: {e}")
 
-@account_manager.route('/preview/<user_id>')
+@account_manager.route('/preview/<profile_id>')
 @login_required
 @admin_required
-def preview(user_id):
-     pass
+def preview_account(profile_id):
+    try:
+        profile_id = int(profile_id)
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT fullname, username, role FROM user WHERE user_id = %s', (profile_id))
+            profile = cursor.fetchone()
+
+            if profile:
+                return render_template ('users/preview-user.html', preview_fullname = profile['fullname'], preview_username = profile['username'], preview_role = {1: 'admin', 2: 'staff'}.get(profile['role']))
+            else:
+                return redirect(url_for('account_manager'))
+            
+    except Exception as e:
+         print(f"preview user route error occurred: {e}")
+    
 
 @account_manager.route('/manage/new_user' , methods=['POST', 'GET'])
 @login_required

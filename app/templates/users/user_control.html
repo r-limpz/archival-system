@@ -3,6 +3,7 @@
 
 {% block style %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/user_controller.css')}}">
+
 {% endblock %}
 
 {% block content %}
@@ -13,17 +14,22 @@
         <p>Lorem Ipsum</p>
     </div>
     <div class="d-flex justify-content-end">
-        <select class=' p-2 rounded-3 mx-3' id="changeDisplay">
-            <option value="all"> All Users </option>
-            <option value="active"> Active Users </option>
-            <option value="deactivated"> Deactivated Users </option>
-        </select>
+        <div class="d-flex justify-content-between mx-3">
+            <select class=' p-2 rounded-3 mx-3' id="changeDisplay-roles">
+                <option value="any"> All Accounts </option>
+                <option value="staff"> Staff Accounts</option>
+                <option value="admin"> Admin Accounts</option>
+            </select>
+            <select class=' p-2 rounded-3 mx-3' id="changeDisplay-status">
+                <option value="all"> Any </option>
+                <option value="active"> Active </option>
+                <option value="deactivated"> Deactivated</option>
+            </select>
+        </div>
         <button class="button" data-bs-toggle="modal" data-bs-target="#addUser_modal"> Add User</button>
     </div>
 
-
-
-    <div id="users_data"></div>
+    <div class="my-5" id="users_data"></div>
 </section>
 {% endblock %}
 
@@ -39,8 +45,8 @@
                 users.forEach(user => {
                     let statusClass = user.status === 'deactivated' ? 'fc-red' : (user.online === 'online' ? 'fc-green' : 'fc-gray');
                     let card = `
-        <div class="users-entry card my-2 rounded-4" style="width:50%;" id="${user.user_id}">
-            <div class="card-body d-flex justify-content-between">
+        <div class="users-entry card my-2 rounded-4 prevent-select" id="${user.user_id}" ondblclick = "previewUser(${user.user_id})" )>
+            <div class="card-body d-flex justify-content-between flex-nowrap">
                 <div class="me-4 account_info d-flex">
                     <div class="p-2 me-3 border rounded-4" style="width:50px;height: 50px;">
                     </div>
@@ -52,9 +58,6 @@
                 </div>
                 <div class="online_status p-2">
                     <p class="fst-italic fs-medium">${user.last_online}</p>
-                </div>
-                <div class="active_status p-2">
-                   
                 </div>
                 <div class="manage_user p-2">
                     <select class='border-0 p-2 rounded-3' value = "${user.status}" id="${user.user_id}">
@@ -79,22 +82,37 @@
             });
     }
 
-    let changeDisplay = document.getElementById('changeDisplay');
+    let changeDisplay_status = document.getElementById('changeDisplay-status');
+    let changeDisplay_roles = document.getElementById('changeDisplay-roles');
 
-    changeDisplay.addEventListener('change', event => {
-        var changestate_value = event.target.value;
-        populateUsers(changestate_value);
+    let changeDisplay_status_value = changeDisplay_status.value;
+    let changeDisplay_roles_value = changeDisplay_roles.value;
+
+    changeDisplay_status.addEventListener('change', event => {
+        changeDisplay_status_value = event.target.value;
+        populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
+    });
+
+    changeDisplay_roles.addEventListener('change', event => {
+        changeDisplay_roles_value = event.target.value;
+        populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
 
 
     window.onload = (event) => {
-        populateUsers('all');
+        populateUsers('all-any');
     };
 
-    setInterval(() => populateUsers('all'), 600000);
+    setInterval(() => populateUsers('all-any'), 600000);
 </script>
-
 <script>
+    //preview user function
+    function previewUser(profile_id){
+        location.href = ('/admin/account_manager/preview/' + profile_id );
+    }
+</script>
+<script>
+    //add user function
     $('#signup_user').on('submit', function (event) {
         event.preventDefault();
 
@@ -124,7 +142,7 @@
                         populateUsers('active');
                         break;
                     case 'failed':
-                        
+
                         break;
                     case 'duplicate user':
 
@@ -141,6 +159,7 @@
 </script>
 
 <script>
+    //password strenght function and password confirmation error
     // Get the password input elements
     let password = document.getElementById('newuser_password');
     let repassword = document.getElementById('newuser_repassword');
@@ -190,4 +209,5 @@
         }
     }
 </script>
+
 {% endblock %}

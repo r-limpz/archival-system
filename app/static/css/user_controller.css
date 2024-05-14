@@ -14,3 +14,13 @@
     box-shadow: none;
     border: var(--fc-darker) solid 2px
 }
+.users-entry{
+    width: 60vw;
+}
+.account_info{
+    min-width: 200px;
+}
+
+.online_status{
+    min-width: 180px;
+}

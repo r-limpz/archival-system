@@ -471,3 +471,9 @@ button {
 .is-invalid label {
     color: red;
 }
+
+.prevent-select {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
