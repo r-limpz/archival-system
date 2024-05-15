@@ -100,7 +100,7 @@
             `;
                     usersDataDiv.innerHTML += card;
                 });
-
+                //add an event listener to loop for each selection in chaning user status
                 let selects = document.querySelectorAll('.status_manager select');
                 selects.forEach(select => {
                     select.addEventListener('change', event => {
@@ -112,20 +112,18 @@
     //change category to display list of cards
     let changeDisplay_status = document.getElementById('changeDisplay-status');
     let changeDisplay_roles = document.getElementById('changeDisplay-roles');
-
     let changeDisplay_status_value = changeDisplay_status.value;
     let changeDisplay_roles_value = changeDisplay_roles.value;
-
+    //add change event on user status selection
     changeDisplay_status.addEventListener('change', event => {
         changeDisplay_status_value = event.target.value;
         populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
-
+    //add change event on roles selection
     changeDisplay_roles.addEventListener('change', event => {
         changeDisplay_roles_value = event.target.value;
         populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
-
     function showPopup(id) {
         // Hide all popups
         var popups = document.getElementsByClassName('manage_user_button');
@@ -135,7 +133,6 @@
                 popups[i].classList.add('d-none');
             }, 500); // Add d-none class after 0.5 second
         }
-
         // Show the clicked popup
         var popup = document.getElementById(id);
         popup.classList.remove('d-none');
@@ -162,14 +159,12 @@
             }, 500); // Start hiding after 0.5 seconds
         };
     }
-
     //when load populate the cards
     window.onload = (event) => {
         populateUsers('all-any');
     };
     //every 10 min reload the populate of cards for real time updates
     setInterval(() => populateUsers('all-any'), 600000);
-
     //filtering function in displaying data
     function searchCards() {
         var input, filter, cards, cardContainer, account_name, account_username, i;
@@ -213,6 +208,15 @@
 
         toastContainer.innerHTML = toastHTML;
     }
+    //clear forms input 
+    function clearForm(form_id) {
+        let form = document.querySelector(form_id);
+        let inputs = form.querySelectorAll('input');
+
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].value = '';
+        }
+    }
     //add user function
     $('#signup_user').on('click', function (event) {
         event.preventDefault();
@@ -239,6 +243,7 @@
                 switch (data.update_query) {
                     case 'success'://the user successfully appended in the database
                         populateUsers('all-any');
+                        clearForm('#add_user');
                         showToast('Success!', 'User added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
@@ -280,6 +285,7 @@
                 success: function (data) {
                     console.log('message :' + data.change_state);
                     populateUsers('all-any');
+
                     if (data.change_state === 'success') {
                         showToast('Success!', 'User status changed.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
