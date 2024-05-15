@@ -31,20 +31,16 @@ class User(UserMixin):
         self.token = token
 
     def get_User(self):
-        try:
-            with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM session WHERE session_id = %s', (self.id,))
-                user_session = cursor.fetchone()
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM session WHERE session_id = %s', (self.id,))
+            user_session = cursor.fetchone()
 
-                if user_session:
-                    cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
-                    return cursor.fetchone()
-                else:
-                    return None
+            if user_session:
+                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
+                return cursor.fetchone()
+            else:
+                return None
                 
-        except Exception as e:
-            print(f"usermixin-getuser : search user error occurred: {e}")
-
     @property
     def is_authenticated(self):
         with config.conn.cursor() as cursor:
@@ -65,25 +61,21 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(session_id):
-    try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
-            user_session = cursor.fetchone()
+    with config.conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
+        user_session = cursor.fetchone()
             
-            if user_session:
-                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
-                user = cursor.fetchone()
+        if user_session:
+            cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
+            user = cursor.fetchone()
                 
-                if user:
-                    token = generate_token(user['password'], user['pass_key'], session_id)
-                    return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
-                else:
-                    return None
+            if user:
+                token = generate_token(user['password'], user['pass_key'], session_id)
+                return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
             else:
                 return None
-            
-    except Exception as e:
-        print(f"Load user error occurred: {e}")
+        else:
+            return None
         
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -93,60 +85,56 @@ def login():
     captchaError = 'To confirm that you’re a person and not a robot, solve the captcha.'
     error = invalidError
     
-    try:
-        if form.validate_on_submit():
+    if form.validate_on_submit():
             #setup variables from input fields
-            username = request.form.get('username')
-            password = request.form.get('password')
-            role = request.form.get('role')
-            input_captcha = request.form.get('captcha')
-            form.captcha.data = ''
-            user_role = {'1': 'admin', '2': 'staff'}.get(role, 'error')
-            role = int(role)
+        username = request.form.get('username')
+        password = request.form.get('password')
+        role = request.form.get('role')
+        input_captcha = request.form.get('captcha')
+        form.captcha.data = ''
+        user_role = {'1': 'admin', '2': 'staff'}.get(role, 'error')
+        role = int(role)
 
-            with config.conn.cursor() as cursor:
+        with config.conn.cursor() as cursor:
                 #Search for the user in the database
-                cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
-                user = cursor.fetchone()
+            cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
+            user = cursor.fetchone()
 
-                if captcha.get_answer() == input_captcha:#validate captcha input
-                    if user and argon2.check_password_hash(user['password'], password) and user['status'] == 1:#authentication for login
+            if captcha.get_answer() == input_captcha:#validate captcha input
+                if user and argon2.check_password_hash(user['password'], password) and user['status'] == 1:#authentication for login
 
-                        cursor.execute('SELECT * FROM session WHERE user_id = %s', (user['user_id']))
-                        session_data = cursor.fetchone()
+                    cursor.execute('SELECT * FROM session WHERE user_id = %s', (user['user_id']))
+                    session_data = cursor.fetchone()
 
-                        if session_data and len(session_data['session_id']) == 256:
-                            session_id = session_data['session_id']
-                        else:
-                            session_id = generate_id()
-                            cursor.execute('INSERT INTO session(session_id, user_id, username, role) VALUES (%s,%s,%s,%s)', (session_id, user['user_id'], username, role))
-                            config.conn.commit()
+                    if session_data and len(session_data['session_id']) == 256:
+                        session_id = session_data['session_id']
+                    else:
+                        session_id = generate_id()
+                        cursor.execute('INSERT INTO session(session_id, user_id, username, role) VALUES (%s,%s,%s,%s)', (session_id, user['user_id'], username, role))
+                        config.conn.commit()
                         
-                        if session_id:
-                            #generate token for session creation on cookies
-                            token = generate_token(user['password'], user['pass_key'], session_id)
-                            login_user(User(session_id, username, user_role, token), remember=False)
+                    if session_id:
+                        #generate token for session creation on cookies
+                        token = generate_token(user['password'], user['pass_key'], session_id)
+                        login_user(User(session_id, username, user_role, token), remember=False)
 
-                            redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
+                        redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
 
-                            if redirect_url:#redirect if user is authenicated and authorized
-                                return redirect(url_for(redirect_url))
+                        if redirect_url:#redirect if user is authenicated and authorized
+                            return redirect(url_for(redirect_url))
                                 
-                            else:
-                                error = invalidError
-                                print('login : route error login')
                         else:
                             error = invalidError
-                            print('login : generating session data error')
+                            print('login : route error login')
                     else:
                         error = invalidError
-                        print('login :', error)
+                        print('login : generating session data error')
                 else:
-                    error = captchaError
-                    print('login :', error)
-
-    except Exception as e:
-        print(f"log in error occurred: {e}")
+                    error = invalidError
+                    print('login password account:', error)
+            else:
+                error = captchaError
+                print('login captcha :', error)
 
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
@@ -154,19 +142,18 @@ def login():
 @login_required
 def logout():
     if current_user:
-        try:
-            with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM session WHERE session_id = %s', (current_user.id,))
-                user_session = cursor.fetchone()
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM session WHERE session_id = %s', (current_user.id,))
+            user_session = cursor.fetchone()
 
-                if user_session:
-                    cursor.execute('DELETE FROM session WHERE session_id = %s', (current_user.id,))
-                    config.conn.commit()
+            if user_session:
+                cursor.execute('DELETE FROM session WHERE session_id = %s', (current_user.id,))
+                config.conn.commit()
+            else:
+                print('Sign out error occurred')
 
-        except Exception as e:
-            print(f"Sign out error occurred: {e}")
-        session.clear()
         logout_user()
+        session.clear()
 
     return redirect(url_for('home'))
 
