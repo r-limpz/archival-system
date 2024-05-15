@@ -4,27 +4,30 @@
 
       <div class="modal-body">
         <h5 class="fw-bold">Sign out</h5>
-        <p> Are you sure you want to signout? All your unsaved data will </p>
+        <p class="px-2"> Are you sure you want to signout? All your unsaved data will be erased.</p>
       </div>
 
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="button">Close</button>
         <a href="{{url_for('auth.logout')}}" id="logout_currentUser"
-          class="btn-red fw-bold text-decoration-none button">Sign out</a>
+          class="btn-red fw-bold text-decoration-none button">
+          Sign out
+        </a>
       </div>
     </div>
   </div>
 </div>
 
 {% if current_user.role == 'admin' %}
+
 <div class="modal fade" id="addUser_modal" tabindex="-1" role="dialog" aria-labelledby="addUser_modal"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="width:400px;">
     <div class="modal-content">
       <div class="modal-body">
-        <h5 class="fw-bold">Create New User Account !</h5>
+        <h5 class="fw-bold">Register new account</h5>
         <div class="p-2">
-          <form action="{{ url_for('account_manager.create_account')}}" method="post" id="signup_user">
+          <form action="{{ url_for('account_manager.create_account')}}" method="post" id="add_user">
             <div class="inputs-forms px-3">
               <div id="form-item" class="py-2">
                 <label for="newuser_fullname">Staff Name</label>
@@ -34,7 +37,7 @@
                 <label for="newuser_username">Username</label>
                 <input type="text" class="form-control" id="newuser_username" name="newuser_username" required>
               </div>
-              <div class="py-2 d-flex " id="adduser_role">
+              <div class="py-2 d-flex d-none" id="adduser_role">
                 <label for="newuser_role" class="p-3">Role</label>
                 <select class="form-control rounded-3 border-0 end-0" name="newuser_role" id="newuser_role" required>
                   <option value="2"> Staff </option>
@@ -63,17 +66,32 @@
                 </div>
               </div>
             </div>
-
-            <div class="mt-5 d-flex justify-content-end">
-              <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
-              <button class="btn-red mx-2 fw-bold" id="newUser_submit" disabled> Add User </button>
-            </div>
           </form>
+          <div class="mt-5 d-flex justify-content-end">
+            <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
+            <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addUser_confirmation_modal" type="button"
+              id="button_showConfirmationAddUser" disabled> Submit </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-{% endif %}
-
+<div class="modal fade" id="addUser_confirmation_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="addUser_confirmation_modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div>
+          <h5 class="fw-bold mb-3"> Register account confirmation </h5>
+          <p> Are you sure you want to add this user ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
+        <button id="signup_user" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal"> Confirm </button>
+      </div>
+    </div>
+  </div>
+</div>
+< {% endif %}

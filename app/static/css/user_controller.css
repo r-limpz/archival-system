@@ -24,3 +24,7 @@
 .online_status{
     min-width: 180px;
 }
+
+.manage_user_button {
+    transition: opacity 350ms ease-in-out;
+}

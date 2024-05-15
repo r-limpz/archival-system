@@ -457,6 +457,16 @@ button {
     background: var(--button-bg-green-gradient-active);
 }
 
+.btn-gray {
+    background: var(--button-bg-default);
+    border: none;
+    color: var(--fc-light);
+}
+
+.btn-gray:hover {
+    background: var(--button-bg-default-active);
+}
+
 
 .form-control:focus {
     outline: none !important;
@@ -476,4 +486,12 @@ button {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.modal-header {
+    border: none !important;
+}
+
+.modal-footer {
+    border: none !important;
 }

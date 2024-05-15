@@ -30,20 +30,62 @@
     </div>
 
     <div class="my-5" id="users_data"></div>
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x" id="toastContainer">
+        <!-- Toasts will be added here -->
+    </div>
+
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
+    // Function to show and hide popup
+    function showPopup(id) {
+        // Hide all popups
+        var popups = document.getElementsByClassName('manage_user_button');
+        for (var i = 0; i < popups.length; i++) {
+            popups[i].style.opacity = '0';
+            setTimeout(function () {
+                popups[i].classList.add('d-none');
+            }, 1000); // Add d-none class after 1 second
+        }
+
+        // Show the clicked popup
+        var popup = document.getElementById(id);
+        popup.classList.remove('d-none');
+        popup.style.opacity = '1';
+        // Hide the popup after 5 seconds
+        var timeoutId = setTimeout(function () {
+            popup.style.opacity = '0';
+            setTimeout(function () {
+                popup.classList.add('d-none');
+            }, 1000); // Add d-none class after 1 second
+        }, 3000); // Start hiding after 3 seconds
+
+        // Cancel the hiding when the mouse is over the popup
+        popup.onmouseover = function () {
+            clearTimeout(timeoutId);
+        };
+        // Restart the hiding when the mouse leaves the popup
+        popup.onmouseout = function () {
+            timeoutId = setTimeout(function () {
+                popup.style.opacity = '0';
+                setTimeout(function () {
+                    popup.classList.add('d-none');
+                }, 1000); // Add d-none class after 1 second
+            }, 3000); // Start hiding after 3 seconds
+        };
+    }
+
     function populateUsers(toggle) {
         fetch('/admin/account_manager/display_staff_users/' + toggle)
             .then(response => response.json())
             .then(users => {
-
                 let usersDataDiv = document.getElementById('users_data');
                 usersDataDiv.innerHTML = '';
                 users.forEach(user => {
-                    let statusClass = user.status === 'deactivated' ? 'fc-red' : (user.online === 'online' ? 'fc-green' : 'fc-gray');
+                    var popup_id = Math.random();
+                    let statusClass = user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'fc-orange');
                     let card = `
         <div class="users-entry card my-2 rounded-4 prevent-select" id="${user.user_id}" ondblclick = "previewUser(${user.user_id})" )>
             <div class="card-body d-flex justify-content-between flex-nowrap">
@@ -59,29 +101,69 @@
                 <div class="online_status p-2">
                     <p class="fst-italic fs-medium">${user.last_online}</p>
                 </div>
-                <div class="manage_user p-2">
+                <div class="status_manager p-2" id="status_manager">
                     <select class='border-0 p-2 rounded-3' value = "${user.status}" id="${user.user_id}">
-                        <option value="Active"> Active </option>
-                        <option value="Deactivated"> Deactivate </option>
+                        <option value="active" ${user.status === 'active' ? 'selected' : ''}> Active </option>
+                        <option value="deactivated" ${user.status === 'deactivated' ? 'selected' : ''}> Deactivated </option>
                     </select>
                 </div>
-                <a class ="py-3 px-2 fc-default text-decoration-none"> <span class="fa-solid fa-ellipsis-vertical"></span>  </a>
+                <div class="py-3" id="manage_user_button">
+
+                    <a class ="py-3 px-3 fc-default text-decoration-none popup_button" onclick="showPopup(${popup_id})">
+                        <span class="fa-solid fa-ellipsis-vertical"> </span>
+                    </a>
+                    <span class="position-absolute top-50 start-100 translate-middle ms-5 manage_user_button d-none " id="${popup_id}">
+                        <div class = "vstack gap-2 col-md-5 mx-auto ms-5" style="width:120px;">
+                            <button class="button btn-gray" onclick="previewUser(${user.user_id})">Preview</button>
+                            <button class="button btn-gray edit_buttonUser" id="${user.user_id}">Edit Profile</button>
+                        </div>
+                    </span>
+                </div>
             </div>
-        </div>`;
+        </div> 
+            `;
                     usersDataDiv.innerHTML += card;
                 });
 
-                let selects = document.querySelectorAll('.manage_user select');
+                let selects = document.querySelectorAll('.status_manager select');
                 selects.forEach(select => {
                     select.addEventListener('change', event => {
-                        let id = event.target.id;
+                        let user_id = event.target.id;
                         let newValue = event.target.value;
-                        console.log(id, newValue);
+
+                        let formData = {
+                            'user_id': user_id,
+                            'user_state': newValue
+                        }
+
+                        $.ajax({
+                            url: '/admin/account_manager/user_state/',
+                            type: 'POST',
+                            data: formData,
+                            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                            success: function (data) {
+                                console.log('message :' + data.change_state);
+                                populateUsers('all-any');
+                                if (data.change_state === 'success') {
+                                    showToast('Success!', 'User status changed.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                }
+                                else {
+                                    showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                }
+                            },
+                            error: function (error) {
+                                console.error('Error:', error);
+                                showToast('Error', 'Change status error occurred.', 'fc-red fa-solid fa-triangle-exclamation', 'border-warning');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            }
+                        });
                     });
                 });
             });
     }
-
+    //change category to display list of cards
     let changeDisplay_status = document.getElementById('changeDisplay-status');
     let changeDisplay_roles = document.getElementById('changeDisplay-roles');
 
@@ -98,30 +180,48 @@
         populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
 
-
+    //change state of displaying popup
+    
+    //when load populate the cards
     window.onload = (event) => {
         populateUsers('all-any');
     };
-
+    //every 10 min reload the populate of cards for real time updates
     setInterval(() => populateUsers('all-any'), 600000);
 </script>
 <script>
     //preview user function
-    function previewUser(profile_id){
-        location.href = ('/admin/account_manager/preview/' + profile_id );
+    function previewUser(profile_id) {
+        location.href = ('/admin/account_manager/preview/' + profile_id);
     }
 </script>
 <script>
-    //add user function
-    $('#signup_user').on('submit', function (event) {
-        event.preventDefault();
+    //show toast message of the status
+    function showToast(title, message, className, bordercol) {
+        let toastContainer = document.getElementById('toastContainer');
 
+        let toastHTML = `<div class="toast align-items-center border border-bottom-2  ${bordercol}" role="alert" aria-live="assertive" aria-atomic="true" id="add_userToast">
+                            <div class="d-flex">
+                                <div class="toast-body d-flex">
+                                    <span class="fs-large ${className} me-3"> </span> <span class="fw-bold me-2">${title}</span> ${message}
+                                </div>
+                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                        `;
+
+        toastContainer.innerHTML = toastHTML;
+    }
+    //add user function
+    $('#signup_user').on('click', function (event) {
+        event.preventDefault();
+        //set data from the modal.html forms
         let fullname = $('#newuser_fullname').val();
         let username = $('#newuser_username').val();
         let role = $('#newuser_role').val();
         let password = $('#newuser_password').val();
         let repassword = $('#newuser_repassword').val();
-
+        //set the data
         let formData = {
             'newuser_fullname': fullname,
             'newuser_username': username,
@@ -129,7 +229,7 @@
             'newuser_password': password,
             'newuser_repassword': repassword
         };
-
+        //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
             url: '/admin/account_manager/manage/new_user',
             type: 'POST',
@@ -137,24 +237,29 @@
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
                 console.log('message :' + data.update_query);
-                switch (event.data) {
-                    case 'success':
-                        populateUsers('active');
+                switch (data.update_query) {
+                    case 'success'://the user successfully appended in the database
+                        populateUsers('all-any');
+                        showToast('Success!', 'User added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
-                    case 'failed':
-
+                    case 'failed'://error in processing occured
+                        showToast('Upload Error occurred!', 'Failed to add user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
-                    case 'duplicate user':
-
+                    case 'duplicate user'://user already exist in the database
+                        showToast('User Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
-                    default:
                 }
             },
+            //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
+                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
-
     });
 </script>
 
@@ -165,7 +270,7 @@
     let repassword = document.getElementById('newuser_repassword');
     let progressBar = document.querySelector('.progress-bar');
     let strengthIndicator = document.getElementById('strength_indicator');
-    let submitButton = document.getElementById('newUser_submit');
+    let submitButton = document.getElementById('button_showConfirmationAddUser');
 
     // Define the width, color, and strength arrays
     let widthPower = ["1%", "25%", "50%", "75%", "100%"];
@@ -194,18 +299,32 @@
         progressBar.style.backgroundColor = colorPower[point];
         progressBar.setAttribute('aria-valuenow', parseInt(widthPower[point]));
         strengthIndicator.textContent = strength[point];
-
+        //disable submit button
         if (point < 4) { submitButton.disabled = true; } else { submitButton.disabled = false; }
-    }
-
-    repassword.oninput = function () {
+        
+        //confirmation password error 
         if (password.value === repassword.value) {
             password.classList.remove("is-invalid");
             repassword.classList.remove("is-invalid");
+            submitButton.disabled = false;
         }
         else {
             password.classList.add("is-invalid");
             repassword.classList.add("is-invalid");
+            submitButton.disabled = true;
+        }
+    }
+    //confirmation password repassword
+    repassword.oninput = function () {
+        if (password.value === repassword.value) {
+            password.classList.remove("is-invalid");
+            repassword.classList.remove("is-invalid");
+            submitButton.disabled = false;
+        }
+        else {
+            password.classList.add("is-invalid");
+            repassword.classList.add("is-invalid");
+            submitButton.disabled = true;
         }
     }
 </script>

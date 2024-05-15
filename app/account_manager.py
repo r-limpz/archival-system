@@ -179,7 +179,6 @@ def preview_account(profile_id):
     except Exception as e:
          print(f"preview user route error occurred: {e}")
     
-
 @account_manager.route('/manage/new_user' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -207,6 +206,38 @@ def create_account():
     except Exception as e:
          print(f"create user route error occurred: {e}")
 
+@account_manager.route('/user_state/', methods=['POST'])
+@login_required
+@admin_required
+def change_status():
+    if request.method == "POST":
+        user_id = request.form.get('user_id')
+        status = request.form.get('user_state')
+        user_id = int(user_id)
+        status = {'active':1, 'deactivated':0 }.get(status)
+
+    try:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
+            config.conn.commit()
+
+            cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', ( status, user_id))
+            status_changed = cursor.fetchone()
+
+            print(status_changed['status'])
+
+            if status_changed:
+                update_query = 'success'
+            else:
+                update_query = 'failed'
+            
+            return jsonify({'change_state': update_query})
+            
+    except Exception as e:
+         print(f"remove user error occurred: {e}")
+
+#------------------------------------------------to continue 
 @account_manager.route('/manage/<user_id>' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -249,23 +280,3 @@ def edit_user(user_id):
             return jsonify({'update_query': update_status})
         else:
             return jsonify({'update_query': 'error occured'})
-
-@account_manager.route('/remove/<user_id>', methods=['POST'])
-@login_required
-@admin_required
-def remove_user(user_id):
-    try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('UPDATE user SET status = 0 WHERE user_id = %s', (user_id))
-            config.conn.commit
-
-            cursor.execute('SELECT * FROM user WHERE user_id = %s AND status = 0', (user_id))
-            user_deactivate = cursor.fetchone
-
-            if not user_deactivate:
-                return jsonify({'success': True})
-            else:
-                return jsonify({'success': False})
-            
-    except Exception as e:
-         print(f"remove user error occurred: {e}")
