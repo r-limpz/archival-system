@@ -31,11 +31,11 @@
             <div class="inputs-forms px-3">
               <div id="form-item" class="py-2">
                 <label class="fw-medium" for="newuser_fullname">Staff Name</label>
-                <input type="text" class="form-control" id="newuser_fullname" name="newuser_fullname" oninput="checkname('fullname', '0', 'newuser_fullname')"required>
+                <input type="text" class="form-control" id="newuser_fullname" name="newuser_fullname" onchange="checkname('fullname', '0', 'newuser_fullname')"required>
               </div>
               <div id="form-item" class="py-2">
                 <label class="fw-medium" for="newuser_username">Username</label>
-                <input type="text" class="form-control" id="newuser_username" name="newuser_username" oninput="checkname('username', '0', 'newuser_username')" required>
+                <input type="text" class="form-control" id="newuser_username" name="newuser_username" onchange="checkname('username', '0', 'newuser_username')" required>
               </div>
               <div class="py-2 d-flex d-none" id="adduser_role">
                 <label class="fw-medium" for="newuser_role" class="p-3">Role</label>

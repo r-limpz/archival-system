@@ -316,11 +316,11 @@
                             <div class="inputs-forms px-3">
                                 <div id="form-item" class="py-2">
                                     <label class="fw-medium" for="update_fullname">Staff Name</label>
-                                    <input type="text" class="form-control" id="update_fullname" name="update_fullname" value="${fullname}" oninput="checkname('fullname', ${profile_id}, 'update_fullname')" required>
+                                    <input type="text" class="form-control" id="update_fullname" name="update_fullname" value="${fullname}" onchange="checkname('fullname', ${profile_id}, 'update_fullname')" required>
                                 </div>
                                 <div id="form-item" class="py-2">
                                     <label class="fw-medium" for="update_username">Username</label>
-                                    <input type="text" class="form-control" id="update_username" name="update_username" value="${username}" oninput="checkname('username', ${profile_id}, 'update_username')" required>
+                                    <input type="text" class="form-control" id="update_username" name="update_username" value="${username}" onchange="checkname('username', ${profile_id}, 'update_username')" required>
                                 </div>
                                 <div class="py-2" id="adduser_role">
                                     <label class="fw-medium" for="update_role">Role</label>
