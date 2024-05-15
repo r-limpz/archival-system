@@ -50,13 +50,15 @@ class User(UserMixin):
         with config.conn.cursor() as cursor:
             user = self.get_User()
             if user and check_token(self.token, user['password'], user['pass_key'], self.id):
+                cursor.execute('UPDATE user SET online = 1, last_online = NULL WHERE user_id = %s AND online = 0', (user['user_id'],))
+                config.conn.commit()
                 return True
             else:
                 return False
     @property
     def is_active(self):
         user = self.get_User()
-        if user and user['status'] == 1 and user['online'] == 1:
+        if user and user['status'] == 1:
             return True
         else:
             return False
@@ -127,14 +129,7 @@ def login():
 
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
 
-                            cursor.execute('UPDATE user SET online = 1, last_online = NULL WHERE user_id = %s', (user['user_id'],))
-                            config.conn.commit()
-                            
-
                             if redirect_url:#redirect if user is authenicated and authorized
-                                session.permanent = True
-                                session['last_activity'] = datetime.now()
-
                                 return redirect(url_for(redirect_url))
                                 
                             else:
@@ -178,6 +173,7 @@ def logout():
 @auth.route('/get_heartbeat', endpoint='heartbeat')
 def heartbeat():
     if current_user.is_authenticated and current_user.is_active:
+        session.permanent = False
         return jsonify(session_Inactive = False)
     else:
         return jsonify(session_Inactive = True)

@@ -65,7 +65,6 @@ def addNewUser( add_fullname, add_username, add_password):
                 cursor.execute('SELECT user_id FROM user WHERE username = %s', (add_username))
                 insertSuccess = cursor.fetchone()
 
-                print('result : ',insertSuccess)
                 if insertSuccess:
                     data = 'success'
                 else:
@@ -78,7 +77,7 @@ def addNewUser( add_fullname, add_username, add_password):
     except Exception as e:
             print(f"create user error occurred: {e}")
 
-def updateAccount(user_id, fullname, role, status, password):
+def updateAccount(user_id, fullname, username, role, password):
     try:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
@@ -92,10 +91,10 @@ def updateAccount(user_id, fullname, role, status, password):
             else:
                 role = 2
             
-            if user and user['fullname'] == fullname and user['role'] == role and argon2.check_password_hash(user['password'], password):
+            if user and user['fullname'] == fullname and user['username'] == username and user['role'] == role and argon2.check_password_hash(user['password'], password):
                 return 'no changes applied'
             elif user:
-                cursor.execute('UPDATE user SET fullname = %s, role = %s, password = %s, pass_key = %s, status = %s WHERE user_id = %s', (fullname, role, hashed_password, generate_key(), status, user_id))
+                cursor.execute('UPDATE user SET fullname = %s, username = %s, role = %s, password = %s, pass_key = %s WHERE user_id = %s', (fullname, username, role, hashed_password, generate_key(), user_id))
                 config.conn.commit()
 
                 cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id))
@@ -187,7 +186,6 @@ def create_account():
         if request.method == "POST":
             fullname = request.form.get('newuser_fullname')
             username = request.form.get('newuser_username')
-            role = request.form.get('newuser_role')
             password = request.form.get('newuser_password')
             re_password = request.form.get('newuser_repassword')
             
@@ -225,8 +223,6 @@ def change_status():
             cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', ( status, user_id))
             status_changed = cursor.fetchone()
 
-            print(status_changed['status'])
-
             if status_changed:
                 update_query = 'success'
             else:
@@ -237,7 +233,6 @@ def change_status():
     except Exception as e:
          print(f"remove user error occurred: {e}")
 
-#------------------------------------------------to continue 
 @account_manager.route('/manage/<user_id>' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -249,34 +244,86 @@ def manage_user(user_id):
 
             if user_info:
                 user_credentials = {
-                    'fullname': user_info['fullname'],
-                    'username': user_info['username'],
-                    'status' : user_info['status'],
-                    'role' : user_info['role'],
+                    'update_fullname': user_info['fullname'],
+                    'update_username': user_info['username'],
+                    'update_role' : user_info['role'],
                 }
                 return jsonify(user_credentials)
-            
             else:
                 return jsonify('error, user not found')
             
     except Exception as e:
          print(f"manage user error occurred: {e}")
 
-@account_manager.route('/update/<user_id>', methods=['POST'])
+@account_manager.route('/account/update', methods=['POST'])
 @login_required
 @admin_required
-def edit_user(user_id):
+def edit_user():
+    # Render edit user page
+    try:
+        if request.method == "POST":
+            user_id = request.form.get('update_user_id')
+            fullname = request.form.get('update_fullname')
+            username = request.form.get('update_username')
+            role = request.form.get('update_role')
+            password = request.form.get('update_password')
+            re_password = request.form.get('update_repassword')
+
+            if password == re_password:
+                update_status = updateAccount(user_id, fullname, username, role, password)
+                print(update_status)
+
+                if update_status:
+                    return jsonify({'update_query': update_status})
+                else:
+                    return jsonify({'update_query': 'error occured'})
+            else:
+                return jsonify({'update_query': 'incorrect password'})
+                
+    except Exception as e:
+            print(f"update user credentials  error occurred: {e}")
+
+@account_manager.route('/verify-unique/textdata', methods=['POST'])
+@login_required
+@admin_required
+def check_inputVerify():
     # Render edit user page
     if request.method == "POST":
-        fullname = request.form.get('fullname')
-        username = request.form.get('username')
-        role = request.form.get('role')
-        status = request.form.get('status')
-        password = request.form.get('password')
+        user_id = request.form.get('profile_id')
+        credential = request.form.get('credential')
+        dataSearch = request.form.get('dataSearch')
 
-        update_status = updateAccount(user_id, fullname, username, role, status, password)
+        user_id = int(user_id)
+        credential = {'username': 'username', 'fullname': 'fullname'}.get(credential, 'fullname')
 
-        if update_status:
-            return jsonify({'update_query': update_status})
-        else:
-            return jsonify({'update_query': 'error occured'})
+        query = 'SELECT user_id FROM user WHERE 1=1'
+        params = []
+
+        if credential == 'username':
+            query += ' AND username = %s'
+            params.append(dataSearch)
+        
+        elif credential == 'fullname':
+            query += ' AND fullname = %s'
+            params.append(dataSearch)
+        
+        if not user_id == 0:
+            query += ' AND NOT user_id = %s'
+            params.append(user_id)
+
+        try:
+            with config.conn.cursor() as cursor:
+                cursor.execute(query, tuple(params))
+                search_result = cursor.fetchone()
+
+                if search_result:
+                    verifyResult = 'true'
+                else:
+                    verifyResult = 'false'
+
+            return jsonify({'is_nameExist': verifyResult})
+        
+        except Exception as e:
+            print(f"verify unique user error occurred: {e}")
+            
+       

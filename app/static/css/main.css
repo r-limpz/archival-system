@@ -467,7 +467,6 @@ button {
     background: var(--button-bg-default-active);
 }
 
-
 .form-control:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -495,3 +494,4 @@ button {
 .modal-footer {
     border: none !important;
 }
+

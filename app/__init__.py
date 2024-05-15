@@ -32,7 +32,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = "strong"
 login_manager.refresh_view = 'home'
-login_manager.login_view = 'home'
+login_manager.login_view = 'login'
 
 csrf = CSRFProtect()
 csrf.init_app(app)

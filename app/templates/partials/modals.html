@@ -1,4 +1,4 @@
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModal" aria-hidden="true">
+<div class="modal fade" id="logout_Confirmation" tabindex="-1" role="dialog" aria-labelledby="logout_Confirmation" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -19,7 +19,7 @@
 </div>
 
 {% if current_user.role == 'admin' %}
-
+<! --account_control forms -->
 <div class="modal fade" id="addUser_modal" tabindex="-1" role="dialog" aria-labelledby="addUser_modal"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="width:400px;">
@@ -30,31 +30,31 @@
           <form action="{{ url_for('account_manager.create_account')}}" method="post" id="add_user">
             <div class="inputs-forms px-3">
               <div id="form-item" class="py-2">
-                <label for="newuser_fullname">Staff Name</label>
-                <input type="text" class="form-control" id="newuser_fullname" name="newuser_fullname" required>
+                <label class="fw-medium" for="newuser_fullname">Staff Name</label>
+                <input type="text" class="form-control" id="newuser_fullname" name="newuser_fullname" oninput="checkname('fullname', '0', 'newuser_fullname')"required>
               </div>
               <div id="form-item" class="py-2">
-                <label for="newuser_username">Username</label>
-                <input type="text" class="form-control" id="newuser_username" name="newuser_username" required>
+                <label class="fw-medium" for="newuser_username">Username</label>
+                <input type="text" class="form-control" id="newuser_username" name="newuser_username" oninput="checkname('username', '0', 'newuser_username')" required>
               </div>
               <div class="py-2 d-flex d-none" id="adduser_role">
-                <label for="newuser_role" class="p-3">Role</label>
-                <select class="form-control rounded-3 border-0 end-0" name="newuser_role" id="newuser_role" required>
+                <label class="fw-medium" for="newuser_role" class="p-3">Role</label>
+                <select class="form-select py-2 rounded-3 border-0 end-0" name="newuser_role" id="newuser_role" required>
                   <option value="2"> Staff </option>
                   <option value="1"> Admin</option>
                 </select>
               </div>
               <div id="form-item" class="py-2">
-                <label for="newuser_password">Password</label>
+                <label class="fw-medium" for="newuser_password">Password</label>
                 <input type="password" class="form-control" id="newuser_password" name="newuser_password" minlength="8"
                   required>
               </div>
               <div id="form-item" class="py-2">
-                <label for="newuser_repassword">Confirm Password</label>
+                <label class="fw-medium" for="newuser_repassword">Confirm Password</label>
                 <input type="password" class="form-control" id="newuser_repassword" name="newuser_repassword"
                   minlength="8" required>
               </div>
-              <div id="password_strengthchecker" class="py-3 container px-0">
+              <div id="addUser_password_strengthchecker" class="py-3 container px-0">
                 <div class="row">
                   <div class="col-7">
                     <div class="progress my-2" role="progressbar" aria-valuenow="0" aria-valuemin="0"
@@ -62,14 +62,14 @@
                       <div class="progress-bar"></div>
                     </div>
                   </div>
-                  <div class="col text-end" id="strength_indicator"> No Password</div>
+                  <div class="col text-end" id="addUser_strength_indicator"> No Password</div>
                 </div>
               </div>
             </div>
           </form>
           <div class="mt-5 d-flex justify-content-end">
             <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
-            <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addUser_confirmation_modal" type="button"
+            <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addUser_confirmation" type="button"
               id="button_showConfirmationAddUser" disabled> Submit </button>
           </div>
         </div>
@@ -78,18 +78,71 @@
   </div>
 </div>
 
-<div class="modal fade" id="addUser_confirmation_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="addUser_confirmation_modal" aria-hidden="true">
+<div class="modal fade" id="edit_account_modal" tabindex="-1" role="dialog" aria-labelledby="edit_account_modal"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width:400px;">
+    <div class="modal-content">
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+<! -- confirmations -->
+<div class="modal fade" id="addUser_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  role="dialog" aria-labelledby="addUser_confirmation" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
         <div>
-          <h5 class="fw-bold mb-3"> Register account confirmation </h5>
+          <h5 class="fw-bold mb-3"> Register Account </h5>
           <p> Are you sure you want to add this user ?</p>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-        <button id="signup_user" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal"> Confirm </button>
+        <button id="signup_user" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal"> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="Change_UserStatus_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+  tabindex="-1" role="dialog" aria-labelledby="Change_UserStatus_confirmation" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div>
+          <h5 class="fw-bold mb-3"> Change Account Status </h5>
+          <p> Are you sure you want to <span></span> this user ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="button" onclick="populateUsers('all-any')">Cancel</button>
+        <button id="update_user_status" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="UpdateCredentials_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+  tabindex="-1" role="dialog" aria-labelledby="UpdateCredentials_confirmation" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div>
+          <h5 class="fw-bold mb-3"> Update Profile Credentials </h5>
+          <p> Are you sure you want to update this user ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="button" onclick="populateUsers('all-any')">Cancel</button>
+        <button id="update_user_credentials" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          Confirm
+        </button>
       </div>
     </div>
   </div>

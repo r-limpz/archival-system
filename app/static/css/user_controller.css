@@ -12,10 +12,10 @@
 #newuser_role:focus {
     outline: none;
     box-shadow: none;
-    border: var(--fc-darker) solid 2px
+    border: var(--fc-darker) solid 1px
 }
 .users-entry{
-    width: 60vw;
+    min-width: 40vw;
 }
 .account_info{
     min-width: 200px;
@@ -27,4 +27,8 @@
 
 .manage_user_button {
     transition: opacity 350ms ease-in-out;
+}
+
+option {
+    padding: 1rem;
 }
