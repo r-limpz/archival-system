@@ -216,9 +216,12 @@ def change_status():
 
     try:
         with config.conn.cursor() as cursor:
-
             cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
             config.conn.commit()
+
+            if status == 0:
+                cursor.execute('DELETE FROM session WHERE user_id = %s', (user_id,))
+                config.conn.commit()
 
             cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', ( status, user_id))
             status_changed = cursor.fetchone()

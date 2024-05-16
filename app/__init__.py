@@ -32,7 +32,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = "strong"
 login_manager.refresh_view = 'home'
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
 
 csrf = CSRFProtect()
 csrf.init_app(app)
@@ -68,7 +68,9 @@ app.register_blueprint(staff_bp)
 #Register account_manager
 from .account_manager import account_manager as user_controlblueprint
 app.register_blueprint(user_controlblueprint)
-
+#Register college and courses manager 
+from .college_manager import college_manager as college_managerBlueprint
+app.register_blueprint(college_managerBlueprint)
 #error handling of pages
 from werkzeug.exceptions import HTTPException
 

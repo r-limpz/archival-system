@@ -160,7 +160,6 @@ def logout():
 @auth.route('/get_heartbeat', endpoint='heartbeat')
 def heartbeat():
     if current_user.is_authenticated and current_user.is_active:
-        session.permanent = False
         return jsonify(session_Inactive = False)
     else:
         return jsonify(session_Inactive = True)
