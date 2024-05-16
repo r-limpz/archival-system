@@ -78,37 +78,67 @@ def addNewUser( add_fullname, add_username, add_password):
             print(f"create user error occurred: {e}")
 
 def updateAccount(user_id, fullname, username, role, password):
+    query = 'UPDATE user SET '
+    params = []
+    hasChanged = {}
+    role = get_role(role)
+
     try:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
             user = cursor.fetchone()
-            hashed_password = argon2.generate_password_hash(password)
 
-            if isinstance(role, str) and len(role) > 1:
-                role = {'admin': 1, 'staff':2}.get(role, 2)
-            elif role in [1, 2 ,'1', '2']:    
-                role = int(role)
+            if not user:
+                return 'user not found'
             else:
-                role = 2
-            
-            if user and user['fullname'] == fullname and user['username'] == username and user['role'] == role and argon2.check_password_hash(user['password'], password):
-                return 'no changes applied'
-            elif user:
-                cursor.execute('UPDATE user SET fullname = %s, username = %s, role = %s, password = %s, pass_key = %s WHERE user_id = %s', (fullname, username, role, hashed_password, generate_key(), user_id))
+                if user['fullname'] != fullname:
+                    query += 'fullname = %s, '
+                    params.append(fullname)
+                    hasChanged.update({"fullname": fullname})
+
+                if user['username'] != username:
+                    query += 'username = %s, '
+                    params.append(username)
+                    hasChanged.update({"username": username})
+
+                if user['role'] != role:
+                    query += 'role = %s, '
+                    params.append(role)
+                    hasChanged.update({"role": role})
+
+                if password and not argon2.check_password_hash(user['password'], password):
+                    query += 'password = %s, '
+                    hashed_password = argon2.generate_password_hash(password)
+                    params.append(hashed_password)
+                    hasChanged.update({"password": hashed_password})
+
+                query = query.rstrip(', ')  # remove trailing comma and space
+                query += ' WHERE user_id = %s'
+                params.append(user_id)
+                cursor.execute(query, tuple(params))
                 config.conn.commit()
 
-                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id))
+                keys_str = ', '.join(list(hasChanged.keys()))
+                
+                verifyQuery = 'SELECT '+ keys_str + ' FROM user WHERE user_id = %s'
+                cursor.execute(verifyQuery, (user_id,))
                 user_update = cursor.fetchone()
 
-                if user_update['fullname'] == fullname and user_update['role'] == role and argon2.check_password_hash(user_update['password'], password):
+                if user_update == hasChanged:
                     return 'success'
                 else:
                     return 'failed'
-            else:
-                return 'user not found'
-
+                    
     except Exception as e:
-            print(f"update user function error occurred: {e}")
+        print(f"changeCredentials function error occurred: {e}")
+
+def get_role(role):
+    if isinstance(role, str) and len(role) > 1:
+        return {'admin': 1, 'staff':2}.get(role, 2)
+    elif role in [1, 2 ,'1', '2']:    
+        return int(role)
+    else:
+        return 2
 
 @account_manager.route('/display_staff_users/<active_status>')
 @login_required
