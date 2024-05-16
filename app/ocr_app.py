@@ -121,7 +121,7 @@ def detectStudentNames(raw_data_string):
 @ocr_App.route('/scanner', methods=['POST'])
 @login_required
 def scanner():
-    if not current_user.is_authenticated() and not current_user.is_active():
+    if not current_user.is_authenticated and not current_user.is_active:
         return redirect(url_for('upload'))
     else: 
         if 'image' not in request.files:
