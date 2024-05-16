@@ -10,8 +10,9 @@
 
 <section class="p-2">
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
-        <h4 class="fw-medium">Account Manager</h4>
-        <p>Lorem Ipsum</p>
+        <h3 class="fw-bold">User Manager</h3>
+        <p class="fs-medium fst-italic">Manage and oversee user accounts, roles, and access rights in a secure and
+            efficient manner.</p>
     </div>
     <div class="d-flex justify-content-end">
         <div class="mx-3" style="width: 30vw;min-width:400px;">
@@ -361,7 +362,7 @@
                         <div class="mt-5 d-flex justify-content-end">
                             <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
                             <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#UpdateCredentials_confirmation"
-                            type="button" id="button_showConfirmation_UpdateUser" disabled> Submit </button>
+                            type="button" id="button_showConfirmation_UpdateUser"> Submit </button>
                         </div>
                     </div>
                 `);
@@ -443,6 +444,7 @@
             let update_role = $('#update_role').val();
             let update_password = $('#update_password').val();
             let update_repassword = $('#update_repassword').val();
+
             //set the data
             let formData = {
                 'update_user_id': user_id,
@@ -453,41 +455,45 @@
                 'update_repassword': update_repassword
             };
             //send the data through ajax and recieve a corresponding status report of query
-            $.ajax({
-                url: '/admin/account_manager/account/update',
-                type: 'POST',
-                data: formData,
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                success: function (data) {
-                    switch (data.update_query) {
-                        case 'success'://the user successfully appended in the database
-                            populateUsers('all-any');
-                            showToast('Success!', 'User added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed'://error in processing occured
-                            showToast('Upload Error occurred!', 'Failed to add user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'user not found'://user already exist in the database
-                            populateUsers('all-any');
-                            showToast('User not Found', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        default:
-                            populateUsers('all-any');
-                            showToast(data.update_query, 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
+            if (update_fullname !== null && update_username !== null && user_id !== null) {
+                $.ajax({
+                    url: '/admin/account_manager/account/update',
+                    type: 'POST',
+                    data: formData,
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                    success: function (data) {
+                        switch (data.update_query) {
+                            case 'success'://the user successfully appended in the database
+                                populateUsers('all-any');
+                                showToast('Success!', 'User added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'failed'://error in processing occured
+                                showToast('Upload Error occurred!', 'Failed to add user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'user not found'://user already exist in the database
+                                populateUsers('all-any');
+                                showToast('User not Found', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+
+                            
+                            default:
+                                populateUsers('all-any');
+                                showToast(data.update_query, 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                        }
+                    },
+                    //handle the ajax error 
+                    error: function (error) {
+                        console.error('Error:', error);
+                        showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
-                },
-                //handle the ajax error 
-                error: function (error) {
-                    console.error('Error:', error);
-                    showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                }
-            });
+                });
+            }
         });
     }
 
