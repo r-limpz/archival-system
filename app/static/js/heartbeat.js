@@ -8,15 +8,12 @@ const channel = new BroadcastChannel("sess_channel");
 channel.onmessage = function (event) {
     switch (event.data) {
         case 'session timeout':
-            alert("Session timeout");
+            alert("Session Timeout");
             window.location.href = timeoutUrl;
-            channel.close()
             break;
         case 'offline alert':
             alert("The network connection has been lost.");
             break;
-        default:
-            console.log( 'channel data :', event.data)
     }
 };
 
@@ -28,17 +25,15 @@ function sendHeartbeat() {
                 channel.postMessage('session timeout');
                 window.location.href = timeoutUrl;
             }
-            else{
+            else {
                 channel.postMessage('session online');
-                console.log('online')
             }
         })
         .catch(error => console.error('Error:', error));
 }
 
-setTimeout(sendHeartbeat, 10000);
+setTimeout(sendHeartbeat, 3000);
 setInterval(() => sendHeartbeat(), 600000);
-
 window.onoffline = (event) => {
     alert("The network connection has been lost.");
     channel.postMessage('offline alert');

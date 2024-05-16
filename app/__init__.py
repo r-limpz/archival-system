@@ -13,7 +13,6 @@ import os
 # Create Flask app
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = "ABCDEFG12345"
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "strict"
 app.config["SESSION_COOKIE_SECURE"] = True
@@ -51,7 +50,7 @@ login_manager.anonymous_user = Anonymous
 def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
         session.permanent = True
-        session.modified = True
+        app.permanent_session_lifetime = timedelta(minutes=20)
 
 #Register authentication logic
 from .auth import auth as auth_blueprint

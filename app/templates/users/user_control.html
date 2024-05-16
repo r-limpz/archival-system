@@ -53,7 +53,6 @@
 {% block scripts %}
 <script>
     // Function to show and hide popup
-
     function populateUsers(toggle) {
         fetch('/admin/account_manager/display_staff_users/' + toggle)
             .then(response => response.json())
@@ -165,7 +164,7 @@
         populateUsers('all-any');
     };
     //every 10 min reload the populate of cards for real time updates
-    setInterval(() => populateUsers('all-any'), 600000);
+    setInterval(() => populateUsers('all-any'), 300000);
     //filtering function in displaying data
     function searchCards() {
         var input, filter, cards, cardContainer, account_name, account_username, i;

@@ -7,7 +7,8 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{url_for('static',filename='logo/usep-logo.png')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='node_modules/bootstrap/dist/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" href="{{url_for('static',filename='node_modules/@fortawesome/fontawesome-free/css/all.min.css')}}" />
+    <link rel="stylesheet"
+        href="{{url_for('static',filename='node_modules/@fortawesome/fontawesome-free/css/all.min.css')}}" />
 
     <script src="{{url_for('static',filename='node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <script src="{{url_for('static',filename='node_modules/@fortawesome/fontawesome-free/js/all.min.js')}}"></script>
@@ -26,5 +27,15 @@
     </div>
 
 </body>
+<script>
+    const channel = new BroadcastChannel("sess_channel");
+
+    channel.onmessage = function (event) {
+        if (event.data === 'session online') {
+            history.back();
+        }
+    };
+
+</script>
 
 </html>
