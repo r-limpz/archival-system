@@ -495,3 +495,6 @@ button {
     border: none !important;
 }
 
+.card {
+    color: var(--fc-default)
+}

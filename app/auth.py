@@ -96,7 +96,7 @@ def login():
         role = int(role)
 
         with config.conn.cursor() as cursor:
-                #Search for the user in the database
+            #Search for the user in the database
             cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
             user = cursor.fetchone()
 
@@ -142,8 +142,6 @@ def logout():
             cursor.execute('SELECT * FROM session WHERE session_id = %s', (current_user.id,))
             user_session = cursor.fetchone()
 
-            print(user_session['username'])
-
             if user_session:
                 cursor.execute('DELETE FROM session WHERE session_id = %s', (current_user.id,))
                 config.conn.commit()
@@ -163,8 +161,6 @@ def session_expired(username):
                 if ifOnline:
                     cursor.execute('DELETE FROM session WHERE username = %s', (username,))
                     config.conn.commit()
-
-                    
                 
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):

@@ -26,7 +26,7 @@
                 <h1 class="fw-bold fc-red" style="font-size: 80px;"> {{ error_number }} </h1>
                 <p class="d-block m-auto" style="width: 500px;"> {{ error_message }} </p>
             </div>
-            <a href=" {% if current_user and current_user.role == 'staff' %} {{url_for('records')}} {% elif current_user and current_user.role == 'admin' %} {{url_for('dashboard')}} {% else %} {{url_for('home')}} {% endif %}"
+            <a href=" {% if current_user and current_user.role == 'staff' %} {{url_for('records')}} {% elif current_user and current_user.role == 'admin' %} {{url_for('dashboard')}} {% else %} {{url_for('index')}} {% endif %}"
                 class="button btn-red text-decoration-none px-4 py-2 fw-bold"> Go Back to
                 {% if current_user.role== 'staff' %} Records
                 {% elif current_user.role == 'admin' %} Dashbord

@@ -44,12 +44,13 @@ def fetch_course():
             cursor.execute('SELECT course_id, course_name FROM courses WHERE registered_college =%s', (col_id))
             course_item = cursor.fetchall()
             courses = []
-
-            for entry in course_item:
-                course_format = {'course_id' :"", 'course_name':""}
-                course_format['course_id'] = entry['course_id']
-                course_format['course_name'] = entry['course_name']
-                courses.append(course_format)
+            
+            if course_item:
+                for entry in course_item:
+                    course_format = {'course_id' :"", 'course_name':""}
+                    course_format['course_id'] = entry['course_id']
+                    course_format['course_name'] = entry['course_name']
+                    courses.append(course_format)
 
             college = College(col_id, col_name, courses)
             Col_Course_list.append(college)
@@ -59,5 +60,5 @@ def fetch_course():
 @college_manager.route('/display_colleges')
 def display_colcourse():
     collegeCourses_list = fetch_course()
-    print(collegeCourses_list)
+    #each entry in the collgeCourses_list is collgeCourses_list[{college_id:'', college_name:'' courses[{1, course_id:'course_id',course_name:'course_name',}]}]
     return jsonify([college.__dict__ for college in collegeCourses_list])
