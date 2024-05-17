@@ -10,7 +10,7 @@ def staff_required(f):
         if not current_user.is_authenticated and current_user.role != 'staff' and not current_user.is_active:
             return redirect(url_for('home'))
         elif current_user.is_authenticated and current_user.is_active and current_user.role == 'admin':
-            return redirect(url_for('staff.dashboard'))
+            return redirect(url_for('admin.dashboard'))
         return f(*args, **kwargs)
     return decorated_function
 

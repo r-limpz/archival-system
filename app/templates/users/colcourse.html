@@ -8,13 +8,55 @@
 <section class="p-2">
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
         <h3 class="fw-bold">College and Course Manager </h3>
-        <p class="fs-medium fst-italic"> A tool for easy management and editing of college and associated courses data.</p>
+        <p class="fs-medium fst-italic"> A tool for easy management and editing of college and associated courses data.
+        </p>
     </div>
-
+    <div id="college_displayCards" class="p-3 d-flex"></div>
 </section>
 
 {% endblock%}
 
 {% block scripts %}
+<script>
+    function populateColleges() {
+        fetch('/admin/college_manager/display_colleges')
+            .then(response => response.json())
+            .then(colleges => {
+                let collegeDataDiv = document.getElementById('college_displayCards');
+                collegeDataDiv.innerHTML = '';  // Clear the div
+
+                colleges.forEach(college => {
+                    let college_id = college.college_id;
+                    let college_name = college.college_name;
+
+                    let coursesHTML = '';
+                    college.courses.forEach(course => {
+                        let course_name = course.course_name;
+                        coursesHTML += `<li>${course_name}</li>`;
+                    });
+
+                    let card = `
+                    <div class="college-entry card my-3 rounded-4 prevent-select mx-3" id="${college_id}">
+                        <div class="card-body">
+                            <div>
+                                <div id="college_name">${college_name}</div>
+                            </div>
+                            <div id="courses_list">
+                                <ul>
+                                    ${coursesHTML}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                    collegeDataDiv.innerHTML += card;
+                });
+            });
+    }
+
+    populateColleges();
+
+</script>
 
 {% endblock%}

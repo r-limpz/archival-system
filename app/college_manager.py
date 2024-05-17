@@ -58,6 +58,6 @@ def fetch_course():
 
 @college_manager.route('/display_colleges')
 def display_colcourse():
-    data = fetch_course()
-    print(data)
-    return render_template('/users/colcourse.html', colleges = data)
+    collegeCourses_list = fetch_course()
+    print(collegeCourses_list)
+    return jsonify([college.__dict__ for college in collegeCourses_list])
