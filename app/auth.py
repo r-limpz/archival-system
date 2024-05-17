@@ -181,3 +181,4 @@ def heartbeat(username):
 @auth.route('/authenticate-user/check-token/timeout/')
 def user_timeout():
     return redirect(url_for('auth.logout'))
+
