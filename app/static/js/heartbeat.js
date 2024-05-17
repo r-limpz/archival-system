@@ -1,14 +1,17 @@
 var element = document.getElementById('heartbeat');
-var heartbeatUrl = element.className;
+var heartbeatUrl = '/get_heartbeat';
 var timeoutUrl = '/authenticate-user/check-token/timeout/';
 
 const channel = new BroadcastChannel("sess_channel");
-
 // Listen for messages from the channel
 channel.onmessage = function (event) {
     switch (event.data) {
         case 'session timeout':
-            alert("Session Timeout");
+            setTimeout(function () { window.location.href = timeoutUrl; }, 10000);
+            alert('Session has expired, please log in again')
+            window.location.href = timeoutUrl;
+            break;
+        case 'session expired':
             window.location.href = timeoutUrl;
             break;
         case 'offline alert':
@@ -18,22 +21,26 @@ channel.onmessage = function (event) {
 };
 
 function sendHeartbeat() {
-    fetch(heartbeatUrl)
+    var username = element.className;
+
+    fetch('/get_heartbeat/' + username)
         .then(response => response.json())
         .then(data => {
             if (data.session_Inactive) {
                 channel.postMessage('session timeout');
                 window.location.href = timeoutUrl;
+                channel.postMessage('session expired');
             }
             else {
                 channel.postMessage('session online');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            channel.postMessage('session expired');
+            window.location.href = timeoutUrl;
+        });
 }
 
-setTimeout(sendHeartbeat, 3000);
-setInterval(() => sendHeartbeat(), 600000);
 window.onoffline = (event) => {
     alert("The network connection has been lost.");
     channel.postMessage('offline alert');
@@ -42,3 +49,6 @@ window.onoffline = (event) => {
 document.getElementById('logout_currentUser').addEventListener('click', function () {
     channel.postMessage('session timeout');
 });
+
+setInterval(() => sendHeartbeat(), 600000);
+setTimeout(sendHeartbeat, 1000);

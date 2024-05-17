@@ -125,16 +125,12 @@ def login():
                                 
                         else:
                             error = invalidError
-                            print('login : route error login')
                     else:
                         error = invalidError
-                        print('login : generating session data error')
                 else:
                     error = invalidError
-                    print('login password account:', error)
             else:
                 error = captchaError
-                print('login captcha :', error)
 
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
@@ -145,6 +141,8 @@ def logout():
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM session WHERE session_id = %s', (current_user.id,))
             user_session = cursor.fetchone()
+
+            print(user_session['username'])
 
             if user_session:
                 cursor.execute('DELETE FROM session WHERE session_id = %s', (current_user.id,))
@@ -157,11 +155,28 @@ def logout():
 
     return redirect(url_for('home'))
 
-@auth.route('/get_heartbeat', endpoint='heartbeat')
-def heartbeat():
-    if current_user.is_authenticated and current_user.is_active:
-        return jsonify(session_Inactive = False)
+def session_expired(username):
+    with config.conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
+                ifOnline = cursor.fetchone()
+
+                if ifOnline:
+                    cursor.execute('DELETE FROM session WHERE username = %s', (username,))
+                    config.conn.commit()
+
+                    
+                
+@auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
+def heartbeat(username):
+
+    if current_user:
+        if current_user.is_authenticated and current_user.is_active:
+            return jsonify(session_Inactive = False)
+        else:
+            session_expired(username)
+            return jsonify(session_Inactive = True)
     else:
+        session_expired(username)
         return jsonify(session_Inactive = True)
 
 @auth.route('/authenticate-user/check-token/timeout/')
