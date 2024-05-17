@@ -61,21 +61,24 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(session_id):
-    with config.conn.cursor() as cursor:
-        cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
-        user_session = cursor.fetchone()
-            
-        if user_session:
-            cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
-            user = cursor.fetchone()
+    if session_id:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
+            user_session = cursor.fetchone()
                 
-            if user:
-                token = generate_token(user['password'], user['pass_key'], session_id)
-                return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
+            if user_session:
+                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_session['user_id'],))
+                user = cursor.fetchone()
+                    
+                if user:
+                    token = generate_token(user['password'], user['pass_key'], session_id)
+                    return User(session_id, user_session['username'], {1: 'admin', 2: 'staff'}.get(user_session['role']), token)
+                else:
+                    return None
             else:
                 return None
-        else:
-            return None
+    else:
+        return redirect(url_for('logout'))
         
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
