@@ -170,7 +170,6 @@ def session_expired(username):
 
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
-    print(username)
     if current_user:
         if current_user.is_authenticated and current_user.is_active:
             return jsonify(session_Inactive = False)

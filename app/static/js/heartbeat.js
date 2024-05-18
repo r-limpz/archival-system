@@ -1,4 +1,4 @@
-var element = document.getElementById('heartbeat');
+var node = document.getElementById('account_username');
 var heartbeatUrl = '/get_heartbeat';
 var timeoutUrl = '/authenticate-user/check-token/timeout/';
 
@@ -21,7 +21,7 @@ channel.onmessage = function (event) {
 };
 
 function sendHeartbeat() {
-    var username = element.className;
+    var username = node.textContent || node.innerText;
 
     fetch('/get_heartbeat/' + username)
         .then(response => response.json())
@@ -41,14 +41,17 @@ function sendHeartbeat() {
         });
 }
 
+setTimeout(sendHeartbeat, 1000);
+setInterval(() => sendHeartbeat(), 300000);
+
 window.onoffline = (event) => {
     alert("The network connection has been lost.");
     channel.postMessage('offline alert');
 };
 
 document.getElementById('logout_currentUser').addEventListener('click', function () {
+    clearSidebarState();
     channel.postMessage('session timeout');
 });
 
-setInterval(() => sendHeartbeat(), 600000);
-setTimeout(sendHeartbeat, 1000);
+
