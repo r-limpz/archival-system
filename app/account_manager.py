@@ -104,11 +104,17 @@ def fetchallAccount(displayController):
                 if users:
                     users_list = []
                     for user in users:
+                        if user['last_online'] is None:
+                            if user['online'] == 1:
+                                last_online = "Now"
+                            elif user['online'] == 0:
+                                last_online = "No activity yet"
+
                         user_dict = {
                             'user_id': user['user_id'],
                             'fullname': user['fullname'],
                             'username': user['username'],
-                            'last_online': get_currentTime(user['last_online']) if user['last_online'] else 'Now',
+                            'last_online': get_currentTime(user['last_online']) if user['last_online'] else last_online,
                             'online': {1: 'online', 0: 'offline'}.get(user['online']),
                             'status': {0: 'deactivated', 1: 'active'}.get(user['status']),
                             'role': {1: 'admin', 2: 'staff'}.get(user['role'])
@@ -281,33 +287,39 @@ def updateAccount(user_id, fullname, username, role, password):
 @login_required
 @admin_required
 def users_list(active_status):
-    try:
-        if active_status:
+    if active_status:
+        try:
+        
             users_list = fetchallAccount(active_status)
             if users_list:
                 return jsonify(users_list)
             else:
                 return jsonify(None)
-    except Exception as e:
-        print(f"display user error occurred: {e}")
+        except Exception as e:
+            print(f"display user error occurred: {e}")
+    else:
+        return jsonify(None)
 
 @account_manager.route('/preview/<profile_id>')
 @login_required
 @admin_required
 def preview_account(profile_id):
-    try:
-        profile_id = int(profile_id)
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT fullname, username, role FROM user WHERE user_id = %s', (profile_id))
-            profile = cursor.fetchone()
+    if profile_id:
+        try:
+            profile_id = int(profile_id)
+            with config.conn.cursor() as cursor:
+                cursor.execute('SELECT fullname, username, role FROM user WHERE user_id = %s', (profile_id))
+                profile = cursor.fetchone()
 
-            if profile:
-                return render_template ('users/preview-user.html', preview_fullname = profile['fullname'], preview_username = profile['username'], preview_role = {1: 'admin', 2: 'staff'}.get(profile['role']))
-            else:
-                return redirect(url_for('account_manager'))
-            
-    except Exception as e:
-         print(f"preview user route error occurred: {e}")
+                if profile:
+                    return render_template ('users/preview-user.html', preview_fullname = profile['fullname'], preview_username = profile['username'], preview_role = {1: 'admin', 2: 'staff'}.get(profile['role']))
+                else:
+                    return redirect(url_for('account_manager'))
+                
+        except Exception as e:
+            print(f"preview user route error occurred: {e}")
+    else:
+        return redirect(url_for('account_manager'))
     
 @account_manager.route('/manage/new_user' , methods=['POST', 'GET'])
 @login_required
@@ -371,23 +383,26 @@ def change_status():
 @login_required
 @admin_required
 def manage_user(user_id):
-    try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT fullname, username, status, role FROM user WHERE user_id = %s', (user_id))
-            user_info = cursor.fetchone()
+    if user_id:
+        try:
+            with config.conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id))
+                user_info = cursor.fetchone()
 
-            if user_info:
-                user_credentials = {
-                    'update_fullname': user_info['fullname'],
-                    'update_username': user_info['username'],
-                    'update_role' : user_info['role'],
-                }
-                return jsonify(user_credentials)
-            else:
-                return jsonify('error, user not found')
-            
-    except Exception as e:
-         print(f"manage user error occurred: {e}")
+                if user_info:
+                    user_credentials = {
+                        'update_fullname': user_info['fullname'],
+                        'update_username': user_info['username'],
+                        'update_role' : user_info['role'],
+                    }
+                    return jsonify(user_credentials)
+                else:
+                    return jsonify('error, user not found')
+                
+        except Exception as e:
+            print(f"manage user error occurred: {e}")
+    else:
+        return jsonify('error, user not found')
 
 @account_manager.route('/account/update', methods=['POST'])
 @login_required
