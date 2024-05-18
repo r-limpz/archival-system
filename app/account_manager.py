@@ -354,10 +354,9 @@ def change_status():
     if request.method == "POST":
         user_id = request.form.get('user_id')
         status = request.form.get('user_state')
+
         user_id = int(user_id)
         status = int({'active': 1, 'deactivated': 0}.get(status))
-
-        print('id:', user_id, '- status:', status)
 
     try:
         with config.conn.cursor() as cursor:

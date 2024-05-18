@@ -61,7 +61,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(session_id):
-    if session_id:
+    try:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
             search_session = cursor.fetchone()
@@ -77,9 +77,9 @@ def load_user(session_id):
                     return None
             else:
                 return None
-    else:
-        print('error occured')
-        return None
+            
+    except Exception as e:
+        print(f"login loader: {e}")
         
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -101,7 +101,7 @@ def login():
 
         with config.conn.cursor() as cursor:
             #Search for the user in the database
-            cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role,))
+            cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
             user = cursor.fetchone()
 
             if captcha.get_answer() == input_captcha:#validate captcha input
@@ -158,22 +158,25 @@ def logout():
     return redirect(url_for('home'))
 
 def session_expired(username):
-    with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
-                ifOnline = cursor.fetchone()
+    if username:
+        with config.conn.cursor() as cursor:
+                    cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
+                    ifOnline = cursor.fetchone()
 
-                if ifOnline:
-                    cursor.execute('DELETE FROM session WHERE username = %s', (username,))
-                    config.conn.commit()
-                
+                    if ifOnline:
+                        cursor.execute('DELETE FROM session WHERE username = %s', (username,))
+                        config.conn.commit()
+
+
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
-
+    print(username)
     if current_user:
         if current_user.is_authenticated and current_user.is_active:
             return jsonify(session_Inactive = False)
         else:
-            session_expired(username)
+            if username:
+                session_expired(username)
             return jsonify(session_Inactive = True)
     else:
         session_expired(username)
