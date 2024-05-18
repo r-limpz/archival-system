@@ -76,7 +76,7 @@
                     class="sidebar-link {% if request.path == url_for('staff.account', user = current_user.username) or request.path == url_for('admin.account', user = current_user.username) %} active {% endif %}">
                     <span
                         class="sidebar-icon fa-solid {% if current_user.role == 'staff' %} fa-user {% elif current_user.role == 'admin' %}fa-solid fa-user-tie {% endif %}"></span>
-                    <span class="hidden-sidebar">{{current_user.username}}</span>
+                    <span id="account_username" class="hidden-sidebar">{{current_user.username}}</span>
                 </a>
             </li>
 
@@ -95,24 +95,17 @@
 </aside>
 
 <script>
+
     document.addEventListener("DOMContentLoaded", function () {
-        const toggle_navbar = document.getElementById("toggle_navbar");
+        const toggleNavbar = document.getElementById("toggle_navbar");
         const sidebar = document.getElementById("side-navigation");
-        toggle_navbar.addEventListener("click", function () {
+
+        toggleNavbar.addEventListener("click", function () {
+            var icon = document.getElementById('toggle-icon');
             sidebar.classList.toggle('open');
+            icon.classList.toggle('fa-chevron-left');
+            icon.classList.toggle('fa-chevron-right');
         });
     });
 
-    document.getElementById('toggle_navbar').addEventListener('click', function () {
-        var icon = document.getElementById('toggle-icon');
-        if (icon.classList.contains('fa-chevron-right')) {
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-            console.log('open');
-        } else {
-            icon.classList.remove('fa-chevron-left');
-            icon.classList.add('fa-chevron-right');
-            console.log('close');
-        }
-    });
 </script>
