@@ -76,6 +76,8 @@ from werkzeug.exceptions import HTTPException
 @app.errorhandler(Exception)
 def handle_error(e):
     code = 500
+    error_message = '500 Internal Server Error'
+    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
     if isinstance(e, HTTPException):
         code = e.code
         code_message = f"{code} {e.name}"

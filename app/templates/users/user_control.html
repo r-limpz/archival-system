@@ -124,6 +124,7 @@
         changeDisplay_roles_value = event.target.value;
         populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
+    
     function showPopup(id) {
         // Hide all popups
         var popups = document.getElementsByClassName('manage_user_button');
@@ -278,24 +279,24 @@
         //if changes confirmed 
         $('#update_user_status').on('click', function () {
             $.ajax({
-                url: '/admin/account_manager/user_state/',
+                url: '/admin/account_manager/manage/user_state',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    console.log('message :' + data.change_state);
                     populateUsers('all-any');
 
                     if (data.change_state === 'success') {
                         showToast('Success!', 'User status changed.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
-                    else {
+                    else if (data.change_state === 'failed'){ 
                         showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                 },
                 error: function (error) {
+                    populateUsers('all-any');
                     console.error('Error:', error);
                     showToast('Error', 'Change status error occurred.', 'fc-red fa-solid fa-triangle-exclamation', 'border-warning');
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();

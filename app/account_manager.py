@@ -347,7 +347,7 @@ def create_account():
     except Exception as e:
          print(f"create user route error occurred: {e}")
 
-@account_manager.route('/user_state/', methods=['POST'])
+@account_manager.route('/manage/user_state', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def change_status():
@@ -355,38 +355,45 @@ def change_status():
         user_id = request.form.get('user_id')
         status = request.form.get('user_state')
         user_id = int(user_id)
-        status = {'active':1, 'deactivated':0 }.get(status)
+        status = int({'active': 1, 'deactivated': 0}.get(status))
+
+        print('id:', user_id, '- status:', status)
 
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
-            config.conn.commit()
+            cursor.execute('SELECT status FROM user WHERE user_id = %s', (user_id,))
+            current_status = cursor.fetchone()
 
-            if status == 0:
-                cursor.execute('DELETE FROM session WHERE user_id = %s', (user_id,))
+            if not current_status or current_status['status'] != status:
+                cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
                 config.conn.commit()
 
-            cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', ( status, user_id))
-            status_changed = cursor.fetchone()
+                if status == 0:
+                    cursor.execute('DELETE FROM session WHERE user_id = %s', (user_id,))
+                    config.conn.commit()
 
-            if status_changed:
-                update_query = 'success'
+                cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', (status, user_id))
+                status_changed = cursor.fetchone()
+
+                if status_changed:
+                    return jsonify({'change_state': 'success'})
+                else:
+                    return jsonify({'change_state': 'failed'})
             else:
-                update_query = 'failed'
-            
-            return jsonify({'change_state': update_query})
-            
-    except Exception as e:
-         print(f"remove user error occurred: {e}")
+                return jsonify({'change_state': 'no changes applied'})
 
-@account_manager.route('/manage/<user_id>' , methods=['POST', 'GET'])
+    except Exception as e:
+        print(f"change status error occurred: {e}")
+
+
+@account_manager.route('/manage/<profile_id>' , methods=['POST', 'GET'])
 @login_required
 @admin_required
-def manage_user(user_id):
-    if user_id:
+def manage_user(profile_id):
+    if profile_id:
         try:
             with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id))
+                cursor.execute('SELECT * FROM user WHERE user_id = %s', (profile_id))
                 user_info = cursor.fetchone()
 
                 if user_info:
@@ -404,7 +411,7 @@ def manage_user(user_id):
     else:
         return jsonify('error, user not found')
 
-@account_manager.route('/account/update', methods=['POST'])
+@account_manager.route('/account/update', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def edit_user():
@@ -430,7 +437,7 @@ def edit_user():
     except Exception as e:
             print(f"update user credentials  error occurred: {e}")
 
-@account_manager.route('/verify-unique/textdata', methods=['POST'])
+@account_manager.route('/verify-unique/textdata', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def check_inputVerify():

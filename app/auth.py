@@ -78,7 +78,8 @@ def load_user(session_id):
             else:
                 return None
     else:
-        return redirect(url_for('logout'))
+        print('error occured')
+        return None
         
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
