@@ -387,6 +387,9 @@ input {
 .bg-red-gradient {
     background: var(--bg-red-gradient);
 }
+.bg-red-gradient-darker {
+    background: var(--button-bg-red-active);
+}
 
 .bg-orange-gradient {
     background: var(--bg-orange-gradient);

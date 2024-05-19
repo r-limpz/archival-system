@@ -1,5 +1,8 @@
-from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session, make_response
+from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
+import socket
+import httpagentparser
+from device_detector import DeviceDetector
 import hashlib
 import secrets
 import string
@@ -157,15 +160,38 @@ def logout():
 
     return redirect(url_for('home'))
 
+def accountHistory(username):
+    if username == current_user.username:
+        ip_address = socket.gethostbyname(socket.gethostname())
+        agent = request.headers.get('User-Agent')
+        browser_info = httpagentparser.detect(agent)
+        
+        browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
+        device  = DeviceDetector(agent).parse()
+        os = device.os_name()
+        type = device.device_type()
+        
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM user WHERE username = %s', (username))
+            queryUser = cursor.fetchone()
+
+            if queryUser:
+                cursor.execute('INSERT INTO loginHistory(user_id, browser_name, device, type, os, ip_address)', (queryUser['user_id'], browser_name, device, type, os, ip_address))
+                return 'success'
+            else:
+                return None
+
+    pass
+
 def session_expired(username):
     if username:
         with config.conn.cursor() as cursor:
-                    cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
-                    ifOnline = cursor.fetchone()
+            cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
+            ifOnline = cursor.fetchone()
 
-                    if ifOnline:
-                        cursor.execute('DELETE FROM session WHERE username = %s', (username,))
-                        config.conn.commit()
+            if ifOnline:
+                cursor.execute('DELETE FROM session WHERE username = %s', (username,))
+                config.conn.commit()
 
 
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
@@ -174,6 +200,7 @@ def heartbeat(username):
         if current_user.is_authenticated and current_user.is_active:
             return jsonify(session_Inactive = False)
         else:
+            print('timeout')
             if username:
                 session_expired(username)
             return jsonify(session_Inactive = True)
@@ -184,4 +211,5 @@ def heartbeat(username):
 @auth.route('/authenticate-user/check-token/timeout/')
 def user_timeout():
     return redirect(url_for('auth.logout'))
+
 

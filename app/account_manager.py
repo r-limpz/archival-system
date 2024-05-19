@@ -385,7 +385,7 @@ def change_status():
         print(f"change status error occurred: {e}")
 
 
-@account_manager.route('/manage/<profile_id>' , methods=['POST', 'GET'])
+@account_manager.route('/manage/<profile_id>')
 @login_required
 @admin_required
 def manage_user(profile_id):
