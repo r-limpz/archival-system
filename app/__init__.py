@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
@@ -7,7 +7,7 @@ from flask_session_captcha import FlaskSessionCaptcha
 from .forms import LoginForm
 from app.Blueprints.admin import admin_bp
 from app.Blueprints.staff import staff_bp
-from datetime import timedelta, datetime
+from datetime import timedelta
 import os
 
 # Create Flask app
@@ -50,7 +50,7 @@ login_manager.anonymous_user = Anonymous
 def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
         session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=20)
+        app.permanent_session_lifetime = timedelta(minutes=30)
 
 #Register authentication logic
 from .auth import auth as auth_blueprint

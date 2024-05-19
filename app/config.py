@@ -6,7 +6,7 @@ try:
         conn = pymysql.connect(host='localhost',
                             user='root',
                             password='',
-                            database='rog',
+                            database='ards_archives',
                             cursorclass=pymysql.cursors.DictCursor)
         
 except pymysql.Error as e:

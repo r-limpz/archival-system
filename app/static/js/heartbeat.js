@@ -1,5 +1,4 @@
 var node = document.getElementById('account_username');
-var heartbeatUrl = '/get_heartbeat';
 var timeoutUrl = '/authenticate-user/check-token/timeout/';
 
 const channel = new BroadcastChannel("sess_channel");

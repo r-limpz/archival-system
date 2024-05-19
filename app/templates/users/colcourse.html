@@ -1,8 +1,8 @@
 {% extends 'layout/users.html' %}
 {% block title %}College Manager | ARDS{% endblock %}
 {% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/admin.css')}}">
 {% endblock %}
-
 {% block content %}
 
 <section class="p-2">
@@ -11,7 +11,7 @@
         <p class="fs-medium fst-italic"> A tool for easy management and editing of college and associated courses data.
         </p>
     </div>
-    <div id="college_displayCards" class="p-3 d-flex"></div>
+    <div id="college_displayCards" class="my-3 d-flex align-content-start flex-wrap"></div>
 </section>
 
 {% endblock%}
@@ -28,28 +28,53 @@
                 colleges.forEach(college => {
                     let college_id = college.college_id;
                     let college_name = college.college_name;
+                    let courseslist = '';
 
-                    let coursesHTML = '';
-                    college.courses.forEach(course => {
-                        let course_name = course.course_name;
-                        coursesHTML += `<li>${course_name}</li>`;
-                    });
+                    if (college.courses && Array.isArray(college.courses)) {
+                        if (college.courses.length > 0) {
+
+                            college.courses.forEach(course => {
+                                let course_name = course.course_name;
+                                courseslist += `<li class="list-group-item">${course_name}</li>`;
+                            });
+                        }
+                        else {
+                            courseslist = 'No courses data';
+                        }
+                    }
 
                     let card = `
-                    <div class="college-entry card p-2 rounded-4 prevent-select mx-3 my-2 fc-light" id="${college_id} ">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <div id="college_name" class="me-4">
-                                    <h5 class="fw-meidum">${college_name}</h5>
+                    <div class="college-entry card prevent-select my-3 mx-2 border-0">
+                        <div class="accordion" id="parent${college_id}">
+                            <div class="accordion-item">
+                                <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
+                                    <button class="w-full accordion-button collapsed py-3 px-4 d-flex justify-content-between bg-red-gradient-darker shadow-none" 
+                                    type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#${college_id}" 
+                                    aria-expanded="false" 
+                                    aria-controls="${college_id}"
+                                    style="width:370px; min-height:90px;">
+                                            <div>
+                                                <h5 class="fw-medium fc-light ps-2 pe-4">
+                                                    ${college_name}
+                                                </h5>
+                                            </div>
+                                    </button>
                                 </div>
-                                <div class="ms-2">
-                                    edit
+                                    <div id="${college_id}" class="accordion-collapse collapse"
+                                    aria-labelledby="label${college_id}"
+                                    data-bs-parent="#parent${college_id}">
+                                        <div class="accordion-body p-0 m-0">
+                                            <div class="card-body border border-top-0 rounded-bottom-3">
+                                                <div id="courses_list">
+                                                    <ul class="list-group list-group-flush"> ${courseslist} 
+                                                        <li class="list-group-item text-end"><a class="text-decorator-none fc-default p-2"><span class="fa fa-edit"></span></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div id="courses_list">
-                                <ul>
-                                    ${coursesHTML}
-                                </ul>
                             </div>
                         </div>
                     </div>

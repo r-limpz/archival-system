@@ -34,7 +34,6 @@
             </a>
         </div>
     </div>
-    <div style="display: none;" id="heartbeat" class="{{ url_for('auth.heartbeat') }}"> </div>
     <script>
         var timeoutUrl = '/authenticate-user/check-token/timeout/';
         const channel = new BroadcastChannel("sess_channel");
