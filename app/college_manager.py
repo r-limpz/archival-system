@@ -170,18 +170,31 @@ def updateCollege(college_id, college_name, courses):
         print(f"Update college error occurred: {e}")
         return query_result
 
-
-#update course function
-def updateCourse(college_id, college_name, courses):
-
-    pass
-
 #remove college function
 def removeCollege(college_id):
-    pass
+    if college_id:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute('SELECT COUNT(*) FROM document WHERE college_id = %s', (college_id,))
+            count = cursor.fetchone()[0]
+
+            if count > 0:
+                cursor.execute('DELETE FROM college WHERE college_id = %s', (college_id,))
+                config.conn.commit()
+
+                if cursor.rowcount > 0:
+                    query_result = 'success'
+                else:
+                    query_result = 'failed'
+            else:
+                query_result = 'failed'
+
+        return query_result
+    else:
+        return 'failed'
 
 #remove course function
-def removeCollege(college_id):
+def removeCourses(college_id):
     pass
 
 #A display route to return all data from fetched colleges
@@ -221,6 +234,21 @@ def create_courses():
 
 @college_manager.route('/update_data/update_college' , methods=['POST', 'GET'])
 def update_college():
+    if request.method == "POST":
+        data = request.get_json()
+        college_id = data.get('college_id')
+        college_name = data.get('college_name')
+        courses_data = data.get('courses_data')
+
+        query_result = updateCollege(college_id, college_name, courses_data)
+
+        if query_result:
+            return jsonify({'query_result' : query_result})
+        else:
+            return jsonify({'query_result' : 'failed'})
+
+@college_manager.route('/remove_data/delete_college/data' , methods=['POST', 'GET'])
+def remove_college():
     if request.method == "POST":
         data = request.get_json()
         college_id = data.get('college_id')
