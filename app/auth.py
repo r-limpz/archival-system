@@ -125,6 +125,8 @@ def login():
                         token = generate_token(user['password'], user['pass_key'], session_id)
                         login_user(User(session_id, username, user_role, token), remember=False)
 
+                        loginHistory((user['user_id']), session_id)
+
                         redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
 
                         if redirect_url:#redirect if user is authenicated and authorized
@@ -155,45 +157,61 @@ def logout():
             else:
                 print('Sign out error occurred')
 
-        logout_user()
-        session.clear()
+            logout_user()
+            session.clear()
 
     return redirect(url_for('home'))
 
-def accountHistory(username):
-    if username == current_user.username:
-        ip_address = socket.gethostbyname(socket.gethostname())
-        agent = request.headers.get('User-Agent')
-        browser_info = httpagentparser.detect(agent)
-        
-        browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
-        device  = DeviceDetector(agent).parse()
-        os = device.os_name() +" "+ device.os_version()
-        type = device.device_type() 
-        
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM user WHERE username = %s', (username))
-            queryUser = cursor.fetchone()
+def getUserInfo():
+    device_data = {'device': '', 'os': '', 'browser': '', 'ip_address': ''}
+    ip_address = socket.gethostbyname(socket.gethostname())
+    agent = request.headers.get('User-Agent')
+    browser_info = httpagentparser.detect(agent)
 
-            if queryUser:
-                cursor.execute('INSERT INTO loginHistory(user_id, browser_name, device, type, os, ip_address) VALUES (%s,%s,%s,%s,%s,%s)', (queryUser['user_id'], browser_name, device, type, os, ip_address))
-                config.conn.commit()
+    browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
+    device = DeviceDetector(agent).parse()
+    deviceType= device.device_type()
+    os = f"{device.os_name()} {device.os_version()}"  # Improved string formatting
 
-                return 'success'
-            else:
-                return 'invalid'
+    device_data = {'device': (deviceType), 'os': os, 'browser': browser_name, 'ip_address': ip_address}
 
+    return device_data
+
+
+def loginHistory(user_id, session_data):
+    with config.conn.cursor() as cursor:
+        user_deviceInfo = getUserInfo()
+        device = user_deviceInfo['device']
+        browser = user_deviceInfo['browser']
+        os = user_deviceInfo['os']
+        ip_address = user_deviceInfo['ip_address']
+
+        cursor.execute('SELECT * FROM login_history WHERE session_data = %s', (session_data,))
+        current_history = cursor.fetchone()
+     
+        if not current_history:
+            cursor.execute('INSERT INTO login_history(user_id, device, browser, os, ip_address, session_data) VALUES (%s, %s, %s, %s, %s, %s)',
+                           (str(user_id), device, browser, os, ip_address, session_data))
+            config.conn.commit()
+            
 
 def session_expired(username):
     if username:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
-            ifOnline = cursor.fetchone()
+            userData = cursor.fetchone()
 
-            if ifOnline:
-                cursor.execute('DELETE FROM session WHERE username = %s', (username,))
-                config.conn.commit()
+            if userData:
+                cursor.execute('SELECT * FROM session WHERE username = %s AND online = 1', (username))
+                sessionData = cursor.fetchone()
 
+                if sessionData:
+                    cursor.execute('DELETE FROM session WHERE username = %s', (username,))
+                    config.conn.commit()
+                else:
+                    print('session user not found')
+            else:
+                print('session user not found')
 
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
