@@ -50,7 +50,7 @@ login_manager.anonymous_user = Anonymous
 def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
         session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=30)
+        app.permanent_session_lifetime = timedelta(minutes=60)
 
 #Register authentication logic
 from .auth import auth as auth_blueprint

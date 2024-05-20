@@ -68,7 +68,7 @@ def load_user(session_id):
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM session WHERE session_id = %s', (session_id))
             search_session = cursor.fetchone()
-                
+           
             if search_session:
                 cursor.execute('SELECT * FROM user WHERE user_id = %s', (search_session['user_id'],))
                 user = cursor.fetchone()
@@ -125,7 +125,7 @@ def login():
                         token = generate_token(user['password'], user['pass_key'], session_id)
                         login_user(User(session_id, username, user_role, token), remember=False)
 
-                        redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')#setup the role-based accessible pages
+                        redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
 
                         if redirect_url:#redirect if user is authenicated and authorized
                             return redirect(url_for(redirect_url))
@@ -168,20 +168,21 @@ def accountHistory(username):
         
         browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
         device  = DeviceDetector(agent).parse()
-        os = device.os_name()
-        type = device.device_type()
+        os = device.os_name() +" "+ device.os_version()
+        type = device.device_type() 
         
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE username = %s', (username))
             queryUser = cursor.fetchone()
 
             if queryUser:
-                cursor.execute('INSERT INTO loginHistory(user_id, browser_name, device, type, os, ip_address)', (queryUser['user_id'], browser_name, device, type, os, ip_address))
+                cursor.execute('INSERT INTO loginHistory(user_id, browser_name, device, type, os, ip_address) VALUES (%s,%s,%s,%s,%s,%s)', (queryUser['user_id'], browser_name, device, type, os, ip_address))
+                config.conn.commit()
+
                 return 'success'
             else:
-                return None
+                return 'invalid'
 
-    pass
 
 def session_expired(username):
     if username:

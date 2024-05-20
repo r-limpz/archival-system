@@ -1,6 +1,5 @@
 {% extends 'layout/users.html' %}
 {% block title %} Users Manager | ARDS{% endblock %}
-
 {% block style %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/admin.css')}}">
 {% endblock %}
@@ -15,13 +14,13 @@
     </div>
     <div class="d-flex justify-content-end">
         <div class="mx-3" style="width: 30vw;min-width:400px;">
-            <input type="text" name="filterCards" class="p-2 rounded-3 mx-3 form-control border-1" id="filterCards"
+            <input type="text" name="filterCards" class="rounded-3 mx-3 form-control border-1" id="filterCards"
                 oninput="searchCards()" placeholder="Search for Account...">
         </div>
         <div class="mx-4"></div>
         <div class="d-flex justify-content-between">
             <div style="max-width: 350px;">
-                <select class='form-select py-2 rounded-3 text-start' id="changeDisplay-roles">
+                <select class='form-select rounded-3 text-start' id="changeDisplay-roles">
                     <option value="any"> All Accounts </option>
                     <option value="staff"> Staff Accounts</option>
                     <option value="admin"> Admin Accounts</option>
@@ -29,7 +28,7 @@
             </div>
             <div class="mx-2"></div>
             <div style="max-width: 320px;">
-                <select class='form-select py-2 rounded-3 text-start' id="changeDisplay-status">
+                <select class='form-select rounded-3 text-start' id="changeDisplay-status">
                     <option value="all"> Any </option>
                     <option value="active"> Active </option>
                     <option value="deactivated"> Deactivated</option>
@@ -37,8 +36,8 @@
             </div>
         </div>
         <div class="mx-3"></div>
-        <button class="btn-red fw-medium button" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
-                class="fa-solid fa-user-plus me-2"> </span> Add User</button>
+        <button class="btn-red button fw-medium" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
+                class="fs-medium fa-solid fa-user-plus me-2"> </span> User</button>
     </div>
 
     <div class="my-5" id="users_data"></div>
@@ -61,42 +60,41 @@
                 users.forEach(user => {
                     var popup_id = Math.random();
                     let statusClass = user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'fc-orange');
-                    let card = `
-        <div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})" style="width:65vw;")>
-            <div class="card-body d-flex justify-content-between flex-nowrap">
-                <div class="me-4 account_info d-flex">
-                    <div class="p-2 me-3 border rounded-4" style="width:50px;height: 50px;">
-                    </div>
-                    <span class="position-absolute" style="bottom:1rem; left:50px"><i class="fa-solid fa-circle me-3 ${statusClass}"></i></span>
-                    <div class="p-2">
-                        <p class="fw-bold" id="account_name">${user.fullname}</p>
-                        <p class="fst-italic id="account_username"">${user.username}</span></p>
-                    </div>
-                </div>
-                <div class="online_status p-2">
-                    <p class="fst-italic fs-medium">${user.last_online}</p>
-                </div>
-                <div class="status_manager p-2" id="status_manager">
-                    <select class='border-0 px-4 py-2 rounded-3' value = "${user.status}" id="${user.user_id}">
-                        <option value="active" ${user.status === 'active' ? 'selected' : ''}> Active </option>
-                        <option value="deactivated" ${user.status === 'deactivated' ? 'selected' : ''}> Deactivated </option>
-                    </select>
-                </div>
-                <div class="py-3" id="manage_user_button">
+                    let card = `<div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})" style="width:65vw;")>
+                                    <div class="card-body d-flex justify-content-between flex-nowrap">
+                                        <div class="me-4 account_info d-flex">
+                                            <div class="p-2 me-3 border rounded-4" style="width:50px;height: 50px;">
+                                            </div>
+                                            <span class="position-absolute" style="bottom:1rem; left:50px"><i class="fa-solid fa-circle me-3 ${statusClass}"></i></span>
+                                            <div class="p-2">
+                                                <p class="fw-bold" id="account_name">${user.fullname}</p>
+                                                <p class="fst-italic id="account_username"">${user.username}</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="online_status p-2">
+                                            <p class="fst-italic fs-medium">${user.last_online}</p>
+                                        </div>
+                                        <div class="status_manager p-2" id="status_manager">
+                                            <select class='border-0 px-4 py-2 rounded-3' value = "${user.status}" id="${user.user_id}">
+                                                <option value="active" ${user.status === 'active' ? 'selected' : ''}> Active </option>
+                                                <option value="deactivated" ${user.status === 'deactivated' ? 'selected' : ''}> Deactivated </option>
+                                            </select>
+                                        </div>
+                                        <div class="py-3" id="manage_user_button">
 
-                    <a class ="py-3 px-3 fc-default text-decoration-none popup_button" onclick="showPopup(${popup_id})">
-                        <span class="fa-solid fa-ellipsis-vertical"> </span>
-                    </a>
-                    <span class="position-absolute top-50 start-100 translate-middle ms-5 manage_user_button d-none " id="${popup_id}">
-                        <div class = "vstack gap-2 col-md-5 mx-auto ms-5" style="width:120px;">
-                            <button class="button btn-gray fs-medium fw-medium" onclick="previewUser(${user.user_id})">Preview</button>
-                            <button class="button btn-gray edit_buttonUser fs-medium fw-medium" onclick="editProfile(${user.user_id})">Manage</button>
-                        </div>
-                    </span>
-                </div>
-            </div>
-        </div> 
-            `;
+                                            <a class ="py-3 px-3 fc-default text-decoration-none popup_button" onclick="showPopup(${popup_id})">
+                                                <span class="fa-solid fa-ellipsis-vertical"> </span>
+                                            </a>
+                                            <span class="position-absolute top-50 start-100 translate-middle ms-5 manage_user_button d-none " id="${popup_id}">
+                                                <div class = "vstack gap-2 col-md-5 mx-auto ms-5" style="width:120px;">
+                                                    <button class="button btn-gray fs-medium fw-medium" onclick="previewUser(${user.user_id})">Preview</button>
+                                                    <button class="button btn-gray edit_buttonUser fs-medium fw-medium" onclick="editProfile(${user.user_id})">Manage</button>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div> `;
+
                     usersDataDiv.innerHTML += card;
                 });
                 //add an event listener to loop for each selection in chaning user status
@@ -123,7 +121,7 @@
         changeDisplay_roles_value = event.target.value;
         populateUsers(changeDisplay_status_value + '-' + changeDisplay_roles_value);
     });
-    
+
     function showPopup(id) {
         // Hide all popups
         var popups = document.getElementsByClassName('manage_user_button');
@@ -192,22 +190,6 @@
     }
 </script>
 <script>
-    //show toast message of the status
-    function showToast(title, message, className, bordercol) {
-        let toastContainer = document.getElementById('toastContainer');
-
-        let toastHTML = `<div class="toast align-items-center border border-bottom-2  ${bordercol}" role="alert" aria-live="assertive" aria-atomic="true" id="add_userToast">
-                            <div class="d-flex">
-                                <div class="toast-body d-flex">
-                                    <span class="fs-large ${className} me-3"> </span> <span class="fw-bold me-2">${title}</span> ${message}
-                                </div>
-                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        </div>
-                        `;
-
-        toastContainer.innerHTML = toastHTML;
-    }
     //clear forms input 
     function clearForm(form_id) {
         let form = document.querySelector(form_id);
@@ -289,7 +271,7 @@
                         showToast('Success!', 'User status changed.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
-                    else if (data.change_state === 'failed'){ 
+                    else if (data.change_state === 'failed') {
                         showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
@@ -477,7 +459,7 @@
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
 
-                            
+
                             default:
                                 populateUsers('all-any');
                                 showToast(data.update_query, 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');

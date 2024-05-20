@@ -41,7 +41,7 @@ function sendHeartbeat() {
 }
 
 setTimeout(sendHeartbeat, 1000);
-setInterval(() => sendHeartbeat(), 300000);
+setInterval(() => sendHeartbeat(), 600000);
 
 window.onoffline = (event) => {
     alert("The network connection has been lost.");
