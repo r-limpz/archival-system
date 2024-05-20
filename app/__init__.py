@@ -5,6 +5,8 @@ from flask_login import LoginManager, login_required, current_user, AnonymousUse
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from .forms import LoginForm
+import pymysql
+from . import config
 from app.Blueprints.admin import admin_bp
 from app.Blueprints.staff import staff_bp
 from datetime import timedelta
@@ -51,6 +53,12 @@ def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
         session.permanent = True
         app.permanent_session_lifetime = timedelta(minutes=60)
+        checkConnection()
+
+def checkConnection():
+    if not config.conn.open:
+        print("Connection is closed. Reconnect or establish a new connection.")
+        config.conn.ping(reconnect=True)
 
 #Register authentication logic
 from .auth import auth as auth_blueprint

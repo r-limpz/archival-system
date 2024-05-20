@@ -1,15 +1,8 @@
 import pymysql
 
-try:
-    with pymysql.connect(host='localhost', user='root', password='', database='rog', cursorclass=pymysql.cursors.DictCursor):
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = ''
+DB_NAME = 'ards_archives'
 
-        conn = pymysql.connect(host='localhost',
-                            user='root',
-                            password='',
-                            database='ards_archives',
-                            cursorclass=pymysql.cursors.DictCursor)
-        
-except pymysql.Error as e:
-    print(f"Database Connection Error: {e}")
-
-
+conn = pymysql.connect(host = DB_HOST, user = DB_USER, password = DB_PASSWORD, database = DB_NAME, cursorclass=pymysql.cursors.DictCursor)

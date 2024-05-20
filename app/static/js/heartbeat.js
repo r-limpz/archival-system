@@ -7,8 +7,6 @@ channel.onmessage = function (event) {
     switch (event.data) {
         case 'session timeout':
             setTimeout(function () { window.location.href = timeoutUrl; }, 10000);
-            alert('Session has expired, please log in again')
-            window.location.href = timeoutUrl;
             break;
         case 'session expired':
             window.location.href = timeoutUrl;
@@ -49,8 +47,7 @@ window.onoffline = (event) => {
 };
 
 document.getElementById('logout_currentUser').addEventListener('click', function () {
-    clearSidebarState();
-    channel.postMessage('session timeout');
+    channel.postMessage('session expired');
 });
 
 
