@@ -222,32 +222,32 @@
     </div>
   </div>
 
-<div class="modal fade" id="editCollege_modal" tabindex="-1" role="dialog" aria-labelledby="editCollege_modal"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="width:400px;">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h5 class="fw-bold">Edit College</h5>
-        <div class="p-2">
-          <form action="{{ url_for('college_manager.create_courses')}}" method="post" id="edit_college">
-            <div class="inputs-forms px-3">
-              <div id="form-item" class="py-2">
-                <label class="fw-medium" for="update_college">College</label>
-                <input type="text" class="form-control update_collegeField" name="update_college" required>
-              </div>
+  <div class="modal fade" id="editCollege_modal" tabindex="-1" role="dialog" aria-labelledby="editCollege_modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="width:400px;">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h5 class="fw-bold">Edit College</h5>
+          <div class="p-2">
+            <form action="{{ url_for('college_manager.update_college')}}" method="post" id="edit_college">
+              <div class="inputs-forms px-3">
+                <div id="form-item" class="py-2">
+                  <label class="fw-medium" for="update_college">College</label>
+                  <input type="text" class="form-control update_collegeField" name="update_college" required>
+                </div>
                 <div id="populate_coursesList"></div>
+              </div>
+            </form>
+            <div class="mt-5 d-flex justify-content-end">
+              <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
+              <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#editCollege_confirmation"
+                type="button" id="button_showConfirmation_editCollege"> Update </button>
             </div>
-          </form>
-          <div class="mt-5 d-flex justify-content-end">
-            <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
-            <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#editCollege_confirmation"
-              type="button" id="button_showConfirmation_editCollege" disabled> Update </button>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="modal fade" id="addColleges_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="addColleges_confirmation" aria-hidden="true">
@@ -261,8 +261,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-          <button id="confirm_addCollege" class="btn-red fw-bold text-decoration-none button"
-            data-bs-dismiss="modal">
+          <button id="confirm_addCollege" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -270,25 +269,45 @@
     </div>
   </div>
 
-    <div class="modal fade" id="addCourses_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      role="dialog" aria-labelledby="addCourses_confirmation" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-body">
-            <div>
-              <h5 class="fw-bold mb-3"> Add Courses data </h5>
-              <p> Are you sure you want to add this course to the database?</p>
-            </div>
+  <div class="modal fade" id="addCourses_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="addCourses_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Add Courses data </h5>
+            <p> Are you sure you want to add this course to the database?</p>
           </div>
-          <div class="modal-footer">
-            <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-            <button id="confirm_addCourse" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
-              Confirm
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
+          <button id="confirm_addCourse" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            Confirm
+          </button>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="modal fade" id="editCollege_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="editCollege_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Update College data </h5>
+            <p> Are you sure you want to change the college information?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
+          <button id="confirm_updateCollege" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
   {% endif %}

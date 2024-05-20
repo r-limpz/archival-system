@@ -54,8 +54,9 @@
 
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
+                                let course_id = course.course_id;
                                 courseslist += `<li class="list-group-item">${course_name}</li>`;
-                                tempCoursesArray.push({ course_id: course.course_id, course: course_name, });
+                                tempCoursesArray.push({ course_id: course_id, course: course_name, });
                                 coursesArray.push(course_name);
                             });
                         }
@@ -64,7 +65,7 @@
                         }
                     }
 
-                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards">
+                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards border-0">
                                     <div class="accordion" id="parent${college_id}">
                                         <div class="accordion-item">
                                             <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
@@ -85,7 +86,7 @@
                                                 aria-labelledby="label${college_id}"
                                                 data-bs-parent="#parent${college_id}">
                                                     <div class="accordion-body p-0 m-0">
-                                                        <div class="card-body border border-top-0 rounded-bottom-3 p-2">
+                                                        <div class="card-body border-0 rounded-bottom-3 p-2">
                                                             <div id="courses_list">
                                                                 <ul class="list-group list-group-flush">
                                                                     ${courseslist} 
@@ -119,7 +120,6 @@
 
     }
     populateColleges();
-    console.log(collegesArray);
 
     function checkCollege(inputID, submitButton) {
         const collegeName = document.getElementById(inputID).value;
@@ -243,7 +243,7 @@
     });
 </script>
 <script>
-    
+
     function show_editModal(input_colID) {
         // Assuming you have already fetched the collegesArray
         college_id = parseInt(input_colID)
@@ -254,24 +254,76 @@
             let inputFields = document.getElementsByClassName('update_collegeField')[0];
             inputFields.value = college.college_name;
             inputFields.id = college.college_id;
-
             containerPopulate.innerHTML = ''; // Clear existing content
 
-            let titleCourse = `<div class="fw-medium mt-3">Courses</div>`;
-            containerPopulate.innerHTML += titleCourse;
+            if (college.courses.length > 0) {
+                let titleCourse = `<div class="fw-medium mt-3">Courses :</div>`;
+                containerPopulate.innerHTML += titleCourse;
 
-            college.courses.forEach(course => {
-                let inputField = `  <div id="form-item" class="py-2">
+                college.courses.forEach(course => {
+                    let inputField = `  <div id="form-item" class="py-2">
                                         <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course}" required>
                                     </div> `;
-                containerPopulate.innerHTML += inputField;
-            });
+                    containerPopulate.innerHTML += inputField;
+                });
+            }
 
             // Show the modal
-             $('#editCollege_modal').modal('show');
+            $('#editCollege_modal').modal('show');
         } else {
             console.error(`College with ID ${college_id} not found.`);
         }
     }
+
+    $('#confirm_updateCollege').on('click', function (event) {
+        event.preventDefault();
+        let college_input = document.getElementsByClassName('update_collegeField')[0];
+        let college_id = college_input.id;
+        let college_name = college_input.value;
+
+        let inputContainer = document.getElementById('populate_coursesList');
+        let inputFields = inputContainer.getElementsByTagName('input');
+        let courses_data = [];
+
+        for (let i = 0; i < inputFields.length; i++) {
+            let input = inputFields[i];
+            let courseId = input.id;
+            let courseName = input.value;
+
+            courses_data.push({ course_id: courseId, course_name: courseName });
+        }
+
+        const formData = {
+            college_id,
+            college_name,
+            courses_data,
+        };
+
+        $.ajax({
+            url: '/admin/college_manager/update_data/update_college',
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                switch (data.query_result) {
+                    case 'success'://the user successfully appended in the database
+                        populateColleges();
+                        clearForm('#new_courses');
+                        showToast('Success!', 'Course added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'failed'://error in processing occured
+                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'duplicate'://user already exist in the database
+                        showToast('Course Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                }
+            }
+        });
+    });
 </script>
 {% endblock%}

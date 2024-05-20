@@ -112,6 +112,7 @@ def createCourse(addon_College, newcourse_name):
     if newcourse_name:
         try:
             with config.conn.cursor() as cursor:
+                
                 cursor.execute('SELECT * FROM courses WHERE course_name = %s', (newcourse_name))
                 course_exist = cursor.fetchone()
 
@@ -138,11 +139,41 @@ def createCourse(addon_College, newcourse_name):
         return 'failed'
 
 #update college function
-def updateCollege(course_id, newCourse_name):
-    pass
+def updateCollege(college_id, college_name, courses):
+
+    try:
+        with config.conn.cursor() as cursor:
+            # Update college name
+            cursor.execute('UPDATE college SET college_name = %s WHERE college_id = %s AND college_name != %s', (college_name, college_id, college_name))
+            config.conn.commit()
+
+            if cursor.rowcount > 0:
+                query_result = 'success'
+            else:
+                query_result = 'failed'
+
+            # Update course names
+            for course in courses:
+                course_id = course['course_id']
+                course_name = course['course_name']
+
+                cursor.execute('UPDATE courses SET course_name = %s WHERE course_id = %s AND course_name != %s', (course_name, course_id, course_name))
+                config.conn.commit()
+
+            if cursor.rowcount > 0:
+                query_result = 'success'
+            else:
+                query_result = 'failed'
+
+            return query_result
+    except Exception as e:
+        print(f"Update college error occurred: {e}")
+        return query_result
+
 
 #update course function
-def updateCourse(college_id, newCollege_name):
+def updateCourse(college_id, college_name, courses):
+
     pass
 
 #remove college function
@@ -182,6 +213,21 @@ def create_courses():
         newcourse_name = request.form.get('newcourse_name')
 
         query_result = createCourse(addon_College, newcourse_name)
+
+        if query_result:
+            return jsonify({'query_result' : query_result})
+        else:
+            return jsonify({'query_result' : 'failed'})
+
+@college_manager.route('/update_data/update_college' , methods=['POST', 'GET'])
+def update_college():
+    if request.method == "POST":
+        data = request.get_json()
+        college_id = data.get('college_id')
+        college_name = data.get('college_name')
+        courses_data = data.get('courses_data')
+
+        query_result = updateCollege(college_id, college_name, courses_data)
 
         if query_result:
             return jsonify({'query_result' : query_result})
