@@ -233,8 +233,7 @@
             <div class="inputs-forms px-3">
               <div id="form-item" class="py-2">
                 <label class="fw-medium" for="update_college">College</label>
-                <input type="text" class=" form-control" id="update_college" name="update_college"
-                  oninput="checkCollege('update_course', 'button_showConfirmation_editCollege')" required>
+                <input type="text" class="form-control update_collegeField" name="update_college" required>
               </div>
                 <div id="populate_coursesList"></div>
             </div>
@@ -242,7 +241,7 @@
           <div class="mt-5 d-flex justify-content-end">
             <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
             <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#editCollege_confirmation"
-              type="button" id="button_showConfirmation_editCollege" disabled> Submit </button>
+              type="button" id="button_showConfirmation_editCollege" disabled> Update </button>
           </div>
         </div>
       </div>
