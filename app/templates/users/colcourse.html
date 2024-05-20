@@ -17,7 +17,7 @@
         <button class="fw-medium mx-2" data-bs-toggle="modal" data-bs-target="#addCourses_modal"> <span
                 class="fc-default fa-solid fa-plus me-2"> </span>Courses</button>
     </div>
-    <div id="college_displayCards" class="my-3 d-flex align-content-start flex-wrap"></div>
+    <div id="college_displayCards" class="mt-3 mb-5 d-flex align-content-start flex-wrap"></div>
 </section>
 
 {% endblock%}
@@ -65,18 +65,18 @@
                         }
                     }
 
-                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards border-0">
+                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards border-0 prevent-select">
                                     <div class="accordion" id="parent${college_id}">
                                         <div class="accordion-item">
                                             <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
                                                 <button class="w-full accordion-button collapsed py-3 px-4 d-flex justify-content-between shadow-none" 
                                                 type="button" data-bs-toggle="collapse" 
                                                 data-bs-target="#${college_id}" 
-                                                aria-expanded="false" 
+                                                aria-expanded="false"
                                                 aria-controls="${college_id}"
                                                 style="width:370px; min-height:90px;">
                                                         <div>
-                                                            <h5 class="fw-medium fc-light ps-2 pe-4">
+                                                            <h5 class="fw-medium fc-light ps-2 pe-4" id="card_collegeName">
                                                                 ${college_name}
                                                             </h5>
                                                         </div>
@@ -102,6 +102,28 @@
                                         </div>
                                     </div>
                                 </div> `;
+
+                    // Add an event listener for double clicks on the document
+                    document.addEventListener('dblclick', function (event) {
+                        // Check if the double click occurred outside of the accordion buttons or cards
+                        const isOutsideAccordion = !event.target.closest('.accordion-button');
+
+                        if (isOutsideAccordion) {
+                            // Get all the accordion items
+                            const accordionItems = document.querySelectorAll('.accordion-item');
+                            // Collapse each accordion item
+                            accordionItems.forEach(item => {
+                                item.querySelector('.accordion-button').classList.add('collapsed');
+
+                                // Change 'aria-expanded' attribute to 'false'
+                                item.querySelector('.accordion-button').setAttribute('aria-expanded', 'false');
+
+                                // Remove 'show' class from the content
+                                item.querySelector('.accordion-collapse').classList.remove('show');
+                            });
+                        }
+                    });
+
 
                     collegeDataDiv.innerHTML += card;
                     collegeSelect.innerHTML += collegeOption;
@@ -157,6 +179,32 @@
         }
     }
 
+    function searchCards() {
+        var input, filter, cards, cardContainer, account_name, account_username, i;
+
+        input = document.getElementById("filterCards");
+        filter = input.value.toUpperCase();
+
+        cardContainer = document.getElementById("users_data");
+        cards = cardContainer.getElementsByClassName("card");
+
+        for (i = 0; i < cards.length; i++) {
+            college_name = cards[i].querySelector("#card_collegeName");
+            course_name = cards[i].querySelector("#account_username");
+
+            if (college_name.innerText.toUpperCase().indexOf(filter) > -1) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+
+            if (course_name.innerText.toUpperCase().indexOf(filter) > -1) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
 </script>
 <script>
     $('#confirm_addCollege').on('click', function (event) {

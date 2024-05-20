@@ -126,11 +126,13 @@ body {
     font-size: var(--fs-default) !important;
     font-weight: 500;
 }
-p{
+
+p {
     line-height: normal;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
+
 /* font size */
 .fs-def {
     font-size: var(--fs-default);
@@ -387,6 +389,7 @@ input {
 .bg-red-gradient {
     background: var(--bg-red-gradient);
 }
+
 .bg-red-gradient-darker {
     background: var(--button-bg-red-active);
 }
@@ -422,11 +425,16 @@ button {
     border-radius: var(--roundness-default);
     border: solid 1px var(--border-default);
     color: var(--fc-default);
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
+
 button:hover {
     color: var(--fc-dark);
     font-weight: 700 !important;
 }
+
 button:active {
     font-weight: 700 !important;
 }
@@ -435,36 +443,40 @@ button:active {
     border-radius: var(--roundness-default);
     padding: var(--button-p-default);
 }
+
 .button:hover {
     font-weight: 700;
 }
 
-.btn-red{
+.btn-red {
     background: var(--button-bg-red-gradient);
-    border:none;
+    border: none;
     color: var(--fc-light);
 }
-.btn-red:hover{
+
+.btn-red:hover {
     color: var(--fc-light);
     background: var(--button-bg-red-gradient-active);
 }
 
-.btn-orange{
+.btn-orange {
     background: var(--button-bg-orange-gradient);
-    border:none;
+    border: none;
     color: var(--fc-light);
 }
-.btn-orange:hover{
+
+.btn-orange:hover {
     color: var(--fc-light);
     background: var(--button-bg-orange-gradient-active);
 }
 
-.btn-green{
+.btn-green {
     background: var(--button-bg-green-gradient);
-    border:none;
+    border: none;
     color: var(--fc-light);
 }
-.btn-green:hover{
+
+.btn-green:hover {
     color: var(--fc-light);
     background: var(--button-bg-green-gradient-active);
 }
