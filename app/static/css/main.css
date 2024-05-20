@@ -423,14 +423,20 @@ button {
     border: solid 1px var(--border-default);
     color: var(--fc-default);
 }
-
-.button:hover{
-    font-weight: bold;    
+button:hover {
+    color: var(--fc-dark);
+    font-weight: 700 !important;
+}
+button:active {
+    font-weight: 700 !important;
 }
 
 .button {
     border-radius: var(--roundness-default);
     padding: var(--button-p-default);
+}
+.button:hover {
+    font-weight: 700;
 }
 
 .btn-red{
@@ -439,6 +445,7 @@ button {
     color: var(--fc-light);
 }
 .btn-red:hover{
+    color: var(--fc-light);
     background: var(--button-bg-red-gradient-active);
 }
 
@@ -448,6 +455,7 @@ button {
     color: var(--fc-light);
 }
 .btn-orange:hover{
+    color: var(--fc-light);
     background: var(--button-bg-orange-gradient-active);
 }
 
@@ -457,6 +465,7 @@ button {
     color: var(--fc-light);
 }
 .btn-green:hover{
+    color: var(--fc-light);
     background: var(--button-bg-green-gradient-active);
 }
 
@@ -467,7 +476,9 @@ button {
 }
 
 .btn-gray:hover {
+    color: var(--fc-light);
     background: var(--button-bg-default-active);
+    font-weight: bold;
 }
 
 .form-control:focus {

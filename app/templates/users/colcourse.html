@@ -5,11 +5,17 @@
 {% endblock %}
 {% block content %}
 
-<section class="p-2">
+<section class="p-2" id="container_collapsedAll">
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
         <h3 class="fw-bold">College and Course Manager </h3>
         <p class="fs-medium fst-italic"> A tool for easy management and editing of college and associated courses data.
         </p>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button class="fw-medium mx-2" data-bs-toggle="modal" data-bs-target="#addColleges_modal"> <span
+                class="fc-default fa-solid fa-plus me-2"> </span>College</button>
+        <button class="fw-medium mx-2" data-bs-toggle="modal" data-bs-target="#addCourses_modal"> <span
+                class="fc-default fa-solid fa-plus me-2"> </span>Courses</button>
     </div>
     <div id="college_displayCards" class="my-3 d-flex align-content-start flex-wrap"></div>
 </section>
@@ -18,17 +24,30 @@
 
 {% block scripts %}
 <script>
+    var collegesArray = [];
+    var coursesArray = [];
+    //collegesArray = [{college_id, college_name, courses[index{course_id, course_name}]}]
+
     function populateColleges() {
+        collegesArray = [];
         fetch('/admin/college_manager/display_colleges')
             .then(response => response.json())
             .then(colleges => {
+                coursesArray = [];
                 let collegeDataDiv = document.getElementById('college_displayCards');
+                let collegeSelect = document.getElementById('addon_College');
+                collegeSelect.innerHTML = '';
                 collegeDataDiv.innerHTML = '';  // Clear the div
 
                 colleges.forEach(college => {
+
                     let college_id = college.college_id;
                     let college_name = college.college_name;
                     let courseslist = '';
+                    let collegeOption = '';
+                    let tempCoursesArray = [];
+
+                    collegeOption = `<option value= "${college_id}">${college_name}</option>`;
 
                     if (college.courses && Array.isArray(college.courses)) {
                         if (college.courses.length > 0) {
@@ -36,6 +55,8 @@
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
                                 courseslist += `<li class="list-group-item">${course_name}</li>`;
+                                tempCoursesArray.push({ course_id: course.course_id, course: course_name, });
+                                coursesArray.push(course_name);
                             });
                         }
                         else {
@@ -43,50 +64,237 @@
                         }
                     }
 
-                    let card = `
-                    <div class="college-entry card prevent-select my-3 mx-2 border-0">
-                        <div class="accordion" id="parent${college_id}">
-                            <div class="accordion-item">
-                                <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
-                                    <button class="w-full accordion-button collapsed py-3 px-4 d-flex justify-content-between bg-red-gradient-darker shadow-none" 
-                                    type="button" data-bs-toggle="collapse" 
-                                    data-bs-target="#${college_id}" 
-                                    aria-expanded="false" 
-                                    aria-controls="${college_id}"
-                                    style="width:370px; min-height:90px;">
-                                            <div>
-                                                <h5 class="fw-medium fc-light ps-2 pe-4">
-                                                    ${college_name}
-                                                </h5>
+                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards">
+                                    <div class="accordion" id="parent${college_id}">
+                                        <div class="accordion-item">
+                                            <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
+                                                <button class="w-full accordion-button collapsed py-3 px-4 d-flex justify-content-between shadow-none" 
+                                                type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#${college_id}" 
+                                                aria-expanded="false" 
+                                                aria-controls="${college_id}"
+                                                style="width:370px; min-height:90px;">
+                                                        <div>
+                                                            <h5 class="fw-medium fc-light ps-2 pe-4">
+                                                                ${college_name}
+                                                            </h5>
+                                                        </div>
+                                                </button>
                                             </div>
-                                    </button>
-                                </div>
-                                    <div id="${college_id}" class="accordion-collapse collapse"
-                                    aria-labelledby="label${college_id}"
-                                    data-bs-parent="#parent${college_id}">
-                                        <div class="accordion-body p-0 m-0">
-                                            <div class="card-body border border-top-0 rounded-bottom-3">
-                                                <div id="courses_list">
-                                                    <ul class="list-group list-group-flush"> ${courseslist} 
-                                                        <li class="list-group-item text-end"><a class="text-decorator-none fc-default p-2"><span class="fa fa-edit"></span></a></li>
-                                                    </ul>
+                                                <div id="${college_id}" class="accordion-collapse collapse"
+                                                aria-labelledby="label${college_id}"
+                                                data-bs-parent="#parent${college_id}">
+                                                    <div class="accordion-body p-0 m-0">
+                                                        <div class="card-body border border-top-0 rounded-bottom-3 p-2">
+                                                            <div id="courses_list">
+                                                                <ul class="list-group list-group-flush">
+                                                                    ${courseslist} 
+                                                                    <li class="list-group-item text-end">
+                                                                        <a class="fa-solid fa-ellipsis" onclick="show_editModal(${college_id})"></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                                </div> `;
 
                     collegeDataDiv.innerHTML += card;
+                    collegeSelect.innerHTML += collegeOption;
+
+                    const collegeObject = {
+                        college_id,
+                        college_name,
+                        courses: tempCoursesArray
+                    };
+                    collegesArray.push(collegeObject);
                 });
+            })
+            .catch(error => {
+                console.error('Error fetching colleges:', error);
             });
+
+    }
+    populateColleges();
+    console.log(collegesArray);
+
+    function checkCollege(inputID, submitButton) {
+        const collegeName = document.getElementById(inputID).value;
+        const foundCollege = collegesArray.find(college => college.college_name.toLowerCase() === collegeName.toLowerCase());
+        const submit_button = document.getElementById(submitButton);
+
+        if (foundCollege) {
+            document.getElementById(inputID).classList.add('is-invalid');
+            submit_button.disabled = true;
+        } else {
+            document.getElementById(inputID).classList.remove('is-invalid');
+            submit_button.disabled = false;
+        }
+    }
+    function checkCourses(inputID, submitButton) {
+        const courseName = document.getElementById(inputID).value;
+        const foundCourse = coursesArray.some(course => course.toLowerCase() === courseName.toLowerCase());
+        const submit_button = document.getElementById(submitButton);
+
+        if (foundCourse) {
+            document.getElementById(inputID).classList.add('is-invalid');
+            submit_button.disabled = true;
+        } else {
+            document.getElementById(inputID).classList.remove('is-invalid');
+            submit_button.disabled = false;
+        }
     }
 
-    populateColleges();
+    function clearForm(form_id) {
+        let form = document.querySelector(form_id);
+        let inputs = form.querySelectorAll('input');
+
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].value = '';
+        }
+    }
 
 </script>
+<script>
+    $('#confirm_addCollege').on('click', function (event) {
+        event.preventDefault();
+        let college_name = $('#newcollege_name').val();
+        let formData = {
+            'newcollege_name': college_name,
+        };
+        //send the data through ajax and recieve a corresponding status report of query
+        $.ajax({
+            url: '/admin/college_manager/add/new_college',
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                console.log('message :' + data.query_result);
+                switch (data.query_result) {
+                    case 'success'://the user successfully appended in the database
+                        populateColleges();
+                        clearForm('#new_college');
+                        showToast('Success!', 'College added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'failed'://error in processing occured
+                        showToast('Upload Error occurred!', 'Failed to add college data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'duplicate'://user already exist in the database
+                        showToast('College Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                }
+            },
+            //handle the ajax error 
+            error: function (error) {
+                console.error('Error:', error);
+                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+            }
+        });
+    });
 
+    $('#confirm_addCourse').on('click', function (event) {
+        event.preventDefault();
+        let addon_College = $('#addon_College').val();
+        let newcourse_name = $('#newcourse_name').val();
+        console.log(typeof (addon_College));
+        let formData = {
+            'addon_College': addon_College,
+            'newcourse_name': newcourse_name,
+        };
+        //send the data through ajax and recieve a corresponding status report of query
+        $.ajax({
+            url: '/admin/college_manager/add/new_course',
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                console.log('message :' + data.query_result);
+                switch (data.query_result) {
+                    case 'success'://the user successfully appended in the database
+                        populateColleges();
+                        clearForm('#new_courses');
+                        showToast('Success!', 'Course added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'failed'://error in processing occured
+                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'duplicate'://user already exist in the database
+                        showToast('Course Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                }
+            },
+            //handle the ajax error 
+            error: function (error) {
+                console.error('Error:', error);
+                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+            }
+        });
+    });
+</script>
+<script>
+    function show_editModal(input_colID) {
+        // Assuming you have already fetched the collegesArray
+        college_id = parseInt(input_colID)
+        const college = collegesArray.find(college => college.college_id === college_id);
+
+        if (college) {
+            const containerPopulate = document.getElementById('populate_coursesList');
+            containerPopulate.innerHTML = ''; // Clear existing content
+
+            college.courses.forEach(course => {
+                const course_id = course.course_id;
+                const course_name = course.course;
+
+                // Create an input field for each course
+                let inputField = `  <div id="form-item" class="py-2">
+                                        <label class="fw-medium" for="update_course">Courses</label>
+                                        <input type="text" class="form-control" id="${course_id}" name="update_course" value="${course_name}" required>
+                                    </div> `;
+                containerPopulate.appendChild(inputField);
+            });
+
+            // Show the modal
+            document.querySelector('#editCollege_modal').modal('show');
+        } else {
+            console.error(`College with ID ${college_id} not found.`);
+        }
+    }
+    function show_editModal(input_colID) {
+        // Assuming you have already fetched the collegesArray
+        college_id = parseInt(input_colID)
+        const college = collegesArray.find(college => college.college_id === college_id);
+
+        if (college) {
+            let containerPopulate = document.getElementById('populate_coursesList');
+            document.getElementById('update_college').value = college.college_name;
+            containerPopulate.innerHTML = ''; // Clear existing content
+
+            let titleCourse = `<div class="fw-medium mt-3">Courses</div>`;
+            containerPopulate.innerHTML += titleCourse;
+
+            college.courses.forEach(course => {
+                let inputField = `  <div id="form-item" class="py-2">
+                                        <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course}" required>
+                                    </div> `;
+                containerPopulate.innerHTML += inputField;
+            });
+
+            // Show the modal
+             $('#editCollege_modal').modal('show');
+        } else {
+            console.error(`College with ID ${college_id} not found.`);
+        }
+    }
+</script>
 {% endblock%}
