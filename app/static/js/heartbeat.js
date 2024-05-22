@@ -1,7 +1,5 @@
 var node = document.getElementById('account_username');
-var current_user = "{{ current_user.id }}";
 var timeoutUrl = '/authenticate-user/check-token/timeout/';
-console.log(current_user);
 const channel = new BroadcastChannel("sess_channel");
 // Listen for messages from the channel
 channel.onmessage = function (event) {

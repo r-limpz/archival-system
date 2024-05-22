@@ -12,6 +12,17 @@
         </p>
     </div>
     <div class="d-flex justify-content-end">
+        <div class="me-5" style="width: 30vw;min-width:400px;">
+            <input type="text" name="filterCards" class="rounded-3 mx-3 form-control border-1" id="filterCards"
+                oninput="searchCards()" placeholder="Search for College...">
+        </div>
+        <div class="mx-4" style="max-width: 350px;">
+            <select class='form-select rounded-3 text-start' id="changeDisplay-roles">
+                <option value="organized"> Show Colleges</option>
+                <option value="unorganize"> Unlinked Courses</option>
+            </select>
+        </div>
+
         <button class="fw-medium mx-2" data-bs-toggle="modal" data-bs-target="#addColleges_modal"> <span
                 class="fc-default fa-solid fa-plus me-2"> </span>College</button>
         <button class="fw-medium mx-2" data-bs-toggle="modal" data-bs-target="#addCourses_modal"> <span
@@ -55,7 +66,7 @@
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
-                                courseslist += `<li class="list-group-item">${course_name}</li>`;
+                                courseslist += `<li class="list-group-item courses_item">${course_name}</li>`;
                                 tempCoursesArray.push({ course_id: course_id, course: course_name, });
                                 coursesArray.push(course_name);
                             });
@@ -75,11 +86,9 @@
                                                 aria-expanded="false"
                                                 aria-controls="${college_id}"
                                                 style="width:370px; min-height:90px;">
-                                                        <div>
                                                             <h5 class="fw-medium fc-light ps-2 pe-4" id="card_collegeName">
                                                                 ${college_name}
                                                             </h5>
-                                                        </div>
                                                 </button>
                                             </div>
                                                 <div id="${college_id}" class="accordion-collapse collapse"
@@ -91,7 +100,7 @@
                                                                 <ul class="list-group list-group-flush">
                                                                     ${courseslist} 
                                                                     <li class="list-group-item text-end">
-                                                                        <a class="fa-solid fa-ellipsis" onclick="show_editModal(${college_id})"></a>
+                                                                        <a class="fa-solid fa-ellipsis p-2 pe-0" onclick="show_editModal(${college_id})"></a>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -180,31 +189,26 @@
     }
 
     function searchCards() {
-        var input, filter, cards, cardContainer, account_name, account_username, i;
+            var input, filter, cards, cardContainer, college_name, i;
 
-        input = document.getElementById("filterCards");
-        filter = input.value.toUpperCase();
+            input = document.getElementById("filterCards");
+            filter = input.value.toUpperCase();
 
-        cardContainer = document.getElementById("users_data");
-        cards = cardContainer.getElementsByClassName("card");
+            cardContainer = document.getElementById("college_displayCards");
+            cards = cardContainer.getElementsByClassName("card");
 
-        for (i = 0; i < cards.length; i++) {
-            college_name = cards[i].querySelector("#card_collegeName");
-            course_name = cards[i].querySelector("#account_username");
+            for (i = 0; i < cards.length; i++) {
+                college_name = cards[i].querySelector("#card_collegeName");
+                
 
-            if (college_name.innerText.toUpperCase().indexOf(filter) > -1) {
-                cards[i].style.display = "";
-            } else {
-                cards[i].style.display = "none";
-            }
-
-            if (course_name.innerText.toUpperCase().indexOf(filter) > -1) {
-                cards[i].style.display = "";
-            } else {
-                cards[i].style.display = "none";
+                if (college_name.innerText.toUpperCase().indexOf(filter) > -1 ) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
             }
         }
-    }
+
 </script>
 <script>
     $('#confirm_addCollege').on('click', function (event) {
@@ -301,6 +305,7 @@
             let containerPopulate = document.getElementById('populate_coursesList');
             let inputFields = document.getElementsByClassName('update_collegeField')[0];
             inputFields.value = college.college_name;
+            inputFields.placeholder = college.college_name;
             inputFields.id = college.college_id;
             containerPopulate.innerHTML = ''; // Clear existing content
 
@@ -310,12 +315,11 @@
 
                 college.courses.forEach(course => {
                     let inputField = `  <div id="form-item" class="py-2">
-                                        <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course}" required>
+                                        <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course}" placeholder="${course.course}" required>
                                     </div> `;
                     containerPopulate.innerHTML += inputField;
                 });
             }
-
             // Show the modal
             $('#editCollege_modal').modal('show');
         } else {
