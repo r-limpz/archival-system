@@ -5,7 +5,6 @@ from flask_login import LoginManager, login_required, current_user, AnonymousUse
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from .forms import LoginForm
-import pymysql
 from . import config
 from app.Blueprints.admin import admin_bp
 from app.Blueprints.staff import staff_bp
@@ -32,11 +31,12 @@ captcha = FlaskSessionCaptcha(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = "strong"
-login_manager.refresh_view = 'home'
+login_manager.refresh_view = 'index'
 login_manager.login_view = 'auth.login'
 
 csrf = CSRFProtect()
 csrf.init_app(app)
+
 argon2 = Argon2(app)
 
 app.config['UPLOAD_FOLDER'] = os.path.realpath('app/static')

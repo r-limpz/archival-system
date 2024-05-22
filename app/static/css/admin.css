@@ -24,7 +24,7 @@
 }
 
 .online_status {
-    min-width: 180px;
+    min-width: 200px;
 }
 
 .manage_user_button {
@@ -45,6 +45,13 @@ option {
     box-shadow: none;
     border-color: none;
     background-color: var(--color-red-active) !important;
+}
+
+.accordion-button:collapsed:focus,
+.accordion-button.collapsed {
+    box-shadow: none;
+    border-color: none;
+    background-color: var(--bg-gray) !important;
 }
 
 .accordion-button::after,

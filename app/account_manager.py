@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for, abort
 from flask_login import login_required, current_user
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 import secrets
 import string
 from flask import current_app as app
@@ -278,10 +278,29 @@ def updateAccount(user_id, fullname, username, role, password):
                     return 'success'
                 else:
                     return 'failed'
-                          
     # Catch and print any exceptions that occur during the update process
     except Exception as e:
         print(f"updateAccount() : {e}")
+
+def removeAccount(profile_id):
+    try:
+        with config.conn.cursor() as cursor:
+            profile_id = int(profile_id)
+
+            cursor.execute('INSERT INTO removed_sched_deact (user_id, sched_removal) VALUES (%s, DATE_ADD(NOW(), INTERVAL 30 DAY))', (profile_id))
+            config.conn.commit()
+
+            cursor.execute('SELECT * FROM removed_sched_deact WHERE user_id =%s', (profile_id))
+            schedExist = cursor.fetchone()
+
+            if schedExist:
+                query = 'success'
+            else:
+                query = 'failed'
+
+            return query
+    except Exception as e:
+        print(f"removeAccount() : {e}")
 
 @account_manager.route('/display_staff_users/<active_status>')
 @login_required
@@ -289,7 +308,6 @@ def updateAccount(user_id, fullname, username, role, password):
 def users_list(active_status):
     if active_status:
         try:
-        
             users_list = fetchallAccount(active_status)
             if users_list:
                 return jsonify(users_list)
@@ -435,6 +453,27 @@ def edit_user():
                 
     except Exception as e:
             print(f"update user credentials  error occurred: {e}")
+
+
+@account_manager.route('/account/deactivate/delete-user', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def account_delete():
+    try:
+        if request.method == "POST":
+            data = request.get_json()
+            profile_id = data.get('user_data')
+
+            query = removeAccount(profile_id)
+
+            if query:
+                return jsonify({'delete_query': query})
+            else:
+                return jsonify({'delete_query': 'failed'})
+        
+    except Exception as e:
+            print(f"delete user error occurred: {e}")
+
 
 @account_manager.route('/verify-unique/textdata', methods=['POST', 'GET'])
 @login_required

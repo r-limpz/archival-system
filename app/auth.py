@@ -6,12 +6,14 @@ from device_detector import DeviceDetector
 import hashlib
 import secrets
 import string
-from datetime import datetime, timedelta
-from . import config, login_manager, argon2, captcha
+from . import config, login_manager, argon2, captcha 
 from flask import current_app as app
 from .forms import LoginForm
 
 auth = Blueprint('auth', __name__)
+
+logged_devices = []
+MAX_ATTEMPTS = 10
 
 def generate_id(length=256):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -26,6 +28,70 @@ def check_token(token, data, key, key2):
     expected_token = generate_token(data, key, key2)
     return token == expected_token
 
+def getUserInfo():
+    device_data = {'device': '', 'os': '', 'browser': '', 'ip_address': ''}
+    ip_address = socket.gethostbyname(socket.gethostname())
+    agent = request.headers.get('User-Agent')
+    browser_info = httpagentparser.detect(agent)
+
+    browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
+    device = DeviceDetector(agent).parse()
+    deviceType= device.device_type()
+    os = f"{device.os_name()} {device.os_version()}"  # Improved string formatting
+
+    device_data = {'device': (deviceType), 'os': os, 'browser': browser_name, 'ip_address': ip_address}
+    return device_data
+
+def loginAttempt(action):
+    user_info = getUserInfo()
+    ipaddress = user_info['ip_address']
+    device = (hashlib.sha256(ipaddress.encode()).hexdigest())
+    existing_device = next((device for device in logged_devices if device['mkasan302923439hsabah'] == device), None)
+
+    if action == 'reset':
+        if existing_device:
+            existing_device['count'] = 0
+        else:
+            logged_devices.append({'mkasan302923439hsabah': device, 'count': 0})
+    elif action == 'attempt':
+        if existing_device:
+            existing_device['count'] += 1
+        else:
+            logged_devices.append({'mkasan302923439hsabah': device, 'count': 1})
+
+def loginHistory(user_id, session_data):
+    with config.conn.cursor() as cursor:
+        user_deviceInfo = getUserInfo()
+        device = user_deviceInfo['device']
+        browser = user_deviceInfo['browser']
+        os = user_deviceInfo['os']
+        ip_address = user_deviceInfo['ip_address']
+
+        cursor.execute('SELECT * FROM login_history WHERE session_data = %s', (session_data,))
+        current_history = cursor.fetchone()
+     
+        if not current_history:
+            cursor.execute('INSERT INTO login_history(user_id, device, browser, os, ip_address, session_data) VALUES (%s, %s, %s, %s, %s, %s)',
+                           (str(user_id), device, browser, os, ip_address, session_data))
+            config.conn.commit()
+
+def session_expired(username):
+    if username:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
+            userData = cursor.fetchone()
+
+            if userData:
+                cursor.execute('SELECT * FROM session WHERE username = %s AND online = 1', (username))
+                sessionData = cursor.fetchone()
+
+                if sessionData:
+                    cursor.execute('DELETE FROM session WHERE username = %s', (username,))
+                    config.conn.commit()
+                else:
+                    print('session user not found')
+            else:
+                print('session user not found')
 class User(UserMixin):
     def __init__(self, id, username, role, token):
         self.id = id
@@ -83,7 +149,7 @@ def load_user(session_id):
             
     except Exception as e:
         print(f"login loader: {e}")
-        
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -124,23 +190,23 @@ def login():
                         #generate token for session creation on cookies
                         token = generate_token(user['password'], user['pass_key'], session_id)
                         login_user(User(session_id, username, user_role, token), remember=False)
-
                         loginHistory((user['user_id']), session_id)
-
+                        loginAttempt('reset')
                         redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
 
                         if redirect_url:#redirect if user is authenicated and authorized
                             return redirect(url_for(redirect_url))
-                                
                         else:
                             error = invalidError
                     else:
                         error = invalidError
                 else:
                     error = invalidError
+                    loginAttempt('attempt')
+                    print(logged_devices)
             else:
                 error = captchaError
-
+               
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
 @auth.route('/logout', methods=['GET', 'POST'])
@@ -161,57 +227,6 @@ def logout():
             session.clear()
 
     return redirect(url_for('home'))
-
-def getUserInfo():
-    device_data = {'device': '', 'os': '', 'browser': '', 'ip_address': ''}
-    ip_address = socket.gethostbyname(socket.gethostname())
-    agent = request.headers.get('User-Agent')
-    browser_info = httpagentparser.detect(agent)
-
-    browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
-    device = DeviceDetector(agent).parse()
-    deviceType= device.device_type()
-    os = f"{device.os_name()} {device.os_version()}"  # Improved string formatting
-
-    device_data = {'device': (deviceType), 'os': os, 'browser': browser_name, 'ip_address': ip_address}
-
-    return device_data
-
-
-def loginHistory(user_id, session_data):
-    with config.conn.cursor() as cursor:
-        user_deviceInfo = getUserInfo()
-        device = user_deviceInfo['device']
-        browser = user_deviceInfo['browser']
-        os = user_deviceInfo['os']
-        ip_address = user_deviceInfo['ip_address']
-
-        cursor.execute('SELECT * FROM login_history WHERE session_data = %s', (session_data,))
-        current_history = cursor.fetchone()
-     
-        if not current_history:
-            cursor.execute('INSERT INTO login_history(user_id, device, browser, os, ip_address, session_data) VALUES (%s, %s, %s, %s, %s, %s)',
-                           (str(user_id), device, browser, os, ip_address, session_data))
-            config.conn.commit()
-            
-
-def session_expired(username):
-    if username:
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
-            userData = cursor.fetchone()
-
-            if userData:
-                cursor.execute('SELECT * FROM session WHERE username = %s AND online = 1', (username))
-                sessionData = cursor.fetchone()
-
-                if sessionData:
-                    cursor.execute('DELETE FROM session WHERE username = %s', (username,))
-                    config.conn.commit()
-                else:
-                    print('session user not found')
-            else:
-                print('session user not found')
 
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):

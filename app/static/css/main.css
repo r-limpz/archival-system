@@ -360,6 +360,18 @@ p {
     border: 1px solid var(--border-light);
 }
 
+.border-red {
+    border: 1px solid var(--border-red);
+}
+
+.border-orange {
+    border: 1px solid var(--border-orange);
+}
+
+.border-green {
+    border: 1px solid var(--border-green);
+}
+
 /* icons */
 .logo-small {
     height: 18px;
