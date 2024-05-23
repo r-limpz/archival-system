@@ -133,6 +133,12 @@ p {
     margin-bottom: 0 !important;
 }
 
+a {
+    color: var(--fc-default);
+}
+a:hover, a:active{
+    color: var(--fc-dark);
+}
 /* font size */
 .fs-def {
     font-size: var(--fs-default);

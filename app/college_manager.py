@@ -124,8 +124,6 @@ def createCourse(addon_College, newcourse_name):
 
                     cursor.execute('SELECT * FROM courses WHERE course_name = %s', (newcourse_name))
                     success = cursor.fetchone()
-                    print('nigga2')
-                    print(success)
                     if success:
                         return 'success'
                     else:
@@ -140,7 +138,6 @@ def createCourse(addon_College, newcourse_name):
 
 #update college function
 def updateCollege(college_id, college_name, courses):
-
     try:
         with config.conn.cursor() as cursor:
             # Update college name
@@ -150,52 +147,91 @@ def updateCollege(college_id, college_name, courses):
             if cursor.rowcount > 0:
                 query_result = 'success'
             else:
-                query_result = 'failed'
+                query_result = 'cannot modify'
 
             # Update course names
             for course in courses:
                 course_id = course['course_id']
-                course_name = course['course_name']
+                new_course_name = course['course_name']
 
-                cursor.execute('UPDATE courses SET course_name = %s WHERE course_id = %s AND course_name != %s', (course_name, course_id, course_name))
+                cursor.execute(''' UPDATE courses c SET c.course_name = %s WHERE c.course_id = %s AND NOT EXISTS ( SELECT 1 FROM courses WHERE course_name = %s )''', (new_course_name, course_id, new_course_name))
+                config.conn.commit()
+
                 config.conn.commit()
 
             if cursor.rowcount > 0:
                 query_result = 'success'
             else:
-                query_result = 'failed'
+                query_result = 'cannot modify'
 
             return query_result
+        
     except Exception as e:
         print(f"Update college error occurred: {e}")
-        return query_result
+        return 'failed'
+
+def unlink_courseitemCollege(course, newCollege):
+    course = int(course)
+    newCollege = int(newCollege)
+
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute(''' UPDATE courses c LEFT JOIN documents d ON c.course_id = d.course SET c.registered_college = %s WHERE c.course_id = %s AND d.course IS NULL ''', (newCollege, course))
+            config.conn.commit()
+
+            cursor.execute('SELECT * FROM courses WHERE course_id = %s', (course))
+            isMoved = cursor.fetchone()
+
+            if isMoved:
+                query_result = 'success'
+            else:
+                query_result = 'cannot modify'
+
+            return query_result
+        
+    except Exception as e:
+        print(f"Update college error occurred: {e}")
+        return 'failed'
 
 #remove college function
 def removeCollege(college_id):
     if college_id:
         with config.conn.cursor() as cursor:
 
-            cursor.execute('SELECT COUNT(*) FROM document WHERE college_id = %s', (college_id,))
-            count = cursor.fetchone()[0]
+            cursor.execute(''' DELETE c FROM courses c LEFT JOIN documents d ON c.college_id = d.college WHERE c.college_id = %s AND d.course IS NULL; ''', (college_id,))
+            config.conn.commit()
 
-            if count > 0:
-                cursor.execute('DELETE FROM college WHERE college_id = %s', (college_id,))
-                config.conn.commit()
+            cursor.execute('SELECT * FROM college WHERE college_id = %s', (college_id))
+            isDeleted = cursor.fetchone()
 
-                if cursor.rowcount > 0:
-                    query_result = 'success'
-                else:
-                    query_result = 'failed'
+            if not isDeleted:
+                query_result = 'success'
             else:
-                query_result = 'failed'
+                query_result = 'cannot delete data'
 
         return query_result
     else:
         return 'failed'
 
 #remove course function
-def removeCourses(college_id):
-    pass
+def removeCourse(course_id):
+    if course_id:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute(''' DELETE c FROM courses c LEFT JOIN documents d ON c.course_id = d.course WHERE c.course_id = %s AND d.course IS NULL; ''', (course_id,))
+            config.conn.commit()
+
+            cursor.execute('SELECT * FROM courses WHERE course_id = %s', (course_id))
+            isDeleted = cursor.fetchone()
+
+            if not isDeleted:
+                query_result = 'success'
+            else:
+                query_result = 'cannot delete data'
+
+        return query_result
+    else:
+        return 'failed'
 
 #A display route to return all data from fetched colleges
 @college_manager.route('/display_colleges' , methods=['GET'])
@@ -247,15 +283,24 @@ def update_college():
         else:
             return jsonify({'query_result' : 'failed'})
 
-@college_manager.route('/remove_data/delete_college/data' , methods=['POST', 'GET'])
+@college_manager.route('/remove_data/delete_college/data')
 def remove_college():
-    if request.method == "POST":
-        data = request.get_json()
-        college_id = data.get('college_id')
-        college_name = data.get('college_name')
-        courses_data = data.get('courses_data')
+    if college_id:
+        college_id = int(college_id)
+        query_result = removeCollege(college_id)
 
-        query_result = updateCollege(college_id, college_name, courses_data)
+        if query_result:
+            return jsonify({'query_result' : query_result})
+        else:
+            return jsonify({'query_result' : 'failed'})
+
+@college_manager.route('/update_college/course/unlink_college/setup_link' , methods=['POST', 'GET'])
+def change_courseCollege():
+    if request.method == "POST":
+        course = request.form.get('moveCourse_target')
+        newCollege = request.form.get('movetoCollege')
+
+        query_result = unlink_courseitemCollege(course, newCollege)
 
         if query_result:
             return jsonify({'query_result' : query_result})

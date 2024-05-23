@@ -36,12 +36,14 @@
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newuser_fullname">Staff Name</label>
                   <input type="text" class="form-control" id="newuser_fullname" name="newuser_fullname"
-                    onchange="checkname('fullname', '0', 'newuser_fullname')" placeholder="e.g. Juan Dela Cruz" required>
+                    onchange="checkname('fullname', '0', 'newuser_fullname')" placeholder="e.g. Juan Dela Cruz"
+                    required>
                 </div>
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newuser_username">Username</label>
                   <input type="text" class="form-control" id="newuser_username" name="newuser_username"
-                    onchange="checkname('username', '0', 'newuser_username')" maxlength="16" placeholder="e.g. jhoneager234" required>
+                    onchange="checkname('username', '0', 'newuser_username')" maxlength="16"
+                    placeholder="e.g. jhoneager234" required>
                 </div>
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newuser_password">Password</label>
@@ -149,27 +151,29 @@
     </div>
   </div>
 
-    <div class="modal fade" id="delete_accountConfirmation" data-bs-backdrop="static" data-bs-keyboard="false"
-      tabindex="-1" role="dialog" aria-labelledby="delete_accountConfirmation" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-orange border-3">
-          <div class="modal-body">
-            <div class="mx-3">
-              <h5 class="fw-bold mb-4"> Are you sure to delete this account? </h5>
-              <p style="text-align: justify;text-justify: inter-word;">Deleting this account will initiate a 30-day period during which the account remains inactive. After this period,
+  <div class="modal fade" id="delete_accountConfirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" role="dialog" aria-labelledby="delete_accountConfirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-orange border-3">
+        <div class="modal-body">
+          <div class="mx-3">
+            <h5 class="fw-bold mb-4"> Are you sure to delete this account? </h5>
+            <p style="text-align: justify;text-justify: inter-word;">Deleting this account will initiate a 30-day period
+              during which the account remains inactive. After this period,
               the account and all related data will be permanently deleted. This action cannot be undone.</p>
-            </div>
           </div>
-          <div class="modal-footer mx-3">
-            <button type="button" data-bs-dismiss="modal" class="button me-3" onclick="populateUsers('all-any')">Cancel</button>
-            <button id="delete_user_profile" class="btn-orange fw-bold text-decoration-none button"
-              data-bs-dismiss="modal">
-              Continue
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="button me-3"
+            onclick="populateUsers('all-any')">Cancel</button>
+          <button id="delete_user_profile" class="btn-orange fw-bold text-decoration-none button"
+            data-bs-dismiss="modal">
+            Continue
+          </button>
         </div>
       </div>
     </div>
+  </div>
   {% endif %}
 
   {% if current_user.role == 'admin' and request.path == url_for('admin.col_course_manager')%}
@@ -260,6 +264,40 @@
     </div>
   </div>
 
+  <div class="modal fade" id="moveCourses_modal" tabindex="-1" role="dialog" aria-labelledby="moveCourses_modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h5 class="fw-bold">Move course entry</h5>
+          <div class="p-2">
+            <form action="{{ url_for('college_manager.change_courseCollege')}}" method="post" id="move_course">
+              <div class="inputs-forms px-3 d-flex justify-content-between ">
+                <div id="form-item" class="py-2 flex-grow-1">
+                  <label class="fw-medium" for="moveCourse_target">Course</label>
+                  <input type="text" class="form-control moveCourse_target" name="moveCourse_target" id="moveCourse_target" value="${course_name}" disabled>
+                </div>
+                <div class="py-4 mx-3">
+                  <p class="py-3"><span class="fa-solid fa-angles-right "></span></p>
+                </div>
+                <div id="form-item" class="py-2">
+                  <label class="fw-medium" for="movetoCollege">College</label>
+                  <select class="form-select py-2 rounded-3" name="movetoCollege" id="movetoCollege" required>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div class="mt-2 d-flex justify-content-end">
+              <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
+              <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#moveCourses_confirmation"
+                type="button" id="button_showConfirmation_moveCourses"> Move </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="addColleges_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="addColleges_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -314,6 +352,26 @@
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
           <button id="confirm_updateCollege" class="btn-red fw-bold text-decoration-none button"
             data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="moveCourses_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="moveCourses_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Change course college</h5>
+            <p> Are you sure you move the <span id="modal_courseChangeText"></span> to <span id="modal_collgeChangeText"></span></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
+          <button id="confirm_changeCourse" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
