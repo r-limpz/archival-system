@@ -40,14 +40,13 @@
             let toastContainer = document.getElementById('toastContainer');
 
             let toastHTML = `<div class="toast align-items-center border border-bottom-2  ${bordercol}" role="alert" aria-live="assertive" aria-atomic="true" id="add_userToast">
-                            <div class="d-flex">
-                                <div class="toast-body d-flex">
-                                    <span class="fs-large ${className} me-3"> </span> <span class="fw-bold me-2">${title}</span> ${message}
+                                <div class="d-flex">
+                                    <div class="toast-body d-flex">
+                                        <span class="fs-large ${className} me-3"> </span> <span class="fw-bold me-2">${title}</span> ${message}
+                                    </div>
+                                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                                 </div>
-                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        </div>
-                        `;
+                            </div> `;
 
             toastContainer.innerHTML = toastHTML;
         }

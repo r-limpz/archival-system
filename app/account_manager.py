@@ -100,10 +100,21 @@ def fetchallAccount(displayController):
                 cursor.execute(query, tuple(params))
                 users = cursor.fetchall()
 
+                cursor.execute('SELECT * FROM removed_sched_deact WHERE 1=1')
+                deleted_accounts = cursor.fetchall()
                 # If users are found, create a list of user dictionaries
                 if users:
                     users_list = []
+                    del_status = 'active'
+                    expected_removed = None
+
                     for user in users:
+                        if deleted_accounts:
+                            for deleted in deleted_accounts:
+                                if deleted['user_id'] == user['user_id']:
+                                    del_status = 'deleted'
+                                    expected_removed = deleted['sched_removal']
+
                         if user['last_online'] is None:
                             if user['online'] == 1:
                                 last_online = "Now"
@@ -117,7 +128,9 @@ def fetchallAccount(displayController):
                             'last_online': get_currentTime(user['last_online']) if user['last_online'] else last_online,
                             'online': {1: 'online', 0: 'offline'}.get(user['online']),
                             'status': {0: 'deactivated', 1: 'active'}.get(user['status']),
-                            'role': {1: 'admin', 2: 'staff'}.get(user['role'])
+                            'role': {1: 'admin', 2: 'staff'}.get(user['role']),
+                            'deleteStatus': del_status,
+                            'sched_deletion': expected_removed
                         }
                         users_list.append(user_dict)
                     return users_list
@@ -287,18 +300,25 @@ def removeAccount(profile_id):
         with config.conn.cursor() as cursor:
             profile_id = int(profile_id)
 
-            cursor.execute('INSERT INTO removed_sched_deact (user_id, sched_removal) VALUES (%s, DATE_ADD(NOW(), INTERVAL 30 DAY))', (profile_id))
-            config.conn.commit()
+            cursor.execute('SELECT * FROM user WHERE user_id =%s', (profile_id))
+            userExist = cursor.fetchone()
 
-            cursor.execute('SELECT * FROM removed_sched_deact WHERE user_id =%s', (profile_id))
-            schedExist = cursor.fetchone()
+            if userExist:
+                cursor.execute('INSERT IGNORE INTO removed_sched_deact (user_id, sched_removal) VALUES (%s, DATE_ADD(NOW(), INTERVAL 30 DAY))', (profile_id))
+                config.conn.commit()
 
-            if schedExist:
-                query = 'success'
+                cursor.execute('SELECT * FROM removed_sched_deact WHERE user_id =%s', (profile_id))
+                schedExist = cursor.fetchone()
+
+                if schedExist:
+                    query = 'success'
+                else:
+                    query = 'failed'
+
+                return query
+            
             else:
-                query = 'failed'
-
-            return query
+                return 'failed'
     except Exception as e:
         print(f"removeAccount() : {e}")
 
