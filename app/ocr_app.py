@@ -1,5 +1,5 @@
 from flask import current_app as app
-from flask import render_template, request
+from flask import render_template, request, jsonify
 from flask_login import login_required, current_user
 from flask import Blueprint,render_template, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -121,28 +121,28 @@ def detectStudentNames(raw_data_string):
 @ocr_App.route('/scanner', methods=['POST'])
 @login_required
 def scanner():
-    if not current_user.is_authenticated and not current_user.is_active:
-        return redirect(url_for('upload'))
-    else: 
-        if 'image' not in request.files:
+
+    if 'document_image' not in request.files:
             return "No file uploaded"
-        file = request.files['image']
-        if file.filename == '' or not allowed_file(file.filename):
+    
+    file = request.files['document_image']
+    
+    if file.filename == '' or not allowed_file(file.filename):
             return "No file selected or unsupported file type"
 
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        file.save(filepath)
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    file.save(filepath)
 
-        try:
-            img = Image.open(filepath)
-            text = pytesseract.image_to_string(img)
-            raw_names = text.split('\n')
-            students = detectStudentNames(raw_names)
-            students_json = [student.__dict__ for student in students] #Convert the list of student objects to JSON
-        except Exception as e:
-            os.remove(filepath)  #Clean up the file if something goes wrong
-            return f"An error occurred: {str(e)}"
+    try:
+        img = Image.open(filepath)
+        text = pytesseract.image_to_string(img)
+        raw_names = text.split('\n')
+        students = detectStudentNames(raw_names)
 
-        return render_template('users/result.html', students_json=students_json)
+        return jsonify([student.__dict__ for student in students])
+        
+    except Exception as e:
+        os.remove(filepath)  #Clean up the file if something goes wrong
+        return jsonify(e)

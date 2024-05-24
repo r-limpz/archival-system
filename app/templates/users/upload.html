@@ -1,23 +1,174 @@
 {% extends 'layout/users.html' %}
 {% block title %}Upload | ARDS{% endblock %}
+
 {% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
 {% endblock %}
 
 {% block content %}
 
-<section class="p-2">
-    <div class="page-header-title p-2 border-bottom border-1 mb-4">
-        <h4 class="fw-medium">Upload</h4>
-        <p>Lorem Ipsum</p>
+<section>
+    <div class="page-header-title p-2 border-bottom border-1 mb-2">
+        <h3 class="fw-bold">Upload</h3>
+        <p class="fs-medium fst-italic"> Lorem Ipsum</p>
     </div>
-    <form action="/scanner" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="file" name="image">
-        <button type="submit">Upload</button>
-    </form>
+    <div class="d-flex justify-content-between gap-4 height: calc(100vh - 5rem - 55px);">
+        <div class="flex-grow-1 p-2">
+            <div class="border rounded-3 h-100">
+                <form action="/scanner" method="post" enctype="multipart/form-data">
+                    <input type="file" name="document_image" id="document_image">
+                </form>
+                <button id="submitOCR" onclick="populateOCR()">Scan Text</button>
+            </div>
+        </div>
+        <div style="max-width:30vw; min-width: 700px; width: auto;">
+            <div class="p-2">
+                <div id="document_headerContainer">
+                    <div class="mb-2">
+                        <div id="form-item">
+                            <label class="fw-bold ps-2" for="document_filename">Document name</label>
+                            <input type="text" class="form-control" id="document_filename" name="document_filename"
+                                placeholder="" required>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between my-3 gap-3">
+                        <div id="form-item">
+                            <label class="fw-bold ps-2" for="document_college">College</label>
+                            <select class="form-select rounded-3 text-truncate" name="document_college"
+                                id="document_college" required>
+                                <option></option>
+                                <option>College of Information and Computing</option>
+                            </select>
+                        </div>
+                        <div id="form-item">
+                            <label class="fw-bold ps-2" for="document_course">Course</label>
+                            <select class="form-select rounded-3 text-truncate" name="document_course"
+                                id="document_course" required>
+                                <option></option>
+                                <option>BS in Information and Computing</option>
+                            </select>
+                        </div>
+                        <div id="form-item" style="min-width: 120px;">
+                            <label class="fw-bold ps-2" for="document_yearLevel">Year-level</label>
+                            <select class="form-select rounded-3 text-truncate" name="document_yearLevel"
+                                id="document_yearLevel" required>
+                                <option value="0"> </option>
+                                <option value="1"> 1st </option>
+                                <option value="2"> 2nd </option>
+                                <option value="3"> 3rd </option>
+                                <option value="4"> 4th </option>
+                                <option value="5"> Masteral </option>
+                            </select>
+                        </div>
+                        <div id="form-item" style="max-width: 80px;">
+                            <label class="fw-bold ps-2" for="course_section">Section</label>
+                            <input type="text" class="form-control" id="course_section" name="course_section"
+                                placeholder="" maxlength="2" required>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between my-3 gap-3">
+                        <div id="form-item" class="flex-grow-1">
+                            <label class="fw-bold ps-2" for="document_subject_name">Subject</label>
+                            <input type="text" class="form-control" id="document_subject_name"
+                                name="document_subject_name" placeholder="" required>
+                        </div>
+                        <div id="form-item" style="min-width: 130px;">
+                            <label class="fw-bold ps-2" for="document_subject_type">Unit</label>
+                            <select class="form-select rounded-3 text-truncate" name="document_subject_type"
+                                id="document_subject_type" required>
+                                <option value="0"></option>
+                                <option value="1">Lecture</option>
+                                <option value="2">Laboratory</option>
+                            </select>
+                        </div>
+                        <div id="form-item" style="min-width: 105px;">
+                            <label class="fw-bold ps-2" for="document_semester">Semester</label>
+                            <select class="form-select rounded-3 text-truncate" name="document_semester"
+                                id="document_semester" required>
+                                <option value="0"> </option>
+                                <option value="1"> 1st Sem </option>
+                                <option value="2"> 2nd Sem</option>
+                                <option value="3"> Off-Sem </option>
+                            </select>
+                        </div>
+                        <div id="form-item" style="max-width: 165px;">
+                            <label class="fw-bold ps-2" for="documnt_academicYear">Academic Year</label>
+                            <span class="d-flex">
+                                <input type="number" class="form-control text-center" id="starting_year"
+                                    name="ending_year" placeholder="YYYY" maxlength="4" required>
+                                <span class="mx-2 fa-solid fa-minus fs-default"
+                                    style="padding: 9.1px 0px;max-width: 1rem;"></span>
+                                <input type="number" class="form-control text-center" id="ending_year" name="ending_year"
+                                    placeholder="YYYY" maxlength="4" required>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 table-fixed-head " id="student_listContainer">
+                    <table class="table w-100 table-sm table-borderless" id="studentList">
+                        <thead class="border-bottom">
+                            <tr>
+                                <th data-field="state" data-checkbox="true" style="width: 25px;" class="text-center">
+                                    <input id="select-all" type="checkbox" class="checkbox">
+                                </th>
+                                <th>Surname</th>
+                                <th>First name</th>
+                                <th style="width:50px"> M.I.</th>
+                                <th style="width:60px"> Suffix </th>
+                                <th style="width:25px">
+                                    <button class="px-2 py-0 border-0" id="populateInputs" onclick="addRows(1)">
+                                        <span class="fa-solid fa-plus">
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex">
+                    <span>
+                        <button id="removeButton"> Remove</button>
+                        <button id="clearButton"> Clear</button>
+                        <button> Upload </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 {% endblock%}
 
 {% block scripts %}
+<script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
+<script>
+    let ocr_resultsList = [];
+
+    function populateOCR() {
+        var formData = new FormData();
+        var file = $('#document_image')[0].files[0];
+
+        formData.append('document_image', file);
+
+        $.ajax({
+            url: '/scanner',
+            type: 'POST',
+            data: formData,
+            processData: false,  // Tell jQuery not to process the data
+            contentType: false,  // Tell jQuery not to set contentType
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                populateResults(data)
+            },
+            error: function (error) {
+                console.error(error); 
+            }
+        });
+    }
+
+
+
+</script>
 {% endblock%}

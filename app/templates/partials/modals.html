@@ -272,17 +272,17 @@
           <h5 class="fw-bold">Move course entry</h5>
           <div class="p-2">
             <form action="{{ url_for('college_manager.change_courseCollege')}}" method="post" id="move_course">
-              <div class="inputs-forms px-3 d-flex justify-content-between ">
+              <div class="inputs-forms px-3 d-flex justify-content-between">
                 <div id="form-item" class="py-2 flex-grow-1">
                   <label class="fw-medium" for="moveCourse_target">Course</label>
-                  <input type="text" class="form-control moveCourse_target" name="moveCourse_target" id="moveCourse_target" value="${course_name}" disabled>
+                  <input type="text" class="form-control moveCourse_target text-truncate" name="moveCourse_target" id="moveCourse_target" value="${course_name}" disabled>
                 </div>
                 <div class="py-4 mx-3">
                   <p class="py-3"><span class="fa-solid fa-angles-right "></span></p>
                 </div>
-                <div id="form-item" class="py-2">
+                <div id="form-item" class="py-2 flex-grow-1">
                   <label class="fw-medium" for="movetoCollege">College</label>
-                  <select class="form-select py-2 rounded-3" name="movetoCollege" id="movetoCollege" required>
+                  <select class="form-select text-truncate" name="movetoCollege" id="movetoCollege" required>
                   </select>
                 </div>
               </div>

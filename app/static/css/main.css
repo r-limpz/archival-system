@@ -136,9 +136,12 @@ p {
 a {
     color: var(--fc-default);
 }
-a:hover, a:active{
+
+a:hover,
+a:active {
     color: var(--fc-dark);
 }
+
 /* font size */
 .fs-def {
     font-size: var(--fs-default);
@@ -511,7 +514,21 @@ button:active {
     font-weight: bold;
 }
 
+.form-control {
+    padding: 0.25rem 0.5rem;
+}
+
+.form-select {
+    padding: 0.25rem 1rem 0.25rem 0.5rem;
+}
+
 .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: var(--fc-darker);
+}
+
+.form-select:focus {
     outline: none !important;
     box-shadow: none !important;
     border-color: var(--fc-darker);
@@ -541,4 +558,11 @@ button:active {
 
 .card {
     color: var(--fc-default)
+}
+
+.scrollable_page-section {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scrollbar-color: transparent;
+    overflow-y: scroll;
 }
