@@ -1,52 +1,15 @@
-{% extends 'layout/users.html' %}
-{% block title %}USeP - ARDS{% endblock %}
-{% block style %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
 
-<section>
-    <h1>Processed Names</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploaded Image</title>
+</head>
 
-    <table id="studentsTable" class="table">
-        <tr>
-            <th>Surname</th>
-            <th>Firstname</th>
-            <th>Middlename</th>
-            <th>Suffix</th>
-        </tr>
-        <tbody>
+<body>
+    <h1>Uploaded Image</h1>
+    <img src="data:image/png;base64, {{ image }}">
+</body>
 
-        </tbody>
-    </table>
-</section>
-
-{% endblock%}
-
-{% block scripts %}
-<script>
-    var table = document.getElementById('studentsTable');
-    var json_data = {{ students_json | tojson }};
-    var students = json_data;
-
-    for (let i = 0; i < students.length; i++) {
-        surname = students[i].surname;
-        firstname = students[i].firstname;
-        middlename = students[i].middlename;
-        suffix = students[i].suffix;
-
-        var row = table.insertRow();
-        var surnameCell = row.insertCell();
-        var firstnameCell = row.insertCell(1);
-        var middlenameCell = row.insertCell(2);
-        var suffixCell = row.insertCell(3);
-
-        surnameCell.innerHTML = surname;
-        firstnameCell.innerHTML = firstname;
-        middlenameCell.innerHTML = middlename;
-        suffixCell.innerHTML = suffix;
-    }
-
-</script>
-
-{% endblock%}
+</html>

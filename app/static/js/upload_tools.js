@@ -1,7 +1,3 @@
-//document information header tools
-var colleges
-var courses
-
 // Get references to the input fields
 const startingYearInput = document.getElementById('starting_year');
 const endingYearInput = document.getElementById('ending_year');
@@ -39,7 +35,7 @@ function addRows(count) {
         cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" placeholder = ""> `; // First Name
         cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" pattern="[a-zA-Z]{1}\.?" placeholder = ""> `; // MI
         cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" placeholder = ""> `; // Suffix
-        cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${i}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+        cell6.innerHTML = `<button class="text-center border-0" id="deleteButton${i}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
         (function (row) {
             cell6.querySelector(`#deleteButton${i}`).addEventListener('click', function () {
@@ -57,27 +53,29 @@ function populateResults(students) {
     var tbody = table.getElementsByTagName('tbody')[0];
     clearEmptyRows();
 
-    students.forEach(function (student, index) {
-        var row = tbody.insertRow(-1); // Insert a new row at the end of the table
+    if (students.length > 0) {
+        students.forEach(function (student, index) {
+            var row = tbody.insertRow(-1); // Insert a new row at the end of the table
 
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        var cell5 = row.insertCell(4);
-        var cell6 = row.insertCell(5);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
 
-        cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
-        cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
-        cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
-        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
-        cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
-        cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+            cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
+            cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
+            cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
+            cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
+            cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
+            cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
-        cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
-            row.remove();
+            cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
+                row.remove();
+            });
         });
-    });
+    }
 }
 
 function clearEmptyRows() {

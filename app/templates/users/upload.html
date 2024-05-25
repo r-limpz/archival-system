@@ -104,14 +104,15 @@
                     <table class="table w-100 table-sm table-borderless" id="studentList">
                         <thead class="border-bottom">
                             <tr>
-                                <th data-field="state" data-checkbox="true" style="width: 25px;" class="text-center">
+                                <th data-field="state" data-checkbox="true" style="width: 25px;"
+                                    class="text-center px-3">
                                     <input id="select-all" type="checkbox" class="checkbox">
                                 </th>
                                 <th>Surname</th>
                                 <th>First name</th>
                                 <th style="width:50px"> M.I.</th>
                                 <th style="width:60px"> Suffix </th>
-                                <th style="width:25px">
+                                <th class="px-2 text-center" style="width:25px">
                                     <button class="px-2 py-0 border-0" id="populateInputs" onclick="addRows(1)">
                                         <span class="fa-solid fa-plus">
                                     </button>
@@ -134,7 +135,7 @@
                         </button>
                     </span>
 
-                    <button class="btn-red fw-medium"> Upload </button>
+                    <button class="btn-red fw-medium" id="uploadRecord"> Upload </button>
                 </div>
             </div>
         </div>
@@ -194,12 +195,12 @@
 
     function populateCourses(selectedCollegeId) {
         const courseSelect = document.getElementById('document_course');
-        courseSelect.innerHTML = '';
+        const option = document.createElement('option');
+        courseSelect.innerHTML = '<option value="0"></option>';
 
         const selectedCollege = collegesArray.find(college => college.college_id === selectedCollegeId);
         if (selectedCollege) {
             selectedCollege.courses.forEach(course => {
-                const option = document.createElement('option');
                 option.value = course.course_id;
                 option.textContent = course.course_name;
                 courseSelect.appendChild(option);
@@ -221,24 +222,129 @@
 
         formData.append('document_image', file);
 
-        $.ajax({
-            url: '/scanner',
-            type: 'POST',
-            data: formData,
-            processData: false,  // Tell jQuery not to process the data
-            contentType: false,  // Tell jQuery not to set contentType
-            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-            success: function (data) {
-                populateResults(data)
-                showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-            },
-            error: function (error) {
-                console.error(error);
-                showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-            }
-        });
+        if (file) {
+            $.ajax({
+                url: '/scanner',
+                type: 'POST',
+                data: formData,
+                processData: false,  // Tell jQuery not to process the data
+                contentType: false,  // Tell jQuery not to set contentType
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+
+                    if (data === 'No file uploaded') {
+                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    }
+                    else {
+                        populateResults(data);
+                        showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                    showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        }
     }
+</script>
+<script>
+    function fetchrowValues() {
+        var rows = document.querySelectorAll('tbody tr');
+        var studentList = []; // Initialize an empty array to store student objects
+
+        rows.forEach(function (row) {
+            var student_surname = row.querySelector('#student_surname').value;
+            var student_firstname = row.querySelector('#student_firstname').value;
+            var student_middlename = row.querySelector('#student_middlename').value;
+            var student_suffixname = row.querySelector('#student_suffixname').value;
+
+            var student = {
+                student_surname: student_surname,
+                student_firstname: student_firstname,
+                student_middlename: student_middlename,
+                student_suffixname: student_suffixname
+            };
+
+            studentList.push(student);
+        });
+        return studentList;
+    }
+
+    $('#uploadRecord').on('click', function (event) {
+        event.preventDefault();
+        var formData = new FormData();
+        var file = $('#document_image')[0].files[0];
+
+        // Append other Document information
+        let document_filename = $('#document_filename').val();
+        let document_college = $('#document_college').val();
+        let document_course = $('#document_course').val();
+        let document_yearLevel = $('#document_yearLevel').val();
+        let course_section = $('#course_section').val();
+
+        let document_subject_name = $('#document_subject_name').val();
+        let document_subject_type = $('#document_subject_type').val();
+        let document_semester = $('#document_semester').val();
+
+        let starting_year = $('#starting_year').val();
+        let ending_year = $('#ending_year').val();
+        let document_academicYear = starting_year && ending_year ? starting_year + '-' + ending_year : '';
+
+        formData.append('document_filename', document_filename);
+        formData.append('document_college', document_college);
+        formData.append('document_course', document_course);
+        formData.append('document_yearLevel', document_yearLevel);
+        formData.append('course_section', course_section);
+        formData.append('document_subject_name', document_subject_name);
+        formData.append('document_subject_type', document_subject_type);
+        formData.append('document_semester', document_semester);
+        formData.append('document_academicYear', document_academicYear);
+        // Append student data
+        var studentsData = fetchrowValues();
+        formData.append('studentsData', JSON.stringify(studentsData));
+        formData.append('document_image', file);
+
+        if (file) {
+            $.ajax({
+                url: '/archival/newRecord/document_upload',
+                type: 'POST',
+                data: formData,
+                processData: false,  // Tell jQuery not to process the data
+                contentType: false,  // Tell jQuery not to set contentType
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    switch (data.query_result) {
+                        case 'success'://the user successfully appended in the database
+                            showToast('Success!', 'Document uploaded in the database.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed'://error in processing occured
+                            showToast('Upload Error occurred!', 'Failed to upload document data.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'No file uploaded'://user already exist in the database
+                            showToast('No file was uploaded', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        default:
+                            showToast('Unsupported file type', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                    showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        }
+
+    });
+
 </script>
 {% endblock%}

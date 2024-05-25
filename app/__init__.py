@@ -39,7 +39,7 @@ csrf.init_app(app)
 
 argon2 = Argon2(app)
 
-app.config['UPLOAD_FOLDER'] = os.path.realpath('app/static')
+app.config['UPLOAD_FOLDER'] = os.path.realpath('app/upload_folder')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 class Anonymous(AnonymousUserMixin):
