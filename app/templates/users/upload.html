@@ -18,7 +18,7 @@
                 <button id="submitOCR" onclick="populateOCR()">Scan Text</button>
             </div>
         </div>
-        <div style="max-width:30vw; min-width: 700px; width: auto;">
+        <div style="max-width:40vw; min-width: 700px; width: auto;">
             <div class="p-2">
                 <div id="document_headerContainer">
                     <div class="mb-2">
@@ -29,20 +29,18 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-between my-3 gap-3">
-                        <div id="form-item">
+                        <div id="form-item" class="flex-grow-1" style="min-width: 226px;">
                             <label class="fw-bold ps-2" for="document_college">College</label>
                             <select class="form-select rounded-3 text-truncate" name="document_college"
                                 id="document_college" required>
                                 <option></option>
-                                <option>College of Information and Computing</option>
                             </select>
                         </div>
-                        <div id="form-item">
+                        <div id="form-item" class="flex-grow-1" style="min-width: 226px;">
                             <label class="fw-bold ps-2" for="document_course">Course</label>
                             <select class="form-select rounded-3 text-truncate" name="document_course"
                                 id="document_course" required>
                                 <option></option>
-                                <option>BS in Information and Computing</option>
                             </select>
                         </div>
                         <div id="form-item" style="min-width: 120px;">
@@ -126,15 +124,17 @@
                 </div>
                 <div class="d-flex justify-content-end pt-3 gap-5">
                     <span class="d-flex justify-content-end gap-3">
-                        <button class="border-0 px-3" id="select_clear" data-bs-toggle="modal" data-bs-target="#clearSelctedList_confirmation"> <span class="fas fa-eraser me-2"></span>
+                        <button class="border-0 px-3" id="select_clear" data-bs-toggle="modal"
+                            data-bs-target="#clearSelctedList_confirmation"> <span class="fas fa-eraser me-2"></span>
                             <span class="fs-small">Clear</span>
                         </button>
-                        <button class="border-0 px-3" id="select_remove" data-bs-toggle="modal" data-bs-target="#deleteSelctedList_confirmation"> <span class="fa fa-trash me-2"></span>
+                        <button class="border-0 px-3" id="select_remove" data-bs-toggle="modal"
+                            data-bs-target="#deleteSelctedList_confirmation"> <span class="fa fa-trash me-2"></span>
                             <span class="fs-small">Remove</span>
                         </button>
                     </span>
 
-                    <button class="btn-red fw-medium" > Upload </button>
+                    <button class="btn-red fw-medium"> Upload </button>
                 </div>
             </div>
         </div>
@@ -146,6 +146,73 @@
 {% block scripts %}
 <script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
 <script>
+
+    var collegesArray = [];
+
+    function getCollege() {
+        fetch('/archival/fetch_college/courseList/data')
+            .then(response => response.json())
+            .then(colleges => {
+                collegesArray = [];
+                let collegeSelect = document.getElementById('document_college');
+                collegeSelect.innerHTML = '';
+                collegeSelect.innerHTML = `<option value= "0"></option>`;;
+                colleges.forEach(college => {
+                    let college_id = college.college_id;
+                    let college_name = college.college_name;
+                    let coursesArray = [];
+                    let collegeOption = '';
+
+                    collegeOption = `<option value= "${college_id}">${college_name}</option>`;
+
+                    if (college.courses && Array.isArray(college.courses)) {
+                        if (college.courses.length > 0) {
+                            college.courses.forEach(course => {
+                                let course_name = course.course_name;
+                                let course_id = course.course_id;
+                                coursesArray.push({ course_id: course_id, course_name: course_name, });
+                            });
+                        }
+                        else {
+                        }
+                    }
+                    const collegeObject = {
+                        college_id,
+                        college_name,
+                        courses: coursesArray
+                    };
+                    collegesArray.push(collegeObject);
+                    collegeSelect.innerHTML += collegeOption;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching colleges:', error);
+            });
+    }
+
+    getCollege();
+
+    function populateCourses(selectedCollegeId) {
+        const courseSelect = document.getElementById('document_course');
+        courseSelect.innerHTML = '';
+
+        const selectedCollege = collegesArray.find(college => college.college_id === selectedCollegeId);
+        if (selectedCollege) {
+            selectedCollege.courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.course_id;
+                option.textContent = course.course_name;
+                courseSelect.appendChild(option);
+            });
+        }
+    }
+
+    const collegeSelect = document.getElementById('document_college');
+    collegeSelect.addEventListener('change', () => {
+        const selectedCollegeId = parseInt(collegeSelect.value);
+        populateCourses(selectedCollegeId);
+    });
+
     let ocr_resultsList = [];
 
     function populateOCR() {
@@ -163,14 +230,15 @@
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
                 populateResults(data)
+                showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             },
             error: function (error) {
                 console.error(error);
+                showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
     }
-
-
-
 </script>
 {% endblock%}

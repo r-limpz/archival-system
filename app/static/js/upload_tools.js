@@ -6,22 +6,17 @@ var courses
 const startingYearInput = document.getElementById('starting_year');
 const endingYearInput = document.getElementById('ending_year');
 
-const yearPicker = document.getElementById("year-picker");
-
 // Event listener for starting year input
 startingYearInput.addEventListener('input', function () {
     const startingYear = parseInt(startingYearInput.value);
     if (!isNaN(startingYear)) {
-        // Set ending year to be one year ahead
         endingYearInput.value = (startingYear + 1).toString();
     }
 });
-
 // Event listener for ending year input
 endingYearInput.addEventListener('input', function () {
     const endingYear = parseInt(endingYearInput.value);
     if (!isNaN(endingYear)) {
-        // Set starting year to be one year behind
         startingYearInput.value = (endingYear - 1).toString();
     }
 });

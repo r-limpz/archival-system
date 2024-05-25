@@ -1,7 +1,6 @@
 from flask import Blueprint, request, redirect, jsonify, url_for
 from flask_login import login_required, current_user
 from functools import wraps
-from flask import current_app as app
 from . import config 
 
 college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/college_manager')

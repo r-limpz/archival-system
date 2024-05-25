@@ -69,6 +69,9 @@ app.register_blueprint(datas_blueprint)
 #text recognition logics
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)
+#upload manager logics
+from .upload_manager import uploader_manager as uploader_blueprint
+app.register_blueprint(uploader_blueprint)
 #Reister authenticated accounts
 app.register_blueprint(admin_bp)
 app.register_blueprint(staff_bp)
