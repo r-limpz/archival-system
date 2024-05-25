@@ -8,11 +8,7 @@
 {% block content %}
 
 <section>
-    <div class="page-header-title p-2 border-bottom border-1 mb-2">
-        <h3 class="fw-bold">Upload</h3>
-        <p class="fs-medium fst-italic"> Lorem Ipsum</p>
-    </div>
-    <div class="d-flex justify-content-between gap-4 height: calc(100vh - 5rem - 55px);">
+    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem );">
         <div class="flex-grow-1 p-2">
             <div class="border rounded-3 h-100">
                 <form action="/scanner" method="post" enctype="multipart/form-data">
@@ -98,8 +94,8 @@
                                     name="ending_year" placeholder="YYYY" maxlength="4" required>
                                 <span class="mx-2 fa-solid fa-minus fs-default"
                                     style="padding: 9.1px 0px;max-width: 1rem;"></span>
-                                <input type="number" class="form-control text-center" id="ending_year" name="ending_year"
-                                    placeholder="YYYY" maxlength="4" required>
+                                <input type="number" class="form-control text-center" id="ending_year"
+                                    name="ending_year" placeholder="YYYY" maxlength="4" required>
                             </span>
                         </div>
                     </div>
@@ -127,12 +123,17 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex">
-                    <span>
-                        <button id="removeButton"> Remove</button>
-                        <button id="clearButton"> Clear</button>
-                        <button> Upload </button>
+                <div class="d-flex justify-content-end pt-3 gap-5">
+                    <span class="d-flex justify-content-end gap-3">
+                        <button class="border-0 px-3" id="clearButton"> <span class="fas fa-eraser me-2"></span>
+                            <span class="fs-small">Clear</span>
+                        </button>
+                        <button class="border-0 px-3" id="removeButton"> <span class="fa fa-trash me-2"></span>
+                            <span class="fs-small">Remove</span>
+                        </button>
                     </span>
+
+                    <button class="btn-red fw-medium"> Upload </button>
                 </div>
             </div>
         </div>
@@ -163,7 +164,7 @@
                 populateResults(data)
             },
             error: function (error) {
-                console.error(error); 
+                console.error(error);
             }
         });
     }

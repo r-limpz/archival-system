@@ -6,6 +6,8 @@ var courses
 const startingYearInput = document.getElementById('starting_year');
 const endingYearInput = document.getElementById('ending_year');
 
+const yearPicker = document.getElementById("year-picker");
+
 // Event listener for starting year input
 startingYearInput.addEventListener('input', function () {
     const startingYear = parseInt(startingYearInput.value);
@@ -40,9 +42,9 @@ function addRows(count) {
         cell1.innerHTML = `<div class="my-2 text-center" ><input type="checkbox" class="checkbox" id="${i}"></div>`;
         cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" placeholder = ""> `; // Last Name
         cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" placeholder = ""> `; // First Name
-        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" placeholder = ""> `; // MI
+        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" pattern="[a-zA-Z]{1}\.?" placeholder = ""> `; // MI
         cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" placeholder = ""> `; // Suffix
-        cell6.innerHTML = `<button class="px-2 py-2 border-0" id="deleteButton${i}"><span class="fa-solid fa-trash fc-red"></span></button>`; // Button
+        cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${i}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
         (function (row) {
             cell6.querySelector(`#deleteButton${i}`).addEventListener('click', function () {
@@ -73,9 +75,9 @@ function populateResults(students) {
         cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
         cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
         cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
-        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" placeholder="">`; // MI
+        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
         cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
-        cell6.innerHTML = `<button class="px-2 py-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-trash fc-red"></span></button>`; // Button
+        cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
         cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
             row.remove();
@@ -91,7 +93,6 @@ function clearEmptyRows() {
     // Iterate over the rows in reverse order
     for (var i = rows.length - 1; i >= 0; i--) {
         var row = rows[i];
-
         let surnameInput = row.querySelector('input[name="student_surname"]');
         let firstnameInput = row.querySelector('input[name="student_firstname"]');
 
@@ -124,11 +125,11 @@ function handleRemoveOrClear(event) {
             });
         }
     });
+
     var tbodyIsEmpty = document.querySelector('tbody').childElementCount === 0;
     if (tbodyIsEmpty) {
         addRows(10);
     }
-
 }
 
 // Event listener for the "Select All" checkbox
