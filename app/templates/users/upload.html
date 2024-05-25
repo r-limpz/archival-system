@@ -8,12 +8,13 @@
 {% block content %}
 
 <section>
-    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem );">
+    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem ); min-height: 700px;">
         <div class="flex-grow-1 p-2">
             <div class="border rounded-3 h-100">
                 <form action="/scanner" method="post" enctype="multipart/form-data">
                     <input type="file" name="document_image" id="document_image">
                 </form>
+                <image></image>
                 <button id="submitOCR" onclick="populateOCR()">Scan Text</button>
             </div>
         </div>
@@ -125,15 +126,15 @@
                 </div>
                 <div class="d-flex justify-content-end pt-3 gap-5">
                     <span class="d-flex justify-content-end gap-3">
-                        <button class="border-0 px-3" id="clearButton"> <span class="fas fa-eraser me-2"></span>
+                        <button class="border-0 px-3" id="select_clear" data-bs-toggle="modal" data-bs-target="#clearSelctedList_confirmation"> <span class="fas fa-eraser me-2"></span>
                             <span class="fs-small">Clear</span>
                         </button>
-                        <button class="border-0 px-3" id="removeButton"> <span class="fa fa-trash me-2"></span>
+                        <button class="border-0 px-3" id="select_remove" data-bs-toggle="modal" data-bs-target="#deleteSelctedList_confirmation"> <span class="fa fa-trash me-2"></span>
                             <span class="fs-small">Remove</span>
                         </button>
                     </span>
 
-                    <button class="btn-red fw-medium"> Upload </button>
+                    <button class="btn-red fw-medium" > Upload </button>
                 </div>
             </div>
         </div>

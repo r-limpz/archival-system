@@ -106,29 +106,83 @@ function clearEmptyRows() {
 
 document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
 document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
+function noSelectedData(event, message, buttonFunction) {
+    let messageErrorTools = document.getElementById('errorContainerTools');
+    messageErrorTools.innerHTML = ''; // Clear any existing content
+
+    messageErrorTools.innerHTML = `
+        <div class="modal-body">
+            <div>
+                <h5 class="fw-bold mb-3"> No selected data to run ${event} function</h5>
+                <p>${message}</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
+            <button id="${buttonFunction}" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+                Confirm
+            </button>
+        </div>
+    `;
+
+    $('#selection_uploadTools').modal('show'); // Show the modal
+}
 
 function handleRemoveOrClear(event) {
-    // Get all checked checkboxes
     var checkboxes = document.querySelectorAll('tbody .checkbox:checked');
     var selectAll = document.querySelector('#select-all');
 
-    checkboxes.forEach(function (checkbox) {
-        var row = checkbox.closest('tr');
-        var inputFields = row.querySelectorAll('input[type="text"]');
-
+    if (checkboxes.length === 0) {
         if (event.target.id === 'removeButton') {
-            row.remove();
-            selectAll.checked = false;
+            $('#deleteSelctedList_confirmation').modal('hide');
+            noSelectedData('remove', 'Remove all rows instead?', 'removeAllRows');
         } else if (event.target.id === 'clearButton') {
-            inputFields.forEach(function (input) {
-                input.value = '';
-            });
+            $('#clearSelctedList_confirmation').modal('hide');
+            noSelectedData('clear', 'Clear all rows instead?', 'clearAllRows');
         }
-    });
+    } else {
+        checkboxes.forEach(function (checkbox) {
+            var row = checkbox.closest('tr');
+            var inputFields = row.querySelectorAll('input[type="text"]');
 
+            if (event.target.id === 'removeButton') {
+                row.remove();
+                showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+            } else if (event.target.id === 'clearButton') {
+                inputFields.forEach(function (input) {
+                    input.value = '';
+                });
+                showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+            }
+        });
+    }
+
+    selectAll.checked = false;
     var tbodyIsEmpty = document.querySelector('tbody').childElementCount === 0;
     if (tbodyIsEmpty) {
         addRows(10);
+    }
+}
+
+function handleRemoveOrClear_allData(event) {
+    var rows = document.querySelectorAll('tbody tr'); // Get all rows
+    var inputFields = document.querySelectorAll('tbody input[type="text"]'); // Get all input fields
+
+    if (event.target.id === 'removeAllRows') {
+        rows.forEach(function (row) {
+            row.remove(); // Remove all rows
+        });
+        addRows(10);
+        showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+    } else if (event.target.id === 'clearAllRows') {
+        inputFields.forEach(function (input) {
+            input.value = ''; // Clear input fields
+        });
+        showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
     }
 }
 

@@ -275,7 +275,8 @@
               <div class="inputs-forms px-3 d-flex justify-content-between">
                 <div id="form-item" class="py-2 flex-grow-1">
                   <label class="fw-medium" for="moveCourse_target">Course</label>
-                  <input type="text" class="form-control moveCourse_target text-truncate" name="moveCourse_target" id="moveCourse_target" value="${course_name}" disabled>
+                  <input type="text" class="form-control moveCourse_target text-truncate" name="moveCourse_target"
+                    id="moveCourse_target" value="${course_name}" disabled>
                 </div>
                 <div class="py-4 mx-3">
                   <p class="py-3"><span class="fa-solid fa-angles-right "></span></p>
@@ -366,7 +367,8 @@
         <div class="modal-body">
           <div>
             <h5 class="fw-bold mb-3"> Change course college</h5>
-            <p> Are you sure you move the <span id="modal_courseChangeText"></span> to <span id="modal_collgeChangeText"></span></p>
+            <p> Are you sure you move the <span id="modal_courseChangeText"></span> to <span
+                id="modal_collgeChangeText"></span></p>
           </div>
         </div>
         <div class="modal-footer">
@@ -378,6 +380,76 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
+  {% if request.path == url_for('staff.upload')%}
+
+  <div class="modal fade" id="deleteSelctedList_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="deleteSelctedList_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Remove Selected data </h5>
+            <p> Are you sure you want delete this rows?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
+          <button id="removeButton" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="clearSelctedList_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" role="dialog" aria-labelledby="clearSelctedList_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Clear Selected data </h5>
+            <p> Are you sure you clear this input fields?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
+          <button id="clearButton" class="btn-red fw-bold text-decoration-none button">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="selection_uploadTools" data-bs-backdrop="static" data-bs-keyboard="false"
+      tabindex="-1" role="dialog" aria-labelledby="selection_uploadTools" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-red border-2" id="errorContainerTools">
+        </div>
+      </div>
+    </div>
+
+  <div class="modal fade" id="newRecords_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="newRecords_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div>
+            <h5 class="fw-bold mb-3"> Upload Document </h5>
+            <p> Are you sure you want to upload this document data to the database?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
+          <button id="comfirm_newRecords" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   {% endif %}
