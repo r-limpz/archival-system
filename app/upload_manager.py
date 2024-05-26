@@ -26,6 +26,17 @@ def convert_pic(filename):
         photo = file.read
     return photo 
 
+def getEditor():
+    with config.conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM user WHERE username = %s', (current_user.username))
+        account_uploader = cursor.fetchone()
+
+        if account_uploader:
+            editor = account_uploader['user_id']
+            return editor
+        else:
+            return None
+    
 # function fetches a list of colleges from the database
 def fetch_collegeList(search_college):
     if search_college:
@@ -83,7 +94,7 @@ def fetch_course(search):
     else:
         return None
     
-def newDocumentUploader(document_header, imageFile, students_data):
+def newDocumentUploader(document_header, imageFile):
     if document_header:
         document = document_header
         filename = document.get('filename')
@@ -95,41 +106,90 @@ def newDocumentUploader(document_header, imageFile, students_data):
         unit = document.get('subject_type')
         semester = document.get('semester')
         academic_year = document.get('academicYear')
-
         document_image = imageFile.read()
 
     if college != "" and course != "":
         try:
             with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM user WHERE username = %s', (current_user.username))
-                account_uploader = cursor.fetchone()
-                editor = account_uploader['user_id']
+                cursor.execute('SELECT * FROM documents WHERE filename = %s', (filename))
+                document_exist = cursor.fetchone()
 
-                cursor.execute('INSERT INTO documents (filename, image_file, college, course, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, document_image, college, course, section, subject_name, academic_year, semester, year_level, unit, editor))
-                config.conn.commit()
+                if not document_exist:
+                    editor = getEditor()
+                    cursor.execute('INSERT INTO documents (filename, image_file, college, course, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, document_image, college, course, section, subject_name, academic_year, semester, year_level, unit, editor))
+                    config.conn.commit()
 
-                document_id = cursor.lastrowid
-                linkStudent_documentTag(document_id, students_data)
+                    document_id = cursor.lastrowid
 
-                return 'success'
-
+                    if document_id:
+                        return document_id
+                    else:
+                        return None
+                else:
+                    return None
         except Exception as e:
                 print(f"Upload document error occurred: {e}")
                 return e
     else:
-        return 'failed'
+        return None
 
-def linkStudent_documentTag(document_id, studentList):
 
+def newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix):
+    if entry_surname and entry_firstname :
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (entry_surname, entry_firstname, entry_middlename, entry_suffix) )
+            student_credentials = cursor.fetchone()
+
+            if not student_credentials:
+                cursor.execute('INSERT INTO students(surname, firstname, middlename, suffix) VALUES (%s,%s,%s,%s)', (entry_surname, entry_firstname, entry_middlename, entry_suffix))
+                config.conn.commit()
+                return cursor.lastrowid
+            else:
+                return student_credentials['student_id']
+
+def generateLink(document_id, student_id):
+    if not document_id or not student_id :
+        return None
+    else:
+        editor = getEditor()
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM tagging WHERE document = %s AND student = %s', (document_id, student_id))
+            linked_item = cursor.fetchone()
+
+            if not linked_item:
+                cursor.execute('INSERT INTO tagging(document, student, editor) VALUES (%s,%s,%s)', (document_id, student_id, editor))
+                config.conn.commit()
+
+                return cursor.lastrowid
+            else:
+                return linked_item['tag_id']
+
+def newRecordData(document_header, imageFile, students_data):
+    document_id = newDocumentUploader(document_header, imageFile)
     try:
         with config.conn.cursor() as cursor:
+            if students_data and document_id:
+                tagging = []
+                for student in students_data:
+                    entry_surname = student['student_surname']
+                    entry_firstname = student['student_firstname']
+                    entry_middlename = student['student_middlename']
+                    entry_suffix = student['student_suffixname']
+                    student_id = newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix)
 
-            queery_results ='success'
-
-            return queery_results   
+                    if student_id:
+                        linked = generateLink(document_id, student_id)
+                        tagging.append(linked)
+                
+                if len(tagging) > 0:
+                    return'success'
+                else:
+                    return 'failed'
+            else:
+                return 'failed'  
 
     except Exception as e:
-            print(f"delete user error occurred: {e}")
+            print(f"new record error occurred: {e}")
 
 @uploader_manager.route('/fetch_college/courseList/data', methods=['GET'])
 @login_required
@@ -181,7 +241,7 @@ def scanner():
     except json.JSONDecodeError:
         students_data = []
 
-    query_result = newDocumentUploader(document_header, file, students_data)
+    query_result = newRecordData(document_header, file, students_data)
 
     return jsonify({'query_result': query_result})
 

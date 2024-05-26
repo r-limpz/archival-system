@@ -330,7 +330,7 @@
                             showToast('No file was uploaded', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
-                        default:
+                        case 'Unsupported file type':
                             showToast('Unsupported file type', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
