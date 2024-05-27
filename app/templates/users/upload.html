@@ -16,13 +16,23 @@
                     </form>
                     <div id="previewContainer" class="d-none border">
                         <img class="m-auto" id="preview" alt="Preview">
-                        <button class=" bg-transparent fc-light border-0 py-2 px-3" id="cancel_selectedDocument"
-                            style="position: absolute; top: 0rem; right: 0rem;"><span class="fa-solid fa-xmark"></span></button>
-                        <button id="submitOCR" class="fw-medium border-0 btn-orange fc-light" style="position: absolute; right: 1rem; bottom: 0.5rem ">Scan
-                            Text</button>
+                        <div class="d-flex justify-content-end gap-3"
+                            style="position: absolute; top: 0rem; right: 0rem;">
+                            <button class=" bg-transparent fc-light border-0 py-2 px-3"
+                                id="cancel_selectedDocument"><span class="fa-solid fa-xmark"></span></button>
+                        </div>
+                        <div class="d-flex justify-content-end gap-3"
+                            style="position: absolute; right: 1rem; bottom: 0.5rem">
+                            <button class="fc-light border-0 py-2 px-4 btn-gray" id="cancel_image">Cancel</button>
+                            <button id="continueButton" class="fw-medium py-2 px-4"> Save </button>
+                            <button id="submitOCR" class="fw-medium border-0 btn-orange fc-light d-none">
+                                <span class="fa-solid fa-expand me-3"></span> Scan Text
+                            </button>
+                        </div>
                     </div>
                     <div class="drag-text text-center" id="dragText">
-                        <h4 class="fw-bold mx-4">Drag & Drop your document here or click to upload</h4>
+                        <div><span class="fa-regular fa-image fw-bold p-2 mb-3" style="font-size: 100px;"></span></div>
+                        <h4 class="fw-bold mx-4">Drag & Drop your Image here </h4>
                     </div>
                 </div>
             </div>
@@ -154,6 +164,7 @@
 {% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
+<script src="{{url_for('static',filename='js/drag_drop.js')}}"></script>
 <script>
     var collegesArray = [];
 
@@ -220,9 +231,9 @@
         const selectedCollegeId = parseInt(collegeSelect.value);
         populateCourses(selectedCollegeId);
     });
-
+</script>
+<script>
     let ocr_resultsList = [];
-    
     submitOCR.addEventListener('click', function (event) {
         event.stopPropagation();
         var formData = new FormData();
@@ -354,97 +365,5 @@
     });
 
 </script>
-<script>
-    let documentDetails = {
-        academicYear: '',
-        college: '',
-        course: '',
-        yearLevel: '',
-        section: '',
-        subjectName: '',
-        subjectType: '',
-        semester: ''
-    };
-
-    function updateDocumentName() {
-        let allEmpty = Object.values(documentDetails).every(function (value) {
-            return value.trim() === '';
-        });
-
-        if (allEmpty) {
-            $("#document_filename").val("");
-        } else {
-            let colcourse = documentDetails.college && documentDetails.course
-                ? documentDetails.college + '-' + documentDetails.course
-                : (documentDetails.college || documentDetails.course);
-
-            let year_level = documentDetails.yearLevel !== "0" && documentDetails.section
-                ? documentDetails.yearLevel + documentDetails.section
-                : (documentDetails.yearLevel !== "0" && documentDetails.section === "")
-                    ? documentDetails.yearLevel
-                    : '';
-
-            let subject = documentDetails.subjectName && documentDetails.subjectType
-                ? documentDetails.subjectName + (documentDetails.subjectType === "1"
-                    ? '_lect'
-                    : documentDetails.subjectType === "2"
-                        ? '_lab'
-                        : '')
-                : '';
-
-            let academic_year = documentDetails.semester !== "0" && documentDetails.academicYear
-                ? documentDetails.semester + '_' + documentDetails.academicYear
-                : documentDetails.semester !== "0"
-                    ? documentDetails.semester
-                    : documentDetails.academicYear || '';
-
-
-            let combination1 = colcourse && year_level
-                ? colcourse + '-' + year_level
-                : colcourse && year_level === ""
-                    ? colcourse
-                    : colcourse === "" && year_level
-                        ? year_level
-                        : '';
-
-            let combination2 = subject && academic_year
-                ? subject + '_' + academic_year
-                : subject === "" && academic_year
-                    ? academic_year
-                    : subject && academic_year === ""
-                        ? subject
-                        : '';
-
-            let doc_name = combination1 && combination2
-                ? combination1 + '_' + combination2
-                : combination1 || combination2 || '';
-
-            $("#document_filename").val(doc_name);
-        }
-    }
-
-    $("#document_college, #document_course, #document_yearLevel, #document_subject_type, #document_semester").change(function () {
-        updateObject();
-        updateDocumentName();
-    });
-
-    $("#course_section, #document_subject_name, #starting_year, #ending_year").on('input', function () {
-        updateObject();
-        updateDocumentName();
-    });
-
-    function updateObject() {
-        documentDetails = {
-            academicYear: $('#starting_year').val() && $('#ending_year').val() ? $('#starting_year').val() + '-' + $('#ending_year').val() : '',
-            college: $('#document_college option:selected').text(),
-            course: $('#document_course option:selected').text(),
-            yearLevel: $('#document_yearLevel option:selected').val(),
-            section: $('#course_section').val().replace(/\s+/g, ''),
-            subjectName: $('#document_subject_name').val(),
-            subjectType: $('#document_subject_type option:selected').val(),
-            semester: $('#document_semester option:selected').text().replace(/\s+/g, ''),
-        };
-    }
-
-</script>
+<script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 {% endblock%}
