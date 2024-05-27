@@ -49,7 +49,7 @@ def fetch_collegeList(search_college):
                 college_id = int(search_college)
                 cursor.execute('SELECT college_id, college_name FROM college WHERE college_id = %s', (college_id))
                 college_data = cursor.fetchall()
-            
+
             if college_data:
                 return college_data
             else:
@@ -85,7 +85,7 @@ def fetch_course(search):
                         course_format['course_name'] = entry['course_name']
                         #append the dictionary in the list
                         courses.append(course_format) 
-                        
+                        print(col_id,' : ', course_format['course_id'])
                 # Create a new college object with fetched courses and append it to the list
                 college = Colleges(col_id, col_name, courses)
                 Col_Course_list.append(college)
@@ -133,9 +133,10 @@ def newDocumentUploader(document_header, imageFile):
     else:
         return None
 
-
 def newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix):
-    if entry_surname and entry_firstname :
+    if not entry_surname and not entry_firstname:
+        return None
+    else:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (entry_surname, entry_firstname, entry_middlename, entry_suffix) )
             student_credentials = cursor.fetchone()
@@ -148,7 +149,7 @@ def newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix):
                 return student_credentials['student_id']
 
 def generateLink(document_id, student_id):
-    if not document_id or not student_id :
+    if not document_id and not student_id :
         return None
     else:
         editor = getEditor()
@@ -195,12 +196,11 @@ def newRecordData(document_header, imageFile, students_data):
 @login_required
 def display_colcourse():
     collegeCourses_list = fetch_course('all')
-    #each entry in the collgeCourses_list is collgeCourses_list[{college_id:'', college_name:'' courses[{1, course_id:'course_id',course_name:'course_name',}]}]
     return jsonify([college.__dict__ for college in collegeCourses_list])
 
 @uploader_manager.route('/newRecord/document_upload', methods=['POST', 'GET'])
 @login_required
-def scanner():
+def uploader():
     if 'document_image' not in request.files:
         return "No file uploaded"
 

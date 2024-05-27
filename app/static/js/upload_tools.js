@@ -213,3 +213,4 @@ document.querySelectorAll('tbody .checkbox').forEach(function (checkbox) {
         document.querySelector('#select-all').checked = allChecked;
     });
 });
+
