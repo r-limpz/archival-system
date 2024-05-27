@@ -84,8 +84,7 @@ def fetch_course(search):
                         course_format['course_id'] = entry['course_id']
                         course_format['course_name'] = entry['course_name']
                         #append the dictionary in the list
-                        courses.append(course_format) 
-                        print(col_id,' : ', course_format['course_id'])
+                        courses.append(course_format)
                 # Create a new college object with fetched courses and append it to the list
                 college = Colleges(col_id, col_name, courses)
                 Col_Course_list.append(college)

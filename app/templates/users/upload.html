@@ -9,12 +9,22 @@
 <section>
     <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem ); min-height: 700px;">
         <div class="flex-grow-1 p-2">
-            <div class="border rounded-3 h-100">
-                <form action="/scanner" method="post" enctype="multipart/form-data">
-                    <input type="file" name="document_image" id="document_image">
-                </form>
-                <image></image>
-                <button id="submitOCR" onclick="populateOCR()">Scan Text</button>
+            <div class="rounded-3 h-100">
+                <div class="h-100 w-100 d-flex justify-content-center align-items-center dashed-border" id="dropzone">
+                    <form action="/scanner" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <input type="file" name="document_image" id="document_image" class="d-none" accept="image/*">
+                    </form>
+                    <div id="previewContainer" class="d-none border">
+                        <img class="m-auto" id="preview" alt="Preview">
+                        <button class=" bg-transparent fc-light border-0 py-2 px-3" id="cancel_selectedDocument"
+                            style="position: absolute; top: 0rem; right: 0rem;"><span class="fa-solid fa-xmark"></span></button>
+                        <button id="submitOCR" class="fw-medium border-0 btn-orange fc-light" style="position: absolute; right: 1rem; bottom: 0.5rem ">Scan
+                            Text</button>
+                    </div>
+                    <div class="drag-text text-center" id="dragText">
+                        <h4 class="fw-bold mx-4">Drag & Drop your document here or click to upload</h4>
+                    </div>
+                </div>
             </div>
         </div>
         <div style="max-width:40vw; min-width: 700px; width: auto;">
@@ -23,8 +33,8 @@
                     <div class="mb-2">
                         <div id="form-item">
                             <label class="fw-bold ps-2" for="document_filename">Document name</label>
-                            <input type="text" class="form-control prevent-select" id="document_filename" name="document_filename"
-                                placeholder="" required disabled>
+                            <input type="text" class="form-control prevent-select" id="document_filename"
+                                name="document_filename" placeholder="" required disabled>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between my-3 gap-3">
@@ -212,8 +222,9 @@
     });
 
     let ocr_resultsList = [];
-
-    function populateOCR() {
+    
+    submitOCR.addEventListener('click', function (event) {
+        event.stopPropagation();
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
 
@@ -228,7 +239,6 @@
                 contentType: false,  // Tell jQuery not to set contentType
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -246,7 +256,7 @@
                 }
             });
         }
-    }
+    });
 </script>
 <script>
     function fetchrowValues() {

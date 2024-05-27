@@ -1,3 +1,66 @@
+const dropzone = document.getElementById('dropzone');
+const documentImageInput = document.getElementById('document_image');
+const previewContainer = document.getElementById('previewContainer');
+const preview = document.getElementById('preview');
+const dragText = document.getElementById('dragText');
+const submitOCR = document.getElementById('submitOCR');
+let continueButton = document.getElementById('continueButton');
+let isContinueClicked = false;
+
+dropzone.addEventListener('click', () => {
+    if (!isContinueClicked) {
+        documentImageInput.click();
+    }
+});
+
+documentImageInput.addEventListener('change', handleFiles);
+
+dropzone.addEventListener('dragover', (e) => {
+    if (!isContinueClicked) {
+        e.preventDefault();
+        dropzone.classList.add('dragging');
+    }
+});
+
+dropzone.addEventListener('dragleave', () => {
+    if (!isContinueClicked) {
+        dropzone.classList.remove('dragging');
+    }
+});
+
+dropzone.addEventListener('drop', (e) => {
+    if (!isContinueClicked) {
+        e.preventDefault();
+        dropzone.classList.remove('dragging');
+        const files = e.dataTransfer.files;
+        if (files.length) {
+            handleFiles({ target: { files } });
+        }
+    }
+});
+
+function handleFiles(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            previewContainer.classList.remove('d-none');
+            dragText.classList.add('d-none');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+cancel_selectedDocument.addEventListener('click', function (event) {
+    event.stopPropagation();
+    preview.src = '';
+    previewContainer.classList.add('d-none');
+    dragText.classList.remove('d-none');
+    documentImageInput.value = '';
+    isContinueClicked = false;
+});
+
 // Get references to the input fields
 const startingYearInput = document.getElementById('starting_year');
 const endingYearInput = document.getElementById('ending_year');
@@ -55,28 +118,47 @@ function populateResults(students) {
 
     if (students.length > 0) {
         students.forEach(function (student, index) {
-            var row = tbody.insertRow(-1); // Insert a new row at the end of the table
-
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
-            var cell4 = row.insertCell(3);
-            var cell5 = row.insertCell(4);
-            var cell6 = row.insertCell(5);
-
-            cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
-            cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
-            cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
-            cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
-            cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
-            cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
-
-            cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
-                row.remove();
+            var isDuplicate = false;
+            tbody.querySelectorAll('tr').forEach(function (row) {
+                var surname = row.querySelector('[name="student_surname"]').value;
+                var firstname = row.querySelector('[name="student_firstname"]').value;
+                var middlename = row.querySelector('[name="student_middlename"]').value;
+                var suffixname = row.querySelector('[name="student_suffixname"]').value;
+                if (surname === student.surname &&
+                    firstname === student.firstname &&
+                    middlename === student.middlename &&
+                    suffixname === student.suffix) {
+                    isDuplicate = true;
+                    return;
+                }
             });
+
+            if (!isDuplicate) {
+                var row = tbody.insertRow(-1); // Insert a new row at the end of the table
+
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                var cell4 = row.insertCell(3);
+                var cell5 = row.insertCell(4);
+                var cell6 = row.insertCell(5);
+
+                cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
+                cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
+                cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
+                cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
+                cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
+                cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+
+                cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
+                    row.remove();
+                });
+            }
         });
     }
 }
+
+
 
 function clearEmptyRows() {
     var table = document.getElementById('studentList');

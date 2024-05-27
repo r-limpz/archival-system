@@ -18,9 +18,29 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-.form-control{
+.form-control {
     padding: 0.25rem 0.5rem;
 }
+
 .form-select {
     padding: 0.25rem 1rem 0.25rem 0.5rem;
+}
+
+#previewContainer {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background-color: #686868;
+    border-radius: 0.5rem;
+}
+
+#preview {
+    max-height: 100%;
+    width: auto;
+    display: block;
+    max-width: 100%;
+    object-fit: cover;
+    padding: 0.25rem;
 }

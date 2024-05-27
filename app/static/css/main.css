@@ -566,3 +566,8 @@ button:active {
     scrollbar-color: transparent;
     overflow-y: scroll;
 }
+
+.dashed-border {
+    border: 2px dashed var(--border-darker);
+    border-radius: 0.5rem;
+}
