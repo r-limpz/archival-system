@@ -138,5 +138,4 @@ def scanner():
         return jsonify([student.__dict__ for student in students])
         
     except Exception as e:
-        os.remove(filepath)  #Clean up the file if something goes wrong
         return jsonify(e)
