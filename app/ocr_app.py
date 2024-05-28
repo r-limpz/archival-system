@@ -128,14 +128,9 @@ def scanner():
     
     if file.filename == '' or not allowed_file(file.filename):
             return "No file selected or unsupported file type"
-
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    file.save(filepath)
-
+    
     try:
-        img = Image.open(filepath)
+        img = Image.open(file)
         text = pytesseract.image_to_string(img)
         raw_names = text.split('\n')
         students = detectStudentNames(raw_names)

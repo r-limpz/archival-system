@@ -5,10 +5,10 @@ const preview = document.getElementById('preview');
 const dragText = document.getElementById('dragText');
 const ocr_button = document.getElementById('submitOCR');
 const save_button = document.getElementById('continueButton');
-let isContinueClicked = false;
+let image_saved = false;
 
 dropzone.addEventListener('click', () => {
-    if (!isContinueClicked) {
+    if (!image_saved) {
         documentImageInput.click();
     }
 });
@@ -16,20 +16,20 @@ dropzone.addEventListener('click', () => {
 documentImageInput.addEventListener('change', handleFiles);
 
 dropzone.addEventListener('dragover', (e) => {
-    if (!isContinueClicked) {
+    if (!image_saved) {
         e.preventDefault();
         dropzone.classList.add('dragging');
     }
 });
 
 dropzone.addEventListener('dragleave', () => {
-    if (!isContinueClicked) {
+    if (!image_saved) {
         dropzone.classList.remove('dragging');
     }
 });
 
 dropzone.addEventListener('drop', (e) => {
-    if (!isContinueClicked) {
+    if (!image_saved) {
         e.preventDefault();
         dropzone.classList.remove('dragging');
         const files = e.dataTransfer.files;
@@ -61,7 +61,7 @@ cancel_selectedDocument.addEventListener('click', function (event) {
     previewContainer.classList.add('d-none');
     dragText.classList.remove('d-none');
     documentImageInput.value = '';
-    isContinueClicked = false;
+    image_saved = false;
 });
 
 cancel_image.addEventListener('click', function (event) {
@@ -72,11 +72,11 @@ cancel_image.addEventListener('click', function (event) {
     previewContainer.classList.add('d-none');
     dragText.classList.remove('d-none');
     documentImageInput.value = '';
-    isContinueClicked = false;
+    image_saved = false;
 });
 
 function saveImage() {
-    isContinueClicked = true;
+    image_saved = true;
     ocr_button.classList.remove('d-none');
     save_button.classList.add('d-none');
 }
@@ -87,27 +87,29 @@ continueButton.addEventListener('click', function (event) {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+
     const preview = document.getElementById('preview');
 
     let scale = 1;
     const scaleStep = 0.1;
-    const maxScale = 3;
+    const maxScale = 5;
     const minScale = 0.5;
 
     document.getElementById('previewContainer').addEventListener('wheel', (event) => {
         event.preventDefault(); // Prevent default scrolling behavior
-
-        if (event.deltaY < 0) {
-            // Scrolling up, zoom in
-            if (scale < maxScale) {
-                scale += scaleStep;
-                updateScale();
-            }
-        } else {
-            // Scrolling down, zoom out
-            if (scale > minScale) {
-                scale -= scaleStep;
-                updateScale();
+        if (image_saved) {
+            if (event.deltaY < 0) {
+                // Scrolling up, zoom in
+                if (scale < maxScale) {
+                    scale += scaleStep;
+                    updateScale();
+                }
+            } else {
+                // Scrolling down, zoom out
+                if (scale > minScale) {
+                    scale -= scaleStep;
+                    updateScale();
+                }
             }
         }
     });

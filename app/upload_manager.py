@@ -1,12 +1,8 @@
 from flask import Blueprint, request, render_template, jsonify
 from flask_login import login_required, current_user
 from flask import current_app as app
-from werkzeug.utils import secure_filename
-from PIL import Image
 import base64
 import json
-import os
-import io
 from . import config 
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')
@@ -119,6 +115,9 @@ def newDocumentUploader(document_header, imageFile):
                     config.conn.commit()
 
                     document_id = cursor.lastrowid
+
+                    cursor.execute('INSERT INTO documents (filename, image_file, college, course, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, document_image, college, course, section, subject_name, academic_year, semester, year_level, unit, editor))
+                    config.conn.commit()
 
                     if document_id:
                         return document_id
