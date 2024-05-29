@@ -8,10 +8,11 @@
 
 {% block content %}
 
-<section >
+<section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
         <h3 class="fw-bold">Student Records</h3>
-        <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking and retrieval.</p>
+        <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking
+            and retrieval.</p>
     </div>
     <div class="m-3">
         <table id='recordsTable' class='display dataTable' cellspacing="0" width="100%">
@@ -21,7 +22,7 @@
                     <th>Full Name</th>
                     <th>College</th>
                     <th>Course</th>
-                    <th>Year</th>
+                    <th>Section</th>
                     <th>Subject</th>
                     <th>Semester</th>
                     <th>Academic Year</th>
@@ -43,21 +44,28 @@
 {% block scripts %}
 <script>
     $(document).ready(function () {
+        var csrf_token = "{{ csrf_token() }}";  // Get CSRF token from Flask
 
         var recordsDataTable = $('#recordsTable').DataTable({
             'processing': true,
             'serverSide': true,
+            'serverMethod': 'post',
             'ajax': {
                 url: '/records_data',
-                type: 'POST'
+                beforeSend: function (request) {
+                    request.setRequestHeader("X-CSRFToken", csrf_token);  // Set CSRF token in the request header
+                },
             },
             'lengthMenu': [[10, 25, 50, 100], [10, 25, 50, "All"]],
+            searching: true,
+            sort: true,
+            "serverSide": true,
             columns: [
                 { data: 'id', orderable: true },
                 { data: 'FullName', orderable: true },
                 { data: 'College', orderable: true },
                 { data: 'Course', orderable: true },
-                { data: 'year_level', orderable: true },
+                { data: 'Section', orderable: true },
                 { data: 'Subject', orderable: true },
                 { data: 'Semester', orderable: true },
                 { data: 'SchoolYear', orderable: true },
@@ -83,5 +91,6 @@
         });
     });            
 </script>
+
 
 {% endblock%}
