@@ -1,2 +1,62 @@
+/* table pagination*/
+#recordsTable tbody {
+    border: none;
+}
 
+.dataTable td {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal !important;
+}
+#recordsTable_wrapper{
+    height: 100%;
+}
+
+.semester {
+    width: 85px;
+}
+
+.academic-year {
+    width: 120px;
+}
+
+.action {
+    min-width: 70px;
+    max-width: 100px;
+}
+
+#recordsTable_paginate {
+    bottom: 0rem;
+    right: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+#recordsTable_paginate .paginate_button {
+    padding: 0.2rem 0.7rem;
+    border-radius: 0.6rem;
+    background: none;
+    background-color: white;
+    margin: 0rem 0.25rem;
+}
+
+#recordsTable_paginate .paginate_button#recordsTable_previous:hover,
+#recordsTable_paginate .paginate_button#recordsTable_next:hover {
+    font-weight: normal;
+    border: none;
+}
+
+#recordsTable_wrapper #recordsTable_paginate .paginate_button:hover {
+    background: none;
+    background-color: white;
+    color: rgb(29, 27, 27) !important;
+    border: rgb(154, 154, 154) solid 1px;
+}
+
+#recordsTable_wrapper #recordsTable_paginate .paginate_button.current {
+    background: none;
+    color: rgb(255, 255, 255) !important;
+    background: linear-gradient(275.52deg, #973939 0.28%, #DC7171 100%) !important;
+    border: none;
+}
 /* table pagination*/

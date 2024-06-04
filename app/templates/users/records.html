@@ -4,6 +4,7 @@
 <link href='https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/table.css')}}">
 {% endblock %}
 
 {% block content %}
@@ -14,29 +15,24 @@
         <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking
             and retrieval.</p>
     </div>
-    <div class="m-3">
-        <table id='recordsTable' class='display dataTable' cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>id</th>
-                    <th>Full Name</th>
-                    <th>College</th>
-                    <th>Course</th>
-                    <th>Section</th>
-                    <th>Subject</th>
-                    <th>Semester</th>
-                    <th>Academic Year</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Your data goes here -->
-            </tbody>
-        </table>
-
-
-
-    </div>
+    <table id='recordsTable' class='display dataTable' cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="text-center">id</th>
+                <th>Full Name</th>
+                <th>College</th>
+                <th>Course</th>
+                <th>Section</th>
+                <th>Subject</th>
+                <th class="semester text-center">Semester</th>
+                <th class="academic-year text-center">Academic Year</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Your data goes here -->
+        </tbody>
+    </table>
 </section>
 
 {% endblock%}
@@ -47,7 +43,17 @@
         var csrf_token = "{{ csrf_token() }}";  // Get CSRF token from Flask
 
         var recordsDataTable = $('#recordsTable').DataTable({
+            stripeClasses: [],
+            language: {
+                paginate: {
+                    previous: '<a class="fa-solid fa-caret-left"></a>',
+                    next: '<a class="fa-solid fa-caret-right"></a>',
+                }
+            },
+            "scrollY": "50vh",
+            "scrollCollapse": true,
             'processing': true,
+            'responsive': true,
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
@@ -61,14 +67,14 @@
             sort: true,
             "serverSide": true,
             columns: [
-                { data: 'id', orderable: true },
-                { data: 'FullName', orderable: true },
+                { data: 'id', orderable: true, className: 'text-center' },
+                { data: 'FullName', orderable: true, className: 'bg-transparent' },
                 { data: 'College', orderable: true },
                 { data: 'Course', orderable: true },
                 { data: 'Section', orderable: true },
                 { data: 'Subject', orderable: true },
-                { data: 'Semester', orderable: true },
-                { data: 'SchoolYear', orderable: true },
+                { data: 'Semester', orderable: true, className: 'text-center' },
+                { data: 'SchoolYear', orderable: true, className: 'text-center' },
                 {
                     'data': 'id',
                     title: 'Action',
@@ -82,12 +88,16 @@
                         const editLink = '<a id="editThis" data-bs-toggle="modal" data-bs-target="#editModal" class= "' + data + '">' + editIcon + '</a>';
                         const deleteLink = '<a id="deleteThis" data-bs-toggle="modal" data-bs-target="#deleteModal" class= "' + data + '">' + deleteIcon + '</a>';
 
-                        return viewLink + ' ' + editLink + ' ' + deleteLink;
+                        return `<div class="d-flex justify-content-between mx-2">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
                     }
 
                 }
             ],
-            'order': [[1, 'asc']]
+            'order': [[1, 'asc']],
+            aoColumnDefs: [{
+                bSortable: false,
+                aTargets: [-1]
+            }]
         });
     });            
 </script>
