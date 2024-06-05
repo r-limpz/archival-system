@@ -283,15 +283,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-
-
-
-
-
-
-
-
-
 #check for session timeout
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
