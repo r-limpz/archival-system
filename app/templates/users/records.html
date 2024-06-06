@@ -15,6 +15,47 @@
         <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking
             and retrieval.</p>
     </div>
+    <div class="d-flex justify-content-between gap-4 mb-3 mx-2">
+        <div class="flex-grow-1" id="filterSearch" style="max-width: 40%;">
+            <input type="text" class="form-control w-full" id="filtersearch_global" placeholder="Search...">
+        </div>
+        <div class="d-flex justify-content-end gap-3" id="filterContainer">
+            <div class="d-flex" style="width: 200px;">
+                <span class="fw-medium p-2">College:</span>
+                <select name="filterCollege" id="filterCollege" class="form-select">
+                </select>
+            </div>
+            <div class="d-flex" style="width: 200px;">
+                <span class="fw-medium p-2">Course:</span>
+                <select name="filterCourse" id="filterCourse" class="form-select">
+                </select>
+            </div>
+            <div class="d-flex" style="width: 200px;">
+                <span class="fw-medium p-2">Semester:</span>
+                <select name="filterSemester" id="filterSemester" class="form-select">
+                    <option value="0"></option>
+                    <option value="1">1st Sem</option>
+                    <option value="2">2nd Sem</option>
+                    <option value="3">Off-Sem</option>
+                </select>
+            </div>
+            <div class="d-flex" style="width: 200px;">
+                <span class="fw-medium p-2">Year</span>
+                <select name="filterYear" id="filterYear" class="form-select">
+                </select>
+            </div>
+            <div class="d-flex" style="width: 130px;">
+                <span class="fw-medium p-2">Show</span>
+                <select name="show_length" id="filterShow" class="form-select">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">All</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
     <table id='recordsTable' class='display dataTable' cellspacing="0" width="100%">
         <thead>
             <tr>
