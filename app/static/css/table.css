@@ -7,20 +7,33 @@
     word-wrap: break-word;
     word-break: break-all;
     white-space: normal !important;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
 }
 #recordsTable_wrapper{
     height: 100%;
 }
-
-.semester {
+.college-th {
+    width: 70px;
+}
+.course-th {
+    width: 70px;
+}
+.section-th {
+    width: 50px;
+}
+.unit-th{
+    width:90px;
+}
+.semester-th {
     width: 85px;
 }
 
-.academic-year {
+.academic-year-th {
     width: 120px;
 }
 
-.action {
+.action-th {
     min-width: 70px;
     max-width: 100px;
 }

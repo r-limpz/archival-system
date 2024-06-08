@@ -4,6 +4,7 @@ from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
+from werkzeug.exceptions import HTTPException
 from .forms import LoginForm
 from . import config
 from app.Blueprints.admin import admin_bp
@@ -81,9 +82,11 @@ app.register_blueprint(user_controlblueprint)
 #Register college and courses manager 
 from .college_manager import college_manager as college_managerBlueprint
 app.register_blueprint(college_managerBlueprint)
-#error handling of pages
-from werkzeug.exceptions import HTTPException
+#Register get colleges list
+from .fetchColleges import fetchColleges as fetchCollegesBlueprint
+app.register_blueprint(fetchCollegesBlueprint)
 
+#error handling of pages
 @app.errorhandler(Exception)
 def handle_error(e):
     code = 500

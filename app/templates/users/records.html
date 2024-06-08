@@ -8,6 +8,15 @@
 {% endblock %}
 
 {% block content %}
+    <style>
+        #recordsTable_filter {
+            display: none;
+        }
+    
+        #recordsTable_length {
+            display: block;
+        }
+    </style>
 
 <section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
@@ -16,37 +25,39 @@
             and retrieval.</p>
     </div>
     <div class="d-flex justify-content-between gap-4 mb-3 mx-2">
-        <div class="flex-grow-1" id="filterSearch" style="max-width: 40%;">
-            <input type="text" class="form-control w-full" id="filtersearch_global" placeholder="Search...">
+        <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
+            <input type="text" class="form-control w-full" id="filterSearch" placeholder="Search...">
         </div>
         <div class="d-flex justify-content-end gap-3" id="filterContainer">
-            <div class="d-flex" style="width: 200px;">
+            <div class="d-flex" style="width: 180px;">
                 <span class="fw-medium p-2">College:</span>
-                <select name="filterCollege" id="filterCollege" class="form-select">
+                <select id="filterCollege" class="form-select">
                 </select>
             </div>
-            <div class="d-flex" style="width: 200px;">
+            <div class="d-flex" style="width: 180px;">
                 <span class="fw-medium p-2">Course:</span>
-                <select name="filterCourse" id="filterCourse" class="form-select">
+                <select id="filterCourse" class="form-select">
                 </select>
             </div>
             <div class="d-flex" style="width: 200px;">
                 <span class="fw-medium p-2">Semester:</span>
-                <select name="filterSemester" id="filterSemester" class="form-select">
-                    <option value="0"></option>
-                    <option value="1">1st Sem</option>
-                    <option value="2">2nd Sem</option>
-                    <option value="3">Off-Sem</option>
-                </select>
+                    <select id="filterSemester" class="form-select">
+                        <option value=""></option>
+                        <option value="1st">1st Sem</option>
+                        <option value="2nd">2nd Sem</option>
+                        <option value="Off-Sem">Off-Sem</option>
+                    </select>
             </div>
-            <div class="d-flex" style="width: 200px;">
+            <div class="d-flex" style="width: 180px;">
                 <span class="fw-medium p-2">Year</span>
-                <select name="filterYear" id="filterYear" class="form-select">
+                <select id="filterYear" class="form-select">
+                    <option value="">YYYY-YYYY</option>
+                    <option value="1998-1999">1998-1999</option>
                 </select>
             </div>
-            <div class="d-flex" style="width: 130px;">
+            <div class="d-flex" style="width: 120px;">
                 <span class="fw-medium p-2">Show</span>
-                <select name="show_length" id="filterShow" class="form-select">
+                <select id="filterShow" class="form-select">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -61,13 +72,13 @@
             <tr>
                 <th class="text-center">id</th>
                 <th>Full Name</th>
-                <th>College</th>
-                <th>Course</th>
-                <th>Section</th>
-                <th>Subject</th>
-                <th class="semester text-center">Semester</th>
-                <th class="academic-year text-center">Academic Year</th>
-                <th class="action text-center">Action</th>
+                <th class="college-th text-center">College</th>
+                <th class="course-th text-center">Course</th>
+                <th class="section-th text-center">Section</th>
+                <th class="subject-th text-center">Subject</th>
+                <th class="semester-th text-center">Semester</th>
+                <th class="academic-year-th text-center">Academic Year</th>
+                <th class="action-th text-center">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -80,9 +91,78 @@
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        var csrf_token = "{{ csrf_token() }}";  // Get CSRF token from Flask
+    var collegesArray = [];
 
+    function getCollege() {
+        fetch('/fetch_college/courseList/data')
+            .then(response => response.json())
+            .then(colleges => {
+                collegesArray = [];
+                let collegeSelect = document.getElementById('filterCollege');
+                collegeSelect.innerHTML = '';
+                collegeSelect.innerHTML = `<option value=""></option>`;
+
+                colleges.forEach(college => {
+
+                    let college_id = college.college_id;
+                    let college_name = college.college_name;
+                    let coursesArray = [];
+                    let collegeOption = '';
+
+                    collegeOption = `<option value= "${college_name}">${college_name}</option>`;
+
+                    if (college.courses && Array.isArray(college.courses)) {
+                        if (college.courses.length > 0) {
+
+                            college.courses.forEach(course => {
+                                let course_name = course.course_name;
+                                let course_id = course.course_id;
+                                coursesArray.push({ course_id: course_id, course_name: course_name, });
+                            });
+                        }
+                    }
+                    const collegeObject = {
+                        college_id,
+                        college_name,
+                        courses: coursesArray
+                    };
+                    collegesArray.push(collegeObject);
+                    collegeSelect.innerHTML += collegeOption;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching colleges:', error);
+            });
+    }
+
+    getCollege();
+
+    function populateCourses(selectedCollegeName) {
+        const courseSelect = document.getElementById('filterCourse');
+        const option = document.createElement('option');
+        courseSelect.innerHTML = '<option value=""></option>';
+
+        const selectedCollege = collegesArray.find(college => college.college_name === selectedCollegeName);
+        if (selectedCollege) {
+            selectedCollege.courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.course_name;
+                option.textContent = course.course_name;
+                courseSelect.appendChild(option);
+            });
+        }
+    }
+
+    const collegeSelect = document.getElementById('filterCollege');
+    collegeSelect.addEventListener('change', () => {
+        const selectedCollegeId = collegeSelect.value;
+        populateCourses(selectedCollegeId);
+    });
+
+    console.log(collegesArray)
+</script>
+<script>
+    $(document).ready(function () {
         var recordsDataTable = $('#recordsTable').DataTable({
             stripeClasses: [],
             language: {
@@ -98,23 +178,24 @@
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
-                url: '/records_data',
-                beforeSend: function (request) {
-                    request.setRequestHeader("X-CSRFToken", csrf_token);  // Set CSRF token in the request header
-                },
+                'url': '/records_data',
+                'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
+                'data': function (data) {
+                    data.filterSearch = $('#filterSearch').val();
+                    data.filterCollege = $('#filterCollege').val();
+                    data.filterCourse = $('#filterCourse').val();
+                    data.filterSemester = $('#filterSemester').val();
+                    data.filterYear = $('#filterYear').val();
+                }
             },
-            'lengthMenu': [[10, 25, 50, 100], [10, 25, 50, "All"]],
-            searching: true,
-            sort: true,
-            "serverSide": true,
-            columns: [
-                { data: 'id', orderable: true, className: 'text-center' },
+            'columns': [
+                { data: 'id', orderable: true, className: 'text-center bg-transparent' },
                 { data: 'FullName', orderable: true, className: 'bg-transparent' },
-                { data: 'College', orderable: true },
-                { data: 'Course', orderable: true },
-                { data: 'Section', orderable: true },
-                { data: 'Subject', orderable: true },
-                { data: 'Semester', orderable: true, className: 'text-center' },
+                { data: 'College', orderable: true , className: 'text-center' },
+                { data: 'Course', orderable: true , className: 'text-center' },
+                { data: 'Section', orderable: true , className: 'text-center' },
+                { data: 'Subject', orderable: false },
+                { data: 'Semester', orderable: false, className: 'text-center' },
                 { data: 'SchoolYear', orderable: true, className: 'text-center' },
                 {
                     'data': 'id',
@@ -131,14 +212,29 @@
 
                         return `<div class="d-flex justify-content-between mx-2">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
                     }
-
                 }
             ],
-            'order': [[1, 'asc']],
             aoColumnDefs: [{
                 bSortable: false,
                 aTargets: [-1]
             }]
+        });
+
+        $('#filterSearch').keyup(function () {
+            recordsDataTable.draw();
+        });
+
+        $('#filterCollege').change(function () {
+            recordsDataTable.draw();
+        });
+        $('#filterCourse').change(function () {
+            recordsDataTable.draw();
+        });
+        $('#filterSemester').change(function () {
+            recordsDataTable.draw();
+        });
+        $('#filterYear').change(function () {
+            recordsDataTable.draw();
         });
     });            
 </script>

@@ -7,12 +7,6 @@ from . import config
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')
 
-class Colleges:
-    def __init__(self, college_id, college_name, courses):
-        self.college_id = college_id
-        self.college_name = college_name
-        self.courses = courses
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -32,63 +26,7 @@ def getEditor():
             return editor
         else:
             return None
-    
-# function fetches a list of colleges from the database
-def fetch_collegeList(search_college):
-    if search_college:
-        with config.conn.cursor() as cursor:
-            #fetchall colleges in the database
-            if search_college == 'all':
-                cursor.execute('SELECT college_id, college_name FROM college WHERE 1=1')
-                college_data = cursor.fetchall()
-            else:
-                college_id = int(search_college)
-                cursor.execute('SELECT college_id, college_name FROM college WHERE college_id = %s', (college_id))
-                college_data = cursor.fetchall()
 
-            if college_data:
-                return college_data
-            else:
-                return None
-    else:
-        return None
-        
-# function fetches the courses for each college and prepares the data for display
-def fetch_course(search):
-    college_list = fetch_collegeList(search) #utilize the fetch colleges function
-    Col_Course_list = [] #list to store this data
-
-    # Proceed if college list is not empty
-    if college_list:
-        with config.conn.cursor() as cursor: 
-            # Iterate over each college
-            for college_item in college_list:
-                col_id = college_item.get('college_id')
-                col_name = college_item.get('college_name')
-                
-                # Execute SQL query to fetch courses for the current college
-                cursor.execute('SELECT course_id, course_name FROM courses WHERE registered_college =%s', (col_id))
-                course_item = cursor.fetchall()
-                courses = [] #temporary array storing courses data for each college
-
-                # If courses data exists, format and store it
-                if course_item: 
-                    # Iterate the fetched list of courses
-                    for entry in course_item:
-                        #setup temporary dictionary storing course data
-                        course_format = {'course_id' :"", 'course_name':""}  
-                        course_format['course_id'] = entry['course_id']
-                        course_format['course_name'] = entry['course_name']
-                        #append the dictionary in the list
-                        courses.append(course_format)
-                # Create a new college object with fetched courses and append it to the list
-                college = Colleges(col_id, col_name, courses)
-                Col_Course_list.append(college)
-                
-        return Col_Course_list
-    else:
-        return None
-    
 def newDocumentUploader(document_header, imageFile):
     if document_header:
         document = document_header
@@ -101,7 +39,6 @@ def newDocumentUploader(document_header, imageFile):
         unit = document.get('subject_type')
         semester = document.get('semester')
         academic_year = document.get('academicYear')
-        document_image = imageFile.read()
 
     if college != "" and course != "":
         try:
@@ -111,18 +48,18 @@ def newDocumentUploader(document_header, imageFile):
 
                 if not document_exist:
                     editor = getEditor()
-                    cursor.execute('INSERT INTO documents (filename, image_file, college, course, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, document_image, college, course, section, subject_name, academic_year, semester, year_level, unit, editor))
-                    config.conn.commit()
+                    image_id = imageUploader(imageFile)
 
-                    document_id = cursor.lastrowid
+                    if image_id:
+                        cursor.execute('INSERT INTO documents (filename, college, course, image_id, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, college, course, image_id, section, subject_name, academic_year, semester, year_level, unit, editor))
+                        config.conn.commit()
 
-                    cursor.execute('INSERT INTO documents (filename, image_file, college, course, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, document_image, college, course, section, subject_name, academic_year, semester, year_level, unit, editor))
-                    config.conn.commit()
+                        document_id = cursor.lastrowid
 
-                    if document_id:
-                        return document_id
-                    else:
-                        return None
+                        if document_id:
+                            return document_id
+                        else:
+                            return None
                 else:
                     return None
         except Exception as e:
@@ -130,6 +67,20 @@ def newDocumentUploader(document_header, imageFile):
                 return e
     else:
         return None
+    
+def imageUploader(imageFile):
+    document_image = imageFile.read()
+    print('uploading image')
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute('INSERT INTO img_files (document_file) VALUES (%s)', (document_image))
+            config.conn.commit()
+            uploaded = cursor.lastrowid
+            print('upload id: ', uploaded)
+
+            return uploaded
+    except Exception as e:
+                print(f"Upload image error occurred: {e}")
 
 def newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix):
     if not entry_surname and not entry_firstname:
@@ -190,12 +141,6 @@ def newRecordData(document_header, imageFile, students_data):
     except Exception as e:
             print(f"new record error occurred: {e}")
 
-@uploader_manager.route('/fetch_college/courseList/data', methods=['GET'])
-@login_required
-def display_colcourse():
-    collegeCourses_list = fetch_course('all')
-    return jsonify([college.__dict__ for college in collegeCourses_list])
-
 @uploader_manager.route('/newRecord/document_upload', methods=['POST', 'GET'])
 @login_required
 def uploader():
@@ -250,8 +195,11 @@ def display_uploaded_image(document_id):
         cursor.execute('SELECT * FROM documents WHERE docs_id = %s', (document_id,))
         document_data = cursor.fetchone()
 
-        if document_data:
-            document_image = document_data['image_file']
+        cursor.execute('SELECT * FROM img_files WHERE img_id = %s', document_data['image_id'])
+        image_data = cursor.fetchone()
+
+        if image_data:
+            document_image = image_data['document_file']
             encoded_image = base64.b64encode(document_image).decode('utf-8')
             return render_template('users/result.html', image=encoded_image)
 

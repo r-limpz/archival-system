@@ -170,7 +170,7 @@
     var collegesArray = [];
 
     function getCollege() {
-        fetch('/archival/fetch_college/courseList/data')
+        fetch('/fetch_college/courseList/data')
             .then(response => response.json())
             .then(colleges => {
                 collegesArray = [];
@@ -220,6 +220,7 @@
         const selectedCollege = collegesArray.find(college => college.college_id === selectedCollegeId);
         if (selectedCollege) {
             selectedCollege.courses.forEach(course => {
+                const option = document.createElement('option');
                 option.value = course.course_id;
                 option.textContent = course.course_name;
                 courseSelect.appendChild(option);
