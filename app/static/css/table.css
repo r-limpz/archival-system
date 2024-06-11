@@ -1,48 +1,63 @@
 /* table pagination*/
-#recordsTable tbody {
-    border: none;
+#filterContainer {
+    padding: 0rem;
 }
 
-.dataTable td {
-    word-wrap: break-word;
-    word-break: break-all;
-    white-space: normal !important;
-    padding-right: 0.25rem;
-    padding-left: 0.25rem;
-}
-#recordsTable_wrapper{
+#recordsTable_wrapper,
+#recordsTable {
     height: 100%;
 }
-.college-th {
-    width: 70px;
-}
-.course-th {
-    width: 70px;
-}
-.section-th {
-    width: 50px;
-}
-.unit-th{
-    width:90px;
-}
-.semester-th {
-    width: 85px;
+#recordsTable {
+    width: 100% !important;
 }
 
-.academic-year-th {
-    width: 120px;
+#recordsTable th,
+#recordsTable td {
+    white-space: nowrap;
 }
 
-.action-th {
-    min-width: 70px;
-    max-width: 100px;
+.dataTables_scrollHeadInner,
+.dataTables_scrollBody {
+    width: 100% !important;
 }
 
-#recordsTable_paginate {
+.dataTables_scrollHeadInner table,
+.dataTables_scrollBody table {
+    width: 100% !important;
+}
+.text-wrap {
+    white-space: normal !important;
+}
+
+table.dataTable thead th,
+table.dataTable tbody,
+#recordsTable_wrapper .dataTables_scrollBody {
+    border-top: none;
+    border-bottom: none;
+}
+
+table.dataTable tbody tr {
+    border-bottom: 0.5px solid rgb(224, 224, 224);
+}
+
+table.dataTable td {
+    white-space: normal !important;
+    width: auto;
+}
+
+/* table pagination*/
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    padding: 0.25rem;
     bottom: 0rem;
     right: 1rem;
-    padding: 0.5rem;
-    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0.75rem;
+    font-size: small;
 }
 
 #recordsTable_paginate .paginate_button {
@@ -51,6 +66,7 @@
     background: none;
     background-color: white;
     margin: 0rem 0.25rem;
+    text-decoration: none;
 }
 
 #recordsTable_paginate .paginate_button#recordsTable_previous:hover,
@@ -64,6 +80,7 @@
     background-color: white;
     color: rgb(29, 27, 27) !important;
     border: rgb(154, 154, 154) solid 1px;
+    text-decoration: none;
 }
 
 #recordsTable_wrapper #recordsTable_paginate .paginate_button.current {
@@ -71,5 +88,31 @@
     color: rgb(255, 255, 255) !important;
     background: linear-gradient(275.52deg, #973939 0.28%, #DC7171 100%) !important;
     border: none;
+    text-decoration: none;
 }
-/* table pagination*/
+
+/* table scrollbar */
+
+.dataTables_scrollBody::-webkit-scrollbar {
+    width: 3px;
+    position: absolute;
+}
+
+
+.dataTables_scrollBody::-webkit-scrollbar-thumb {
+    background-color: #a5a5a5;
+}
+
+/* tools*/
+#showPreviewModal #imageContainer {
+    padding: 0.25rem;
+}
+
+#previewImageDisplay {
+    max-height: 100%;
+    width: auto;
+    display: block;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.1s ease-in-out;
+}

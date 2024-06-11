@@ -14,6 +14,6 @@
     "@fortawesome/fontawesome-free": "^6.5.2",
     "bootstrap": "^5.3.3",
     "broadcast-channel": "^7.0.0",
-    "datatables": "^1.10.18"
+    "uninstall": "^0.0.0"
   }
 }

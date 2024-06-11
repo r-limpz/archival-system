@@ -1,5 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from flask_login import login_required, current_user
+import base64
+import json
 from . import config
 
 data_fetch = Blueprint('data', __name__)
@@ -37,7 +39,6 @@ def records_data():
             if filterSemester:
                 search_query += f" and (Semester = '{filterSemester}')"  
 
-            print(search_query)
             with config.conn.cursor() as cursor:
                 # Total number of records without filtering
                 cursor.execute("SELECT count(*) as allcount from srecordstbl")
@@ -67,6 +68,7 @@ def records_data():
                             'Unit': row['Unit'],
                             'Semester': row['Semester'],
                             'SchoolYear': row['SchoolYear'],
+                            'image_id': row['image_id'],
                         })
                 else:
                     print('NO RECORDS ')
@@ -81,3 +83,19 @@ def records_data():
                 return jsonify(response)
     except Exception as e:
         print(e)
+
+#preview document image
+@data_fetch.route('/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
+@login_required
+def previewDocument(image_id):
+    image_id = int(image_id)
+    with config.conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM img_files WHERE img_id = %s', image_id)
+        image_data = cursor.fetchone()
+
+        if image_data:
+            document_image = image_data['document_file']
+            encoded_image = base64.b64encode(document_image).decode('utf-8')
+            return Response(encoded_image)
+        
+        return "No image data found", 404

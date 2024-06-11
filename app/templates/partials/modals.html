@@ -156,7 +156,8 @@
         <div class="modal-body">
           <div class="mx-3">
             <h5 class="fw-bold mb-4"> Are you sure to delete this account? </h5>
-            <p class="ms-2" style="text-align: justify;text-justify: inter-word;">Deleting this account will initiate a 30-day period
+            <p class="ms-2" style="text-align: justify;text-justify: inter-word;">Deleting this account will initiate a
+              30-day period
               during which the account remains inactive. After this period,
               the account and all related data will be permanently deleted. This action cannot be undone.</p>
           </div>
@@ -382,8 +383,8 @@
 
   {% if request.path == url_for('staff.upload')%}
 
-  <div class="modal fade" id="deleteSelctedList_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    role="dialog" aria-labelledby="deleteSelctedList_confirmation" aria-hidden="true">
+  <div class="modal fade" id="deleteSelctedList_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" role="dialog" aria-labelledby="deleteSelctedList_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
@@ -422,13 +423,13 @@
     </div>
   </div>
 
-    <div class="modal fade" id="selection_uploadTools" data-bs-backdrop="static" data-bs-keyboard="false"
-      tabindex="-1" role="dialog" aria-labelledby="selection_uploadTools" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-red border-2" id="errorContainerTools">
-        </div>
+  <div class="modal fade" id="selection_uploadTools" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="selection_uploadTools" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-red border-2" id="errorContainerTools">
       </div>
     </div>
+  </div>
 
   <div class="modal fade" id="newRecords_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="newRecords_confirmation" aria-hidden="true">
@@ -445,6 +446,29 @@
           <button id="comfirm_newRecords" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+  {% if request.path == url_for('staff.records') or request.path == url_for('admin.records')%}
+
+  <div class="modal fade" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="showPreviewModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="max-height: 80vh;">
+        <div class="modal-body">
+          <p id="file_info"></p>
+          <div class="imageContainer py-2">
+            <img src="" alt="" id="previewImageDisplay">
+          </div>
+          <div class="d-flex justify-content-end">
+            <button class="button fs-medium fw-medium" onclick="downloadImage()"><span
+                class="fa-solid fa-download mx-2"></span>
+              Download</button>
+          </div>
         </div>
       </div>
     </div>
