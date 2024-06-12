@@ -7,7 +7,7 @@
 
 <section id="container_collapsedAll">
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
-        <h3 class="fw-bold">College and Course Manager </h3>
+        <h5 class="fw-bold">College and Course Manager </h5>
         <p class="fs-medium fst-italic"> A tool for easy management and editing of college and associated courses data.
         </p>
     </div>
@@ -42,19 +42,20 @@
                 let collegeDataDiv = document.getElementById('college_displayCards');
                 let collegeSelect = document.getElementById('addon_College');
                 let collegeMoveSelect = document.getElementById('movetoCollege');
-                collegeSelect.innerHTML = '';
+                collegeSelect.innerHTML = `<option value= " "></option>`;
+                collegeMoveSelect.innerHTML = `<option value= " "></option>`;
                 collegeDataDiv.innerHTML = '';
-                collegeMoveSelect.innerHTML = '';
-
+                
                 colleges.forEach(college => {
 
                     let college_id = college.college_id;
                     let college_name = college.college_name;
+                    let college_description = college.college_description;
                     let courseslist = '';
                     let collegeOption = '';
                     let tempCoursesArray = [];
 
-                    collegeOption = `<option value= "${college_id}">${college_name}</option>`;
+                    collegeOption = `<option value= "${college_id}"> (${college_name}) ${college_description}</option>`;
 
                     if (college.courses && Array.isArray(college.courses)) {
                         if (college.courses.length > 0) {
@@ -62,8 +63,9 @@
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
-                                courseslist += `<li class="list-group-item courses_item">${course_name}</li>`;
-                                tempCoursesArray.push({ course_id: course_id, course_name: course_name, });
+                                let course_description = course.course_description;
+                                courseslist += `<li class="list-group-item courses_item"><span class="fw-medium me-2">(${course_name})</span> ${course_description} </li>`;
+                                tempCoursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
                                 coursesArray.push(course_name);
                             });
                         }
@@ -81,9 +83,9 @@
                                                 data-bs-target="#${college_id}" 
                                                 aria-expanded="false"
                                                 aria-controls="${college_id}"
-                                                style="width:370px; min-height:90px;">
-                                                            <h5 class="fw-medium fc-light ps-2 pe-4" id="card_collegeName">
-                                                                ${college_name}
+                                                style="min-width:370px; min-height:90px;">
+                                                            <h5 class="fc-light ps-2 pe-4" id="card_collegeName">
+                                                              <span class="fw-bold me-2">(${college_name})</span> <span class="fw-medium">${college_description}</span>
                                                             </h5>
                                                 </button>
                                             </div>
@@ -129,7 +131,6 @@
                         }
                     });
 
-
                     collegeDataDiv.innerHTML += card;
                     collegeSelect.innerHTML += collegeOption;
                     collegeMoveSelect.innerHTML += collegeOption;
@@ -137,6 +138,7 @@
                     const collegeObject = {
                         college_id,
                         college_name,
+                        college_description,
                         courses: tempCoursesArray
                     };
                     collegesArray.push(collegeObject);
@@ -197,12 +199,13 @@
         for (i = 0; i < cards.length; i++) {
             college_name = cards[i].querySelector("#card_collegeName");
 
-
             if (college_name.innerText.toUpperCase().indexOf(filter) > -1) {
                 cards[i].style.display = "";
             } else {
                 cards[i].style.display = "none";
             }
+
+
         }
     }
 
@@ -225,15 +228,15 @@
                     case 'success'://the user successfully appended in the database
                         populateColleges();
                         clearForm('#new_college');
-                        showToast('Success!', 'College added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'College added successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add college data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Upload Error occurred!', 'Failed to add college data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'duplicate'://user already exist in the database
-                        showToast('College Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('College Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }
@@ -241,7 +244,7 @@
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
@@ -267,15 +270,15 @@
                     case 'success'://the user successfully appended in the database
                         populateColleges();
                         clearForm('#new_courses');
-                        showToast('Success!', 'Course added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'Course added successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'cannot modify'://user already exist in the database
-                        showToast('Course Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('Course Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }
@@ -283,7 +286,7 @@
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
@@ -298,10 +301,16 @@
 
         if (college) {
             let containerPopulate = document.getElementById('populate_coursesList');
-            let inputFields = document.getElementsByClassName('update_collegeField')[0];
-            inputFields.value = college.college_name;
-            inputFields.placeholder = college.college_name;
-            inputFields.id = college.college_id;
+            let collegeField = document.getElementsByClassName('update_collegeField')[0];
+            collegeField.value = college.college_name;
+            collegeField.placeholder = college.college_name;
+            collegeField.id = college.college_id;
+
+            let collegeDescriptionField = document.getElementsByClassName('update_collegeDescriptionField')[0];
+            collegeDescriptionField.value = college.college_description;
+            collegeDescriptionField.placeholder = college.college_description;
+            collegeDescriptionField.id = college.college_id;
+
             containerPopulate.innerHTML = ''; // Clear existing content
 
             if (college.courses.length > 0) {
@@ -309,11 +318,14 @@
                 containerPopulate.innerHTML += titleCourse;
 
                 college.courses.forEach(course => {
-                    let inputField = `  <div id="form-item" class="py-2 d-flex">
-                                            <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course_name}" placeholder="${course.course_name}" required>
-                                            <span  class="ms-2 p-2">
-                                                <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
-                                            </span>
+                    let inputField = `  <div id="${course.course_id}" class="py-2 course-item">
+                                            <div class="d-flex gap-2 w-full">
+                                                <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course_name}" placeholder="${course.course_name}" style="width: 100px;" required>
+                                                <input type="text" class="form-control flex-fill" id="${course.course_id}" name="update_courseDescription" value="${course.course_description}" placeholder="${course.course_description}" required>
+                                                <span  class="p-2" style="max-width:50px;">
+                                                    <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
+                                                </span>
+                                            </div>
                                         </div> `;
                     containerPopulate.innerHTML += inputField;
                 });
@@ -330,7 +342,7 @@
 
         let inputFields = document.getElementsByClassName('moveCourse_target')[0];
         inputFields.value = "";
-        inputFields.value = course.course_name;
+        inputFields.value = "(" + course.course_name + ") " + course.course_description;
         inputFields.id = course_id;
 
         let toCollege = document.getElementById('movetoCollege')[0];
@@ -341,7 +353,6 @@
 
         let collegeText = document.getElementById('modal_collgeChangeText');
         let courseText = document.getElementById('modal_courseChangeText');
-
 
         var selectedText = $('#movetoCollege option:selected').text();
         $('#collegeText').text(selectedText);
@@ -370,16 +381,17 @@
                     switch (data.query_result) {
                         case 'success'://the user successfully appended in the database
                             populateColleges();
-                            clearForm('#new_courses');
-                            showToast('Success!', 'Course moved successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            showToast('Success!', 'Course moved successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed'://error in processing occured
-                            showToast('Error occurred!', 'Failed to update course. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                            populateColleges();
+                            showToast('Error occurred!', 'Failed to update course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'cannot modify'://user already exist in the database
-                            showToast('Connot modify course', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                            populateColleges();
+                            showToast('Connot modify course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }
@@ -387,7 +399,7 @@
                 //handle the ajax error 
                 error: function (error) {
                     console.error('Error:', error);
-                    showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                    showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                 }
             });
@@ -400,26 +412,28 @@
     $('#confirm_updateCollege').on('click', function (event) {
         event.preventDefault();
         let college_input = document.getElementsByClassName('update_collegeField')[0];
+        let college_Desc = document.getElementsByClassName('update_collegeDescriptionField')[0];
         let college_id = college_input.id;
         let college_name = college_input.value;
+        let college_description = college_Desc.value;
 
         let inputContainer = document.getElementById('populate_coursesList');
-        let inputFields = inputContainer.getElementsByTagName('input');
         let courses_data = [];
 
-        for (let i = 0; i < inputFields.length; i++) {
-            let input = inputFields[i];
-            let courseId = input.id;
-            let courseName = input.value;
-
-            courses_data.push({ course_id: courseId, course_name: courseName });
-        }
+        let course_items = document.getElementsByClassName('course-item');
+        Array.from(course_items).forEach(item => {
+            let courseId = item.id;
+            let update_course = item.querySelector('input[name="update_course"]').value;
+            let update_course_description = item.querySelector('input[name="update_courseDescription"]').value;
+            courses_data.push({ course_id: courseId, course_name: update_course, course_description: update_course_description });
+        });
 
         const formData = {
             college_id,
             college_name,
+            college_description,
             courses_data,
-        };
+        }; 
 
         $.ajax({
             url: '/admin/college_manager/update_data/update_college',
@@ -431,16 +445,17 @@
                 switch (data.query_result) {
                     case 'success'://the user successfully appended in the database
                         populateColleges();
-                        clearForm('#new_courses');
-                        showToast('Success!', 'Course added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'Course added successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        populateColleges();
+                        showToast('Upload Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
-                    case 'duplicate'://user already exist in the database
-                        showToast('Course Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                    default ://user already exist in the database
+                        populateColleges();
+                        showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }

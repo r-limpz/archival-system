@@ -18,9 +18,10 @@ def admin_required(f):
 
 #setup the college object class for the college information object
 class Colleges:
-    def __init__(self, college_id, college_name, courses):
+    def __init__(self, college_id, college_name, college_description, courses):
         self.college_id = college_id
         self.college_name = college_name
+        self.college_description = college_description
         self.courses = courses
 
 # function fetches a list of colleges from the database
@@ -29,11 +30,11 @@ def fetch_collegeList(search_college):
         with config.conn.cursor() as cursor:
             #fetchall colleges in the database
             if search_college == 'all':
-                cursor.execute('SELECT college_id, college_name FROM college WHERE 1=1')
+                cursor.execute('SELECT college_id, college_name, college_description FROM college WHERE 1=1')
                 college_data = cursor.fetchall()
             else:
                 college_id = int(search_college)
-                cursor.execute('SELECT college_id, college_name FROM college WHERE college_id = %s', (college_id))
+                cursor.execute('SELECT college_id, college_name, college_description FROM college WHERE college_id = %s', (college_id))
                 college_data = cursor.fetchall()
             
             if college_data:
@@ -55,9 +56,10 @@ def fetch_course(search):
             for college_item in college_list:
                 col_id = college_item.get('college_id')
                 col_name = college_item.get('college_name')
+                col_desc = college_item.get('college_description')
                 
                 # Execute SQL query to fetch courses for the current college
-                cursor.execute('SELECT course_id, course_name FROM courses WHERE registered_college =%s', (col_id))
+                cursor.execute('SELECT course_id, course_name, course_description FROM courses WHERE registered_college =%s', (col_id))
                 course_item = cursor.fetchall()
                 courses = [] #temporary array storing courses data for each college
 
@@ -69,11 +71,12 @@ def fetch_course(search):
                         course_format = {'course_id' :"", 'course_name':""}  
                         course_format['course_id'] = entry['course_id']
                         course_format['course_name'] = entry['course_name']
+                        course_format['course_description'] = entry['course_description']
                         #append the dictionary in the list
                         courses.append(course_format) 
                         
                 # Create a new college object with fetched courses and append it to the list
-                college = Colleges(col_id, col_name, courses)
+                college = Colleges(col_id, col_name, col_desc, courses)
                 Col_Course_list.append(college)
                 
         return Col_Course_list
@@ -136,32 +139,41 @@ def createCourse(addon_College, newcourse_name):
         return 'failed'
 
 #update college function
-def updateCollege(college_id, college_name, courses):
+def updateCollege(college_id, college_name, college_description, courses):
     try:
         with config.conn.cursor() as cursor:
             # Update college name
-            cursor.execute('UPDATE college SET college_name = %s WHERE college_id = %s AND college_name != %s', (college_name, college_id, college_name))
+            cursor.execute('UPDATE college SET college_name = %s, college_description = %s WHERE college_id = %s AND (college_name != %s OR college_description = %s)', (college_name, college_description, college_id, college_name, college_description))
             config.conn.commit()
 
             if cursor.rowcount > 0:
                 query_result = 'success'
-            else:
-                query_result = 'cannot modify'
+
+            course_updatedCount = 0;
 
             # Update course names
             for course in courses:
                 course_id = course['course_id']
                 new_course_name = course['course_name']
+                newc_course_description = course['course_description']
+                
+                cursor.execute('SELECT 1 FROM courses WHERE course_id = %s AND course_name = %s AND course_description = %s', (course_id, new_course_name, newc_course_description))
+                entry = cursor.fetchone()
 
-                cursor.execute(''' UPDATE courses c SET c.course_name = %s WHERE c.course_id = %s AND NOT EXISTS ( SELECT 1 FROM courses WHERE course_name = %s )''', (new_course_name, course_id, new_course_name))
-                config.conn.commit()
+                if not entry:
+                    cursor.execute(''' UPDATE courses SET course_name = %s , course_description = %s WHERE course_id = %s AND NOT EXISTS ( SELECT 1 FROM courses WHERE course_name = %s AND course_description = %s)''', (new_course_name, newc_course_description, course_id, new_course_name, newc_course_description))
+                    config.conn.commit()
 
-                config.conn.commit()
+                    if cursor.rowcount > 0:
+                        course_updatedCount += 1
+                        
+                else:
+                    course_updatedCount += 1
 
-            if cursor.rowcount > 0:
+            if course_updatedCount > 0:
                 query_result = 'success'
             else:
-                query_result = 'cannot modify'
+                query_result = 'failed'
 
             return query_result
         
@@ -255,6 +267,8 @@ def create_college():
             return jsonify({'query_result' : 'failed'})
 
 @college_manager.route('/add/new_course' , methods=['POST', 'GET'])
+@login_required
+@admin_required
 def create_courses():
     if request.method == "POST":
         addon_College = request.form.get('addon_College')
@@ -268,14 +282,17 @@ def create_courses():
             return jsonify({'query_result' : 'failed'})
 
 @college_manager.route('/update_data/update_college' , methods=['POST', 'GET'])
+@login_required
+@admin_required
 def update_college():
     if request.method == "POST":
         data = request.get_json()
         college_id = data.get('college_id')
         college_name = data.get('college_name')
+        college_description = data.get('college_description')
         courses_data = data.get('courses_data')
 
-        query_result = updateCollege(college_id, college_name, courses_data)
+        query_result = updateCollege(college_id, college_name, college_description, courses_data)
 
         if query_result:
             return jsonify({'query_result' : query_result})
@@ -283,6 +300,8 @@ def update_college():
             return jsonify({'query_result' : 'failed'})
 
 @college_manager.route('/remove_data/delete_college/data')
+@login_required
+@admin_required
 def remove_college():
     if college_id:
         college_id = int(college_id)
@@ -294,6 +313,8 @@ def remove_college():
             return jsonify({'query_result' : 'failed'})
 
 @college_manager.route('/update_college/course/unlink_college/setup_link' , methods=['POST', 'GET'])
+@login_required
+@admin_required
 def change_courseCollege():
     if request.method == "POST":
         course = request.form.get('moveCourse_target')

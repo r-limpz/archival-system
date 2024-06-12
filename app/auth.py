@@ -225,7 +225,7 @@ def login():
         else:
             with config.conn.cursor() as cursor:
                 #Search for the user in the database
-                cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
+                cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role))
                 user = cursor.fetchone()
 
                 if captcha.get_answer() == input_captcha:#validate captcha input

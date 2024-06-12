@@ -20,126 +20,63 @@
 
 <section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
-        <h3 class="fw-bold">Student Records</h3>
+        <h5 class="fw-bold">Student Records</h5>
         <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking
             and retrieval.</p>
     </div>
-    <div class="d-flex justify-content-between gap-3 mb-3 mx-2">
+    <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate" id="filterSearch" placeholder="Search...">
         </div>
-        <div class="d-flex justify-content-end gap-2 fs-medium" id="filterContainer">
-            <div class="d-flex" style="width: 160px;">
-                <span class="fw-medium p-2">College:</span>
-                <select id="filterCollege" class="form-select text-truncate fs-medium">
-                    <option value=""></option>
-                </select>
+        <div class="d-flex justify-content-end gap-4 fs-medium p-0" id="filterContainer">
+            <div class="d-flex justify-content-between gap-2 p-0">
+                <div class="d-flex" style="width: 100px;">
+                    <select id="filterCollege" class="form-select text-truncate fs-medium">
+                    </select>
+                </div>
+                <div class="d-flex" style="width: 100px;">
+                    <select id="filterCourse" class="form-select text-truncate fs-medium">
+                    </select>
+                </div>
+                <div class="d-flex" style="width: 110px;">
+                    <select id="filterSemester" class="form-select fs-medium">
+                        <option value="">Semester</option>
+                        <option value="1st">1st Sem</option>
+                        <option value="2nd">2nd Sem</option>
+                        <option value="Off-Sem">Off-Sem</option>
+                    </select>
+                </div>
             </div>
-            <div class="d-flex" style="width: 170px;">
-                <span class="fw-medium p-2">Course:</span>
-                <select id="filterCourse" class="form-select text-truncate fs-medium">
-                    <option value=""></option>
-                </select>
-            </div>
-            <div class="d-flex" style="width: 185px;">
-                <span class="fw-medium p-2">Semester:</span>
-                <select id="filterSemester" class="form-select fs-medium">
-                    <option value=""></option>
-                    <option value="1st">1st Sem</option>
-                    <option value="2nd">2nd Sem</option>
-                    <option value="Off-Sem">Off-Sem</option>
-                </select>
-            </div>
-            <div class="d-flex" style="width: 165px;">
-                <span class="fw-medium p-2">Year</span>
-                <select id="filterYear" class="form-select fs-medium">
-                    <option value="">YYYY-YYYY</option>
-                    <option value="1998-1999">1998-1999</option>
-                </select>
-            </div>
-            <div class="d-flex" style="width: 120px;">
-                <span class="fw-medium p-2">Show</span>
-                <select id="filterShow" class="form-select fs-medium">
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="50">100</option>
-                    <option value="10000">All</option>
-                </select>
+            <div class="d-flex justify-content-end gap-2 fs-medium p-0">
+                <div class="d-flex gap-2">
+                    <span class="fw-medium py-2 flex-grow-1" style="width: 110px;">Academic Year:</span>
+                    <select id="filterYear" class="form-select fs-medium" style="width: 120px;">
+                        <option value="">YYYY-YYYY</option>
+                        <option value="1998-1999">1998-1999</option>
+                    </select>
+                </div>
+                <div class="d-flex" style="width: 120px;">
+                    <span class="fw-medium p-2">Show</span>
+                    <select id="filterShow" name="filterShow" class="form-select fs-medium">
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="50">100</option>
+                        <option value="-1">All</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
 
     <table id='recordsTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
-        width="100%" >
-        <thead>
-            <tr>
-                <th class="tr-id">ID</th>
-                <th class="fullname-th text-center">Full Name</th>
-                <th class="college-th text-center">College</th>
-                <th class="course-th text-center">Course</th>
-                <th class="section-th text-center">Section</th>
-                <th class="subject-th text-center">Subject</th>
-                <th class="unit-th text-center">Unit</th>
-                <th class="semester-th text-center">Semester</th>
-                <th class="academic-year-th text-center">Year</th>
-                <th class="action-th text-center">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Your data goes here -->
-        </tbody>
+        width="100%">
     </table>
 </section>
 
 {% endblock%}
 
 {% block scripts %}
-<script>
-    //preview
-    function preview(rowID) {
-        console.log(rowID);
 
-        fetch('/getDocImage/image/data/' + rowID)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(encodedImage => {
-                let previewImageDisplay = document.getElementById('previewImageDisplay');
-                previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
-
-                // Show the modal
-                let modal = new bootstrap.Modal(document.getElementById('showPreviewModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
-    }
-
-    // Clear the image source when the modal is hidden
-    $('#showPreviewModal').on('hidden.bs.modal', function (e) {
-        document.getElementById('previewImageDisplay').src = '';
-    })
-
-    function downloadImage() {
-            // Assuming 'image' is a global variable holding your image data
-            var image = document.getElementById('previewImageDisplay').src;
-
-            // Download the image
-            var link = document.createElement('a');
-            link.href = image;
-            link.download = 'download.jpg';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-    //edit
-    //delete
-</script>
 <script>
     //populate data table
     var collegesArray = [];
@@ -150,8 +87,11 @@
             .then(colleges => {
                 collegesArray = [];
                 let collegeSelect = document.getElementById('filterCollege');
+                let courseSelect = document.getElementById('filterCourse');
                 collegeSelect.innerHTML = '';
-                collegeSelect.innerHTML = `<option value=""></option>`;
+                collegeSelect.innerHTML = `<option value=""> College </option>`;
+                courseSelect.innerHTML = '';
+                courseSelect.innerHTML = `<option value=""> Course </option>`;
 
                 colleges.forEach(college => {
 
@@ -191,7 +131,7 @@
     function populateCourses(selectedCollegeName) {
         const courseSelect = document.getElementById('filterCourse');
         const option = document.createElement('option');
-        courseSelect.innerHTML = '<option value=""></option>';
+        courseSelect.innerHTML = '<option value="">Course</option>';
 
         const selectedCollege = collegesArray.find(college => college.college_name === selectedCollegeName);
         if (selectedCollege) {
@@ -211,8 +151,10 @@
     });
 </script>
 <script>
-    $(document).ready(function () {
-        var recordsDataTable = $('#recordsTable').DataTable({ 
+    var recordsDataTable;
+
+    function dataTableFunction() {
+        recordsDataTable = $('#recordsTable').DataTable({
             stripeClasses: [],
             language: {
                 paginate: {
@@ -222,7 +164,7 @@
             },
             scrollY: '60vh',
             scrollX: true,
-            scrollCollapse: false,
+            scrollCollapse: true,
             'processing': true,
             'responsive': true,
             'serverSide': true,
@@ -238,31 +180,46 @@
                     data.filterYear = $('#filterYear').val();
                 }
             },
-            'lengthMenu': [[25, 50, 100, 10000], [25, 50, 100, "All"]],
+            'lengthMenu': [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            'deferRender': true,
+            'scroller': true,
             'columns': [
-                { data: 'id', orderable: true },
-                { data: 'FullName', orderable: true, className: 'fw-medium'},
-                { data: 'College', orderable: true, className: 'text-center' },
-                { data: 'Course', orderable: true, className: 'text-center' },
-                { data: 'Section', orderable: true, className: 'text-center' },
-                { data: 'Subject', orderable: false, className: 'text-wrap' },
-                { data: 'Unit', orderable: false, className: 'text-center'},
-                { data: 'Semester', orderable: false, className: 'text-center'},
-                { data: 'SchoolYear', orderable: true, className: 'text-center'},
+                { data: 'id', orderable: true, title: '#' },
+                { data: 'FullName', orderable: true, title: 'Student', wrap: true, className: 'fw-medium' },
+                { data: 'College', orderable: true, title: 'College', wrap: false, className: 'text-center' },
+                { data: 'Course', orderable: true, title: 'Course', wrap: false, className: 'text-center' },
+                { data: 'Section', orderable: true, title: 'Section', wrap: false, className: 'text-center' },
+                { data: 'Subject', orderable: false, title: 'Subject', wrap: true, },
+                { data: 'Unit', orderable: false, title: 'Unit', wrap: false, className: 'text-center', width: '32px' },
+                { data: 'Semester', orderable: false, title: 'Semester', wrap: false, className: 'text-center', width: '75px' },
+                { data: 'SchoolYear', orderable: true, title: 'SchoolYear', wrap: true, className: 'text-center', width: '100px' },
                 {
                     'data': 'id',
                     title: 'Action',
                     wrap: true,
                     orderable: false,
                     "render": function (data, type, row) {
-                        const viewLink = '<a id="viewThis" class="flex-fill" onclick="preview(' + row['image_id'] + ')"><span class="fa-solid fa-eye"></span></a>';
-                        const editLink = '<a id="editThis" class="flex-fill" onclick="editRecord(' + row['id'] + ')"><span class="fa-solid fa-pen"></span></a>';
-                        const deleteLink = '<a id="deleteThis" class="flex-fill" onclick="deleteRecord(' + row['id'] + ')"><span class="fa-solid fa-trash"></span></a>';
+                        const viewLink = '<a id="viewThis" class="flex-fill text-center" onclick="preview(' + row['image_id'] + ')"><span class="fa-solid fa-eye"></span></a>';
+                        const editLink = '<a id="editThis" class="flex-fill text-center" onclick="editRecord(' + row['id'] + ')"><span class="fa-solid fa-pen"></span></a>';
+                        const deleteLink = '<a id="deleteThis" class="flex-fill text-center" onclick="deleteRecord(' + row['id'] + ')"><span class="fa-solid fa-trash text-danger"></span></a>';
 
-                        return `<div class="d-flex fs-small">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
+                        return `<div class="d-flex fs-small align-items-center">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
                     }
                 }
             ],
+        });
+
+        $('#filterShow').change(function () {
+            if ($(this).val() == -1) {  // If "All" is selected
+                $('.dataTables_wrapper .dataTables_paginate').addClass('d-none');  // Hide the pagination
+            } else {
+                $('.dataTables_wrapper .dataTables_paginate').removeClass('d-none');  // Show the pagination
+            }
+        });
+
+        $('#recordsTable tbody').on('dblclick', 'tr', function () {
+            var data = recordsDataTable.row(this).data();
+            preview(data.image_id);
         });
 
         $('#filterSearch').keyup(function () {
@@ -281,16 +238,146 @@
         $('#filterYear').change(function () {
             recordsDataTable.draw();
         });
+    }
 
-        $('#toggle_navbar').click(function () {
-            recordsDataTable.columns.adjust().draw();
-        });
-
-        $('#recordsTable tbody').on('dblclick', 'tr', function () {
-            var data = recordsDataTable.row(this).data();
-            preview(data.image_id);
-        });
-    });
+    dataTableFunction();
 </script>
+<script>
+    //preview
+    function preview(rowID) {
+        console.log(rowID);
 
+        fetch('/getDocImage/image/data/' + rowID)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(encodedImage => {
+                let previewImageDisplay = document.getElementById('previewImageDisplay');
+                previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
+
+                // Show the modal
+                let modal = new bootstrap.Modal(document.getElementById('showPreviewModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    }
+
+    // Clear the image source when the modal is hidden
+    $('#showPreviewModal').on('hidden.bs.modal', function (e) {
+        document.getElementById('previewImageDisplay').src = '';
+    })
+
+    function downloadImage() {
+        // Assuming 'image' is a global variable holding your image data
+        var image = document.getElementById('previewImageDisplay').src;
+        var link = document.createElement('a');
+        link.href = image;
+        link.download = 'download.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    //edit
+    function editRecord(studentEntryId) {
+        fetch('/tags/getStudent/document/data/' + studentEntryId)
+            .then(response => response.json())
+            .then(recordsData => {
+                let surname = recordsData.surname;
+                let firstname = recordsData.firstname;
+                let middlename = recordsData.middlename;
+                let suffix = recordsData.suffix;
+
+                // Create the HTML string with the fetched data
+                let html = `
+                <div id="form-item" class="py-2">
+                    <label class="fw-medium" for="update_Entrysurname">Surname</label>
+                    <input type="text" class="form-control" id="update_Entrysurname" name="update_Entrysurname" placeholder="${surname}" value="${surname}" required>
+                </div>
+                <div id="form-item" class="py-2">
+                    <label class="fw-medium" for="update_Entryfirstname">First Name</label>
+                    <input type="text" class="form-control" id="update_Entryfirstname" name="update_Entryfirstname" placeholder="${firstname}" value="${firstname}" required>
+                </div>
+                <div id="form-item" class="py-2">
+                    <label class="fw-medium" for="update_Entrymiddlename">Middle Name</label>
+                    <input type="text" class="form-control" id="update_Entrymiddlename" name="update_Entrymiddlename" placeholder="${middlename}" value="${middlename}" required>
+                </div>
+                <div id="form-item" class="py-2">
+                    <label class="fw-medium" for="update_Entrysuffix">Suffix</label>
+                    <input type="text" class="form-control" id="update_Entrysuffix" name="update_Entrysuffix" placeholder="${suffix}" value="${suffix}" required>
+                </div>
+            `;
+                // Set the HTML of the parent element
+                document.getElementById('updateTag_data').innerHTML = html;
+            });
+
+        let modal = new bootstrap.Modal(document.getElementById('EditRecordModal'));
+        modal.show();
+
+        $('#update_entry_credentials').on('click', function (event) {
+            event.preventDefault();
+
+            var tagging_id = studentEntryId;
+            let update_surname = $('#update_Entrysurname').val();
+            let update_firstname = $('#update_Entryfirstname').val();
+            let update_middlename = $('#update_Entrymiddlename').val();
+            let update_suffix = $('#update_Entrysuffix').val();
+
+            //set the data
+            let formData = {
+                'tagging_id': tagging_id,
+                'update_surname': update_surname,
+                'update_firstname': update_firstname,
+                'update_middlename': update_middlename,
+                'update_suffix': update_suffix
+            };
+
+            $.ajax({
+                url: '/tags/updateStudent/document/update',
+                type: 'POST',
+                data: formData,
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    recordsDataTable.draw();
+                    switch (data.update_query) {
+                        case 'no changes':
+                            break;
+                        case 'success'://the user successfully appended in the database
+                            showToast('Success!', 'Entry updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed'://error in processing occured
+                            showToast('Update Error occurred!', 'Failed to modify entry credentials.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'Entry not found'://user already exist in the database
+                            showToast('Entry not Found', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        default:
+                            showToast(data.update_query, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                },
+                //handle the ajax error 
+                error: function (error) {
+                    console.error('Error:', error);
+                    showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        });
+    }
+
+    //delete
+    function deleteRecord(tagsEntryId) {
+        let modal = new bootstrap.Modal(document.getElementById('deleteRecordModal'));
+    }
+</script>
 {% endblock%}

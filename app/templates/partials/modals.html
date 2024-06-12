@@ -179,7 +179,7 @@
 
   <div class="modal fade" id="addColleges_modal" tabindex="-1" role="dialog" aria-labelledby="addColleges_modal"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="width:450px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
       <div class="modal-content">
         <div class="modal-body">
           <h5 class="fw-bold">Add a College</h5>
@@ -188,8 +188,14 @@
               <div class="inputs-forms px-3">
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newcollege_name">College Name</label>
-                  <input type="text" class="form-control" id="newcollege_name" name="newcollege_name"
-                    oninput="checkCollege('newcollege_name', 'button_showConfirmationAddColleges')" required>
+                  <div class="d-flex gap-2">
+                    <input type="text" class="form-control" id="newcollege_name" name="newcollege_name" required
+                      style="width: 100px;">
+                    <input type="text" class="form-control flex-fill" id="newcollege_nameDescription"
+                      name="newcollege_nameDescription"
+                      oninput="checkCollege('newcollege_name', 'button_showConfirmationAddColleges')" required>
+                  </div>
+
                 </div>
               </div>
             </form>
@@ -206,7 +212,7 @@
 
   <div class="modal fade" id="addCourses_modal" tabindex="-1" role="dialog" aria-labelledby="addCourses_modal"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="width:450px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
       <div class="modal-content">
         <div class="modal-body">
           <h5 class="fw-bold">Add a Course</h5>
@@ -220,8 +226,14 @@
                 </div>
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newcourse_name">Courses</label>
-                  <input type="text" class="form-control" id="newcourse_name" name="newcourse_name"
-                    oninput="checkCourses('newcourse_name', 'button_showConfirmationAddCourses')" required>
+                  <div class="d-flex gap-2">
+                    <input type="text" class="form-control" id="newcourse_name" name="newcourse_name" required
+                      style="width: 100px;">
+                    <input type="text" class="form-control flex-fill" id="newcourse_nameDescription"
+                      name="newcourse_nameDescription"
+                      oninput="checkCollege('newcourse_nameDescription', 'button_showConfirmationAddColleges')"
+                      required>
+                  </div>
                 </div>
               </div>
             </form>
@@ -238,7 +250,7 @@
 
   <div class="modal fade" id="editCollege_modal" tabindex="-1" role="dialog" aria-labelledby="editCollege_modal"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="width:450px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:700px;">
       <div class="modal-content">
         <div class="modal-body">
           <h5 class="fw-bold">Manage College</h5>
@@ -247,7 +259,12 @@
               <div class="inputs-forms px-3">
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="update_college">College</label>
-                  <input type="text" class="form-control update_collegeField" name="update_college" required>
+                  <div class="d-flex gap-2">
+                    <input type="text" class="form-control update_collegeField" name="update_college"
+                      style="width: 100px;" required>
+                    <input type="text" class="form-control update_collegeDescriptionField flex-fill"
+                      name="update_collegeDescription" required>
+                  </div>
                 </div>
                 <div id="populate_coursesList"></div>
               </div>
@@ -265,24 +282,24 @@
 
   <div class="modal fade" id="moveCourses_modal" tabindex="-1" role="dialog" aria-labelledby="moveCourses_modal"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered" style="min-width: 55vw; width: auto;">
       <div class="modal-content">
         <div class="modal-body">
           <h5 class="fw-bold">Move course entry</h5>
           <div class="p-2">
             <form action="{{ url_for('college_manager.change_courseCollege')}}" method="post" id="move_course">
-              <div class="inputs-forms px-3 d-flex justify-content-between">
-                <div id="form-item" class="py-2 flex-grow-1">
+              <div class="inputs-forms px-3 d-flex gap-2">
+                <div id="form-item" class="py-2 w-full flex-fill" style="width: 45%;">
                   <label class="fw-medium" for="moveCourse_target">Course</label>
-                  <input type="text" class="form-control moveCourse_target text-truncate" name="moveCourse_target"
+                  <input type="text" class="form-control pe-4 moveCourse_target text-truncate " name="moveCourse_target"
                     id="moveCourse_target" value="${course_name}" disabled>
                 </div>
-                <div class="py-4 mx-3">
+                <div class="py-4">
                   <p class="py-3"><span class="fa-solid fa-angles-right "></span></p>
                 </div>
-                <div id="form-item" class="py-2 flex-grow-1">
+                <div id="form-item" class="py-2 flex-fill" style="width: 45%;">
                   <label class="fw-medium" for="movetoCollege">College</label>
-                  <select class="form-select text-truncate" name="movetoCollege" id="movetoCollege" required>
+                  <select class="form-select pe-5 text-truncate" name="movetoCollege" id="movetoCollege" required>
                   </select>
                 </div>
               </div>
@@ -474,4 +491,67 @@
     </div>
   </div>
 
+  <div class="modal fade" id="EditRecordModal" tabindex="-1" role="dialog" aria-labelledby="EditRecordModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="width:450px;">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h5 class="fw-bold">Edit Entry </h5>
+          <div class="p-2">
+            <form action="{{ url_for('data.editEntryData')}}" method="post" id="add_user">
+              <div class="inputs-forms px-3 my-3" id="updateTag_data">
+              </div>
+            </form>
+            <div class="mt-5 d-flex justify-content-end">
+              <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
+              <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#UpdateTag_confirmation"
+                type="button" id="button_showConfirmationUpdateTag"> Submit </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="UpdateTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" role="dialog" aria-labelledby="UpdateTag_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body mx-3">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3"> Update Entry Credentials </h5>
+            <p class="ms-2"> Are you sure you want to update this tag entry?</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="button me-3" >Cancel</button>
+          <button id="update_entry_credentials" class="btn-red fw-bold text-decoration-none button"
+            data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="DeleteTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      role="dialog" aria-labelledby="DeleteTag_confirmation" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body mx-3">
+            <div class="mx-3">
+              <h5 class="fw-bold my-3"> Delete Entry </h5>
+              <p class="ms-2"> Are you sure you want to delete this tag entry?</p>
+            </div>
+          </div>
+          <div class="modal-footer mx-3">
+            <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+            <button id="delete_entry_credentials" class="btn-red fw-bold text-decoration-none button"
+              data-bs-dismiss="modal">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}

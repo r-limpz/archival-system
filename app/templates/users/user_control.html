@@ -8,7 +8,7 @@
 
 <section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
-        <h3 class="fw-bold">User Manager</h3>
+        <h5 class="fw-bold">User Manager</h5>
         <p class="fs-medium fst-italic">Manage and oversee user accounts, roles, and access rights in a secure and
             efficient manner.</p>
     </div>
@@ -59,7 +59,7 @@
                 usersDataDiv.innerHTML = '';
                 users.forEach(user => {
                     var popup_id = Math.random();
-                    let statusClass = user.deleteStatus === 'deleted' ? 'fc-red' : (user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'fc-orange'));
+                    let statusClass = user.deleteStatus === 'deleted' ? 'text-danger' : (user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'text-warning'));
                     let card = `<div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})" style="width:65vw;")>
                                     <div class="card-body d-flex justify-content-between flex-nowrap">
                                         <div class="me-4 account_info d-flex">
@@ -71,7 +71,7 @@
                                                     data-bs-placement="top"
                                                     data-bs-trigger="hover"
                                                     data-bs-html="true"
-                                                    title="${statusClass.includes('fc-red') ? 'Schedule deletion account' : (statusClass.includes('fc-green') ? 'Online' : (statusClass.includes('fc-orange') ? 'Offline' : 'Deactivated'))}">
+                                                    title="${statusClass.includes('text-danger') ? 'Schedule deletion account' : (statusClass.includes('fc-green') ? 'Online' : (statusClass.includes('text-warning') ? 'Offline' : 'Deactivated'))}">
                                                 </i>
                                             </span>
                                             <div class="p-2">
@@ -238,11 +238,11 @@
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Upload Error occurred!', 'Failed to add user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'duplicate user'://user already exist in the database
-                        showToast('User Already Exist!', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('User Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }
@@ -250,7 +250,7 @@
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
@@ -286,14 +286,14 @@
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                     else if (data.change_state === 'failed') {
-                        showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                 },
                 error: function (error) {
                     populateUsers('all-any');
                     console.error('Error:', error);
-                    showToast('Error', 'Change status error occurred.', 'fc-red fa-solid fa-triangle-exclamation', 'border-warning');
+                    showToast('Error', 'Change status error occurred.', 'text-danger fa-solid fa-triangle-exclamation', 'border-warning');
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                 }
             });
@@ -466,19 +466,19 @@
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'failed'://error in processing occured
-                                showToast('Upload Error occurred!', 'Failed to add user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                                showToast('Upload Error occurred!', 'Failed to add user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'user not found'://user already exist in the database
                                 populateUsers('all-any');
-                                showToast('User not Found', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                                showToast('User not Found', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
 
 
                             default:
                                 populateUsers('all-any');
-                                showToast(data.update_query, 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                                showToast(data.update_query, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                         }
@@ -486,7 +486,7 @@
                     //handle the ajax error 
                     error: function (error) {
                         console.error('Error:', error);
-                        showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                 });
@@ -572,17 +572,17 @@
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed'://error in processing occured
-                            showToast('failed', 'Failed to delete user.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                            showToast('failed', 'Failed to delete user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'cannot delete user'://user already exist in the database
                             populateUsers('all-any');
-                            showToast('Cannot process the request', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                            showToast('Cannot process the request', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         default:
                             populateUsers('all-any');
-                            showToast(data.delete_query, 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                            showToast(data.delete_query, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }
@@ -590,7 +590,7 @@
                 //handle the ajax error 
                 error: function (error) {
                     console.error('Error:', error);
-                    showToast('Error', 'Upload error occurred.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                    showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                 }
             });

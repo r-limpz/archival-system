@@ -465,6 +465,10 @@ button:active {
     padding: var(--button-p-default);
 }
 
+button:disabled {
+    opacity: 0.50;
+}
+
 .button:hover {
     font-weight: 700;
 }

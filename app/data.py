@@ -1,12 +1,87 @@
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
+from functools import wraps
 import base64
 import json
 from . import config
 
 data_fetch = Blueprint('data', __name__)
 
+#decorator for authorization role based
+def authenticate(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated and current_user.is_active:
+            if current_user.role not in ['admin', 'staff']:
+                return redirect(url_for('home'))
+        else:
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def fetchEntryData(tag_id):
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute(""" SELECT students.*, tagging.* FROM students JOIN tagging ON students.student_id = tagging.student WHERE tagging.tag_id = %s """, (tag_id,))
+            student_data = cursor.fetchone()
+
+            record_data = { 'surname': '', 'firstname': '', 'middlename': '', 'suffix': '' }
+
+            record_data['surname'] = student_data['surname']
+            record_data['firstname'] = student_data['firstname']
+            record_data['middlename'] = student_data['middlename']
+            record_data['suffix'] = student_data['suffix']
+
+            return record_data
+
+    except Exception as e:
+        print('Fetch Recordds Error :', e)
+
+def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix):
+    try:
+        with config.conn.cursor() as cursor:
+            tagging_id = int(tagging_id)
+            print(new_surname, new_firstname, new_middlename, new_suffix)
+            cursor.execute(""" SELECT students.*, tagging.* FROM students JOIN tagging ON students.student_id = tagging.student WHERE tagging.tag_id = %s """, (tagging_id,))
+            studentData = cursor.fetchone()
+
+            if studentData:
+                if studentData['surname'] == new_surname and studentData['firstname'] == new_firstname and studentData['middlename'] == new_middlename and studentData['suffix'] == new_middlename:
+                    return 'no changes'
+                else:
+                    cursor.execute(""" INSERT INTO students (surname, firstname, middlename, suffix) SELECT %s, %s, %s, %s WHERE NOT EXISTS 
+                                  ( SELECT 1 FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s ) """,
+                                    (new_surname, new_firstname, new_middlename, new_suffix, new_surname, new_firstname, new_middlename, new_suffix))
+                   
+                    cursor.execute('SELECT student_id FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (new_surname, new_firstname, new_middlename, new_suffix))
+                    studentID = cursor.fetchone()['student_id']
+
+                    if studentID:
+                        cursor.execute('UPDATE tagging SET student = %s WHERE tag_id = %s', (studentID, tagging_id))
+                        config.conn.commit()
+
+                        if cursor.rowcount > 0:
+                            return 'success'
+                            
+                        return 'failed'
+                
+            return 'entry not found'
+    except Exception as e:
+        print('Unlink Recordds Error :', e)
+
+def removeRecordData():
+    try:
+        with config.conn.cursor() as cursor:
+            sss
+            
+    except Exception as e:
+        print('Remove Recordds Error :', e)
+
+
 @data_fetch.route("/records_data",methods=["POST","GET"])
+@login_required
+@authenticate
 def records_data():
     try:
         if request.method == 'POST':
@@ -28,7 +103,7 @@ def records_data():
             if filterSearch:
                 search_terms = filterSearch.split(' ')
                 for term in search_terms:
-                    search_query += f" and (FullName like '%{term}%' or College like '%{term}%' or Course like '%{term}%' or Subject like '%{term}%' or SchoolYear like '%{term}%' or Semester like '%{term}%' or Section like '%{term}%') "
+                    search_query += f" and (FullName like '%{term}%' or College like '%{term}%' or Course like '%{term}%' or Subject like '%{term}%' or SchoolYear like '%{term}%' or Semester like '%{term}%' or Unit like '%{term}%') "
             
             if filterCollege:
                 search_query += f" and (College = '{filterCollege}')"
@@ -51,9 +126,15 @@ def records_data():
                 total_record_with_filter = records['allcount']
 
                 # Fetch records
-                stud_query = f"SELECT * FROM srecordstbl WHERE 1 {search_query} ORDER BY {column_name} {column_sort_order} LIMIT {row},{rowperpage}"
-                cursor.execute(stud_query)
-                recordlist = cursor.fetchall()
+                if rowperpage == -1:  # If length is -1, then it's "All"
+                    stud_query = f"SELECT * FROM srecordstbl WHERE 1 {search_query} ORDER BY {column_name} {column_sort_order}"
+                    cursor.execute(stud_query)
+                    recordlist = cursor.fetchall()
+                # limite records
+                else:
+                    stud_query = f"SELECT * FROM srecordstbl WHERE 1 {search_query} ORDER BY {column_name} {column_sort_order} LIMIT {row},{rowperpage}"
+                    cursor.execute(stud_query)
+                    recordlist = cursor.fetchall()
 
                 data = []
                 if recordlist:
@@ -70,8 +151,6 @@ def records_data():
                             'SchoolYear': row['SchoolYear'],
                             'image_id': row['image_id'],
                         })
-                else:
-                    print('NO RECORDS ')
                     
                 response = {
                     'draw': draw,
@@ -82,11 +161,12 @@ def records_data():
 
                 return jsonify(response)
     except Exception as e:
-        print(e)
+        print('Fetch Records Error: ',e)
 
 #preview document image
 @data_fetch.route('/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
 @login_required
+@authenticate
 def previewDocument(image_id):
     image_id = int(image_id)
     with config.conn.cursor() as cursor:
@@ -99,3 +179,34 @@ def previewDocument(image_id):
             return Response(encoded_image)
         
         return "No image data found", 404
+    
+#fetch entry data
+@data_fetch.route('/tags/getStudent/document/data/<tag_id>', methods=['POST', 'GET'])
+@login_required
+@authenticate
+def getEntryData(tag_id):
+    tag_id = int(tag_id)
+
+    if tag_id:
+        query_result = fetchEntryData(tag_id)
+        return jsonify(query_result)
+    
+@data_fetch.route('/tags/updateStudent/document/update', methods=['POST', 'GET'])
+@login_required
+@authenticate
+def editEntryData():
+
+    if request.method == "POST":
+            tagging_id = request.form.get('tagging_id')
+            new_surname = request.form.get('update_surname')
+            new_firstname = request.form.get('update_firstname')
+            new_middlename = request.form.get('update_middlename')
+            new_suffix = request.form.get('update_suffix')
+
+            tagging_id = int(tagging_id)
+
+            if tagging_id:
+                update_query = editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix)
+
+                if update_query:
+                    return jsonify({'update_query': update_query})

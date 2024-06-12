@@ -1,37 +1,41 @@
-/* table pagination*/
-#filterContainer {
-    padding: 0rem;
-}
-
+/* table ui*/
+#recordsTable,
+#documentsTable,
 #recordsTable_wrapper,
-#recordsTable {
+#documentsTable_wrapper {
     height: 100%;
 }
-#recordsTable {
-    width: 100% !important;
+.dataTables_scrollBody{
+min-height: 60vh;
 }
 
-#recordsTable th,
-#recordsTable td {
-    white-space: nowrap;
+table.dataTable thead th {
+    font-weight: 800 !important;
+    text-align: center;
 }
 
+table.dataTable th,
+table.dataTable td {
+    white-space: normal !important;
+    width: auto;
+}
+
+#recordsTable,
 .dataTables_scrollHeadInner,
-.dataTables_scrollBody {
-    width: 100% !important;
-}
-
+.dataTables_scrollBody,
 .dataTables_scrollHeadInner table,
 .dataTables_scrollBody table {
     width: 100% !important;
 }
+
 .text-wrap {
     white-space: normal !important;
 }
 
 table.dataTable thead th,
 table.dataTable tbody,
-#recordsTable_wrapper .dataTables_scrollBody {
+#recordsTable_wrapper .dataTables_scrollBody,
+#documentsTable_wrapper .dataTables_scrollBody {
     border-top: none;
     border-bottom: none;
 }
@@ -40,10 +44,6 @@ table.dataTable tbody tr {
     border-bottom: 0.5px solid rgb(224, 224, 224);
 }
 
-table.dataTable td {
-    white-space: normal !important;
-    width: auto;
-}
 
 /* table pagination*/
 .dataTables_wrapper .dataTables_info,
@@ -51,7 +51,6 @@ table.dataTable td {
     padding: 0.25rem;
     bottom: 0rem;
     right: 1rem;
-    display: flex;
     justify-content: flex-end;
 }
 
@@ -60,7 +59,8 @@ table.dataTable td {
     font-size: small;
 }
 
-#recordsTable_paginate .paginate_button {
+#recordsTable_paginate .paginate_button,
+#documentsTable_paginate .paginate_button {
     padding: 0.2rem 0.7rem;
     border-radius: 0.6rem;
     background: none;
@@ -70,12 +70,15 @@ table.dataTable td {
 }
 
 #recordsTable_paginate .paginate_button#recordsTable_previous:hover,
-#recordsTable_paginate .paginate_button#recordsTable_next:hover {
+#documentsTable_paginate .paginate_button#documentsTable_previous:hover,
+#recordsTable_paginate .paginate_button#recordsTable_next:hover,
+#documentsTable_paginate .paginate_button#documentsTable_next:hover {
     font-weight: normal;
     border: none;
 }
 
-#recordsTable_wrapper #recordsTable_paginate .paginate_button:hover {
+#recordsTable_wrapper #recordsTable_paginate .paginate_button:hover,
+#documentsTable_wrapper #documentsTable_paginate .paginate_button:hover {
     background: none;
     background-color: white;
     color: rgb(29, 27, 27) !important;
@@ -83,7 +86,8 @@ table.dataTable td {
     text-decoration: none;
 }
 
-#recordsTable_wrapper #recordsTable_paginate .paginate_button.current {
+#recordsTable_wrapper #recordsTable_paginate .paginate_button.current,
+#documentsTable_wrapper #documentsTable_paginate .paginate_button.current {
     background: none;
     color: rgb(255, 255, 255) !important;
     background: linear-gradient(275.52deg, #973939 0.28%, #DC7171 100%) !important;
@@ -92,12 +96,10 @@ table.dataTable td {
 }
 
 /* table scrollbar */
-
 .dataTables_scrollBody::-webkit-scrollbar {
     width: 3px;
     position: absolute;
 }
-
 
 .dataTables_scrollBody::-webkit-scrollbar-thumb {
     background-color: #a5a5a5;

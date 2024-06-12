@@ -188,21 +188,6 @@ def uploader():
 
     return jsonify({'query_result': query_result})
 
-@uploader_manager.route('/displayImage/<document_id>', methods=['POST', 'GET'])
-@login_required
-def display_uploaded_image(document_id):
-    with config.conn.cursor() as cursor:
-        cursor.execute('SELECT * FROM documents WHERE docs_id = %s', (document_id,))
-        document_data = cursor.fetchone()
-
-        cursor.execute('SELECT * FROM img_files WHERE img_id = %s', document_data['image_id'])
-        image_data = cursor.fetchone()
-
-        if image_data:
-            document_image = image_data['document_file']
-            encoded_image = base64.b64encode(document_image).decode('utf-8')
-            return render_template('users/result.html', image=encoded_image)
-
 
 
 
