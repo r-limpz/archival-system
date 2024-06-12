@@ -11,11 +11,8 @@ data_fetch = Blueprint('data', __name__)
 def authenticate(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user.is_authenticated and current_user.is_active:
-            if current_user.role not in ['admin', 'staff']:
+        if not current_user.is_authenticated and not current_user.is_active and current_user.role not in ['admin', 'staff']:
                 return redirect(url_for('home'))
-        else:
-            return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -42,7 +39,6 @@ def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_
     try:
         with config.conn.cursor() as cursor:
             tagging_id = int(tagging_id)
-            print(new_surname, new_firstname, new_middlename, new_suffix)
             cursor.execute(""" SELECT students.*, tagging.* FROM students JOIN tagging ON students.student_id = tagging.student WHERE tagging.tag_id = %s """, (tagging_id,))
             studentData = cursor.fetchone()
 
@@ -70,10 +66,20 @@ def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_
     except Exception as e:
         print('Unlink Recordds Error :', e)
 
-def removeRecordData():
+def removeRecordData(tagging_id):
     try:
         with config.conn.cursor() as cursor:
-            sss
+            tagging_id = int(tagging_id)
+
+            cursor.execute('DELETE FROM tagging WHERE tag_id = %s', (tagging_id))
+            rows_deleted = cursor.rowcount  # Get the number of affected rows
+
+            config.conn.commit()
+
+            if rows_deleted > 0:
+                return 'success'
+            
+            return 'failed'
             
     except Exception as e:
         print('Remove Recordds Error :', e)
@@ -210,3 +216,17 @@ def editEntryData():
 
                 if update_query:
                     return jsonify({'update_query': update_query})
+                
+@data_fetch.route('/tags/removeStudent/document/delete/unlink', methods=['POST', 'GET'])
+@login_required
+@authenticate
+def deleteEntryData():
+
+    if request.method == "POST":
+        tagging_id = request.form.get('tagging_id')
+        tagging_id = int(tagging_id)
+
+        delete_query = removeRecordData(tagging_id)
+
+        if delete_query:
+            return jsonify({'delete_query': delete_query})

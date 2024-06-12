@@ -33,17 +33,17 @@ def get_currentTime(last_online):
         # Check the time difference and format it as a string
         if weeks > 0:
             if days > 0:
-                last_online_str = f"{weeks} weeks and {days} days ago"
+                last_online_str = f"Offline {weeks} weeks and {days} days ago"
             else:
-                last_online_str = f"{weeks} weeks ago"
+                last_online_str = f"Offline {weeks} weeks ago"
         elif days > 0:
-            last_online_str = f"{days} days ago"
+            last_online_str = f"Offline {days} days ago"
         elif hours > 0:
-            last_online_str = f"{hours} hours and {minutes} minutes ago"
+            last_online_str = f"Offline {hours} hours and {minutes} minutes ago"
         elif minutes > 0:
-            last_online_str = f"{minutes} minutes ago"
+            last_online_str = f"Offline {minutes} minutes ago"
         else:
-            last_online_str = f"{seconds} seconds ago"
+            last_online_str = f"Offline {seconds} seconds ago"
 
         # Return the formatted string
         return last_online_str
@@ -117,7 +117,7 @@ def fetchallAccount(displayController):
 
                         if user['last_online'] is None:
                             if user['online'] == 1:
-                                last_online = "Now"
+                                last_online = "Online Now"
                             elif user['online'] == 0:
                                 last_online = "No activity yet"
 

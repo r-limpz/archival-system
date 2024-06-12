@@ -57,9 +57,13 @@ def update_Session():
         checkConnection()
 
 def checkConnection():
-    if not config.conn.open:
-        print("Connection is closed. Reconnect or establish a new connection.")
-        config.conn.ping(reconnect=True)
+    try:
+        if not config.conn.open:
+            print("Connection is closed. Reconnect or establish a new connection.")
+            config.conn.ping(reconnect=True)
+            
+    except Exception as e:
+        print(f"Failed to reconnect: {e}")
 
 #Register authentication logic
 from .auth import auth as auth_blueprint
