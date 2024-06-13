@@ -1,22 +1,3 @@
-// Get references to the input fields
-const startingYearInput = document.getElementById('starting_year');
-const endingYearInput = document.getElementById('ending_year');
-
-// Event listener for starting year input
-startingYearInput.addEventListener('input', function () {
-    const startingYear = parseInt(startingYearInput.value);
-    if (!isNaN(startingYear)) {
-        endingYearInput.value = (startingYear + 1).toString();
-    }
-});
-// Event listener for ending year input
-endingYearInput.addEventListener('input', function () {
-    const endingYear = parseInt(endingYearInput.value);
-    if (!isNaN(endingYear)) {
-        startingYearInput.value = (endingYear - 1).toString();
-    }
-});
-
 function addRows(count) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element

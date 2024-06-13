@@ -9,13 +9,14 @@ let documentDetails = {
     semester: ''
 };
 
-function updateDocumentName() {
+function updateDocumentName(document_filename) {
     let allEmpty = Object.values(documentDetails).every(function (value) {
         return value.trim() === '';
     });
 
     if (allEmpty) {
-        $("#document_filename").val("");
+        $(document_filename).val("");
+
     } else {
         let colcourse = documentDetails.college && documentDetails.course
             ? documentDetails.college + '-' + documentDetails.course
@@ -29,9 +30,9 @@ function updateDocumentName() {
 
         let subject = documentDetails.subjectName && documentDetails.subjectType
             ? documentDetails.subjectName + (documentDetails.subjectType === "1"
-                ? '_lect'
+                ? '_LECT'
                 : documentDetails.subjectType === "2"
-                    ? '_lab'
+                    ? '_LAB'
                     : '')
             : '';
 
@@ -50,8 +51,8 @@ function updateDocumentName() {
                     ? year_level
                     : '';
 
-        let combination2 = subject && academic_year
-            ? subject + '_' + academic_year
+        let combination2 = academic_year && subject
+            ? academic_year + '_' + subject
             : subject === "" && academic_year
                 ? academic_year
                 : subject && academic_year === ""
@@ -62,29 +63,70 @@ function updateDocumentName() {
             ? combination1 + '_' + combination2
             : combination1 || combination2 || '';
 
-        $("#document_filename").val(doc_name);
+        $(document_filename).val(doc_name);
     }
 }
 
 $("#document_college, #document_course, #document_yearLevel, #document_subject_type, #document_semester").change(function () {
-    updateObject();
-    updateDocumentName();
+    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
+    updateDocumentName('#document_filename');
 });
 
 $("#course_section, #document_subject_name, #starting_year, #ending_year").on('input', function () {
-    updateObject();
-    updateDocumentName();
+    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
+    updateDocumentName('#document_filename');
 });
 
-function updateObject() {
+function updateObject(college, course, year_level, section, subject, unit, semester, starting_year, ending_year) {
     documentDetails = {
-        academicYear: $('#starting_year').val() && $('#ending_year').val() ? $('#starting_year').val() + '-' + $('#ending_year').val() : '',
-        college: $('#document_college option:selected').text(),
-        course: $('#document_course option:selected').text(),
-        yearLevel: $('#document_yearLevel option:selected').val(),
-        section: $('#course_section').val().replace(/\s+/g, ''),
-        subjectName: $('#document_subject_name').val(),
-        subjectType: $('#document_subject_type option:selected').val(),
-        semester: $('#document_semester option:selected').text().replace(/\s+/g, ''),
+        college: $(college + ' option:selected').text(),
+        course: $(course + ' option:selected').text(),
+        yearLevel: $(year_level + ' option:selected').val(),
+        section: $(section).val() ? $(section).val().replace(/\s+/g, '') : '',
+        subjectName: $(subject).val(),
+        subjectType: $(unit + ' option:selected').val(),
+        semester: $(semester + ' option:selected').text() ? $(semester + ' option:selected').text().replace(/\s+/g, '') : '',
+        academicYear: $(starting_year).val() && $(ending_year).val() ? $(starting_year).val() + '-' + $(ending_year).val() : '',
     };
 }
+
+function updateObjectEdit(college, course, year_level, section, subject, unit, semester, starting_year, ending_year) {
+    documentDetails = {
+        college: $(college + ' option:selected').text().match(/\((.*?)\)/)?.[1] || '',
+        course: $(course + ' option:selected').text().match(/\((.*?)\)/)?.[1] || '',
+        yearLevel: $(year_level + ' option:selected').val(),
+        section: $(section).val() ? $(section).val().replace(/\s+/g, '') : '',
+        subjectName: $(subject).val(),
+        subjectType: $(unit + ' option:selected').val(),
+        semester: $(semester + ' option:selected').text() ? $(semester + ' option:selected').text().replace(/\s+/g, '') : '',
+        academicYear: $(starting_year).val() && $(ending_year).val() ? $(starting_year).val() + '-' + $(ending_year).val() : '',
+    };
+}
+
+function updateYearStart(startingYearInput, endingYearInput) {
+    const startingYear = parseInt(startingYearInput.value);
+    if (!isNaN(startingYear)) {
+        endingYearInput.value = (startingYear + 1).toString();
+    }
+}
+function updateYearEnd(startingYearInput, endingYearInput) {
+    const endingYear = parseInt(endingYearInput.value);
+    if (!isNaN(endingYear)) {
+        startingYearInput.value = (endingYear - 1).toString();
+    }
+}
+
+// Example usage:
+const customStartingYearInput = document.getElementById('starting_year');
+const customEndingYearInput = document.getElementById('ending_year');
+// Event listener for starting year input
+customStartingYearInput.addEventListener('input', function () {
+    updateYearStart(customStartingYearInput, customEndingYearInput);
+});
+
+// Event listener for ending year input
+customEndingYearInput.addEventListener('input', function () {
+    updateYearEnd(customStartingYearInput, customEndingYearInput);
+});
+
+
