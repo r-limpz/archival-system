@@ -69,8 +69,11 @@ def checkConnection():
 from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 #Register fetch datatable source logic
-from .data import data_fetch as datas_blueprint
-app.register_blueprint(datas_blueprint)
+from .records import fetch_records as records_blueprint
+app.register_blueprint(records_blueprint)
+#Register fetch datatable source logic
+from .documents import fetch_documents as documents_blueprint
+app.register_blueprint(documents_blueprint)
 #text recognition logics
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)

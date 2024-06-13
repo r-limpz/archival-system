@@ -526,6 +526,8 @@ button:disabled {
     padding: 0.25rem 1rem 0.25rem 0.5rem;
 }
 
+
+
 .form-control:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -550,6 +552,12 @@ button:disabled {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .modal-header {

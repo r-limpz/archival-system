@@ -179,6 +179,7 @@
                 colleges.forEach(college => {
                     let college_id = college.college_id;
                     let college_name = college.college_name;
+                    let college_description = college.college_description;
                     let coursesArray = [];
                     let collegeOption = '';
 
@@ -189,7 +190,8 @@
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, });
+                                let course_description = course.course_description;
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description : course_description });
                             });
                         }
                         else {
@@ -198,6 +200,7 @@
                     const collegeObject = {
                         college_id,
                         college_name,
+                        college_description,
                         courses: coursesArray
                     };
                     collegesArray.push(collegeObject);

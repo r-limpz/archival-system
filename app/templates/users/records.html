@@ -3,7 +3,6 @@
 {% block style %}
 <link href="{{url_for('static',filename='DataTables/datatables.min.css')}}" rel='stylesheet'>
 <script src="{{url_for('static',filename='DataTables/datatables.min.js')}}"></script>
-
 <link rel="stylesheet" href="{{url_for('static', filename='css/table.css')}}">
 {% endblock %}
 
@@ -60,7 +59,7 @@
                     <select id="filterShow" name="filterShow" class="form-select fs-medium">
                         <option value="25">25</option>
                         <option value="50">50</option>
-                        <option value="50">100</option>
+                        <option value="100">100</option>
                         <option value="-1">All</option>
                     </select>
                 </div>
@@ -72,11 +71,9 @@
         width="100%">
     </table>
 </section>
-
 {% endblock%}
 
 {% block scripts %}
-
 <script>
     //populate data table
     var collegesArray = [];
@@ -97,6 +94,7 @@
 
                     let college_id = college.college_id;
                     let college_name = college.college_name;
+                    let college_description = college.college_description;
                     let coursesArray = [];
                     let collegeOption = '';
 
@@ -108,13 +106,15 @@
                             college.courses.forEach(course => {
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, });
+                                let course_description = course.course_description;
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description : course_description });
                             });
                         }
                     }
                     const collegeObject = {
                         college_id,
                         college_name,
+                        college_description,
                         courses: coursesArray
                     };
                     collegesArray.push(collegeObject);
@@ -185,14 +185,14 @@
             'scroller': true,
             'columns': [
                 { data: 'id', orderable: true, title: '#' },
-                { data: 'FullName', orderable: true, title: 'Student', wrap: true, className: 'fw-medium' },
-                { data: 'College', orderable: true, title: 'College', wrap: false, className: 'text-center' },
-                { data: 'Course', orderable: true, title: 'Course', wrap: false, className: 'text-center' },
-                { data: 'Section', orderable: true, title: 'Section', wrap: false, className: 'text-center' },
-                { data: 'Subject', orderable: false, title: 'Subject', wrap: true, },
-                { data: 'Unit', orderable: false, title: 'Unit', wrap: false, className: 'text-center', width: '32px' },
-                { data: 'Semester', orderable: false, title: 'Semester', wrap: false, className: 'text-center', width: '75px' },
-                { data: 'SchoolYear', orderable: true, title: 'SchoolYear', wrap: true, className: 'text-center', width: '100px' },
+                { data: 'FullName', title: 'FullName', orderable: true, wrap: true, className: 'fw-medium' },
+                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
+                { data: 'Course', title: 'Course', orderable: true, wrap: false, className: 'text-center' },
+                { data: 'Section', title: 'Section', orderable: true, wrap: false, className: 'text-center' },
+                { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
+                { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
+                { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
+                { data: 'SchoolYear',title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
                     'data': 'id',
                     title: 'Action',
@@ -207,14 +207,6 @@
                     }
                 }
             ],
-        });
-
-        $('#filterShow').change(function () {
-            if ($(this).val() == -1) {  // If "All" is selected
-                $('.dataTables_wrapper .dataTables_paginate').addClass('d-none');  // Hide the pagination
-            } else {
-                $('.dataTables_wrapper .dataTables_paginate').removeClass('d-none');  // Show the pagination
-            }
         });
 
         $('#recordsTable tbody').on('dblclick', 'tr', function () {
@@ -241,13 +233,24 @@
     }
 
     dataTableFunction();
+
+    $('#filterShow').change(function () {
+        var value = $(this).val();  // Get the selected value
+        // Change the select value of #recordsTable_length
+        $('#recordsTable_length select').val(value).change();
+        if (value == -1) {  // If "All" is selected
+            $('.dataTables_wrapper .dataTables_paginate').addClass('d-none');  // Hide the pagination
+        } else {
+            $('.dataTables_wrapper .dataTables_paginate').removeClass('d-none');  // Show the pagination
+        }
+    });
 </script>
 <script>
     //preview
     function preview(rowID) {
         console.log(rowID);
 
-        fetch('/getDocImage/image/data/' + rowID)
+        fetch('/records/getDocImage/image/data/' + rowID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -284,8 +287,8 @@
     }
 
     //edit
-    function editRecord(studentEntryId) {
-        fetch('/tags/getStudent/document/data/' + studentEntryId)
+    function editRecord(documentID) {
+        fetch('/records/tags/getStudent/document/data/' + documentID)
             .then(response => response.json())
             .then(recordsData => {
                 let surname = recordsData.surname;
@@ -338,7 +341,7 @@
             };
 
             $.ajax({
-                url: '/tags/updateStudent/document/update',
+                url: '/records/tags/updateStudent/document/update',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -386,7 +389,7 @@
             let formData = { 'tagging_id': tagging_id };
 
             $.ajax({
-                url: '/tags/removeStudent/document/delete/unlink',
+                url: '/records/tags/removeStudent/document/delete/unlink',
                 type: 'POST',
                 data: (formData),
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },

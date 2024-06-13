@@ -4,15 +4,15 @@
 <div class="modal fade" id="logout_Confirmation" tabindex="-1" role="dialog" aria-labelledby="logout_Confirmation"
   aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-body mx-3 ">
+    <div class="modal-content border-3 border-orange">
+      <div class="modal-body mx-3">
         <h5 class="fw-bold">Sign out</h5>
         <p class="ms-2"> Are you sure you want to signout? All your unsaved data will be erased.</p>
       </div>
       <div class="modal-footer mx-3">
         <button type="button" data-bs-dismiss="modal" class="button me-3">Close</button>
         <a href="{{url_for('auth.logout')}}" id="logout_currentUser"
-          class="btn-red fw-bold text-decoration-none button btn-red">
+          class="btn-orange fw-bold text-decoration-none button btn-red">
           Sign out
         </a>
       </div>
@@ -101,7 +101,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
-          <button id="signup_user" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          <button id="signup_user" class="btn-green fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -140,7 +140,7 @@
         <div class="modal-footer mx-3">
           <button type="button" data-bs-dismiss="modal" class="button me-3"
             onclick="populateUsers('all-any')">Cancel</button>
-          <button id="update_user_credentials" class="btn-red fw-bold text-decoration-none button"
+          <button id="update_user_credentials" class="btn-green fw-bold text-decoration-none button"
             data-bs-dismiss="modal">
             Confirm
           </button>
@@ -327,7 +327,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-          <button id="confirm_addCollege" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          <button id="confirm_addCollege" class="btn-green fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -347,7 +347,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-          <button id="confirm_addCourse" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          <button id="confirm_addCourse" class="btn-green fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -367,7 +367,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-          <button id="confirm_updateCollege" class="btn-red fw-bold text-decoration-none button"
+          <button id="confirm_updateCollege" class="btn-green fw-bold text-decoration-none button"
             data-bs-dismiss="modal">
             Confirm
           </button>
@@ -389,7 +389,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button" onclick="populateColleges()">Cancel</button>
-          <button id="confirm_changeCourse" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          <button id="confirm_changeCourse" class="btn-green fw-bold text-decoration-none button"
+            data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -460,7 +461,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-          <button id="comfirm_newRecords" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+          <button id="comfirm_newRecords" class="btn-green fw-bold text-decoration-none button" data-bs-dismiss="modal">
             Confirm
           </button>
         </div>
@@ -498,14 +499,14 @@
         <div class="modal-body">
           <h5 class="fw-bold">Edit Entry </h5>
           <div class="p-2">
-            <form action="{{ url_for('data.editEntryData')}}" method="post" id="add_user">
+            <form action="{{ url_for('fetch_records.editEntryData')}}" method="post" id="add_user">
               <div class="inputs-forms px-3 my-3" id="updateTag_data">
               </div>
             </form>
             <div class="mt-5 d-flex justify-content-end">
               <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
               <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#UpdateTag_confirmation"
-                type="button" id="button_showConfirmationUpdateTag"> Submit </button>
+                type="button" id="button_showConfirmationUpdateTag"> Update </button>
             </div>
           </div>
         </div>
@@ -513,8 +514,8 @@
     </div>
   </div>
 
-  <div class="modal fade" id="UpdateTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
-    tabindex="-1" role="dialog" aria-labelledby="UpdateTag_confirmation" aria-hidden="true">
+  <div class="modal fade" id="UpdateTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="UpdateTag_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body mx-3">
@@ -524,8 +525,8 @@
           </div>
         </div>
         <div class="modal-footer mx-3">
-          <button type="button" data-bs-dismiss="modal" class="button me-3" >Cancel</button>
-          <button id="update_entry_credentials" class="btn-red fw-bold text-decoration-none button"
+          <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+          <button id="update_entry_credentials" class="btn-green fw-bold text-decoration-none button"
             data-bs-dismiss="modal">
             Confirm
           </button>
@@ -534,22 +535,66 @@
     </div>
   </div>
 
-    <div class="modal fade" id="DeleteTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      role="dialog" aria-labelledby="DeleteTag_confirmation" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-body mx-3">
-            <div class="mx-3">
-              <h5 class="fw-bold my-3"> Delete Entry </h5>
-              <p class="ms-2"> Are you sure you want to delete this tag entry?</p>
-            </div>
+  <div class="modal fade" id="DeleteTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="DeleteTag_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-orange border-3">
+        <div class="modal-body mx-3">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3"> Delete Entry </h5>
+            <p class="ms-2"> Are you sure you want to delete this tag entry?</p>
           </div>
-          <div class="modal-footer mx-3">
-            <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
-            <button id="delete_entry_credentials" class="btn-red fw-bold text-decoration-none button"
-              data-bs-dismiss="modal">
-              Confirm
-            </button>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+          <button id="delete_entry_credentials" class="btn-orange fw-bold text-decoration-none button"
+            data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if request.path == url_for('staff.documents') or request.path == url_for('admin.documents')%}
+
+  <div class="modal fade" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="showPreviewModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="max-height: 80vh;">
+        <div class="modal-body">
+          <p id="file_info"></p>
+          <div class="imageContainer py-2">
+            <img src="" alt="" id="previewImageDisplay">
+          </div>
+          <div class="d-flex justify-content-end">
+            <button class="button fs-medium fw-medium" onclick="downloadImage()"><span
+                class="fa-solid fa-download mx-2"></span>
+              Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="UpdateDocumentModal" tabindex="-1" role="dialog" aria-labelledby="UpdateDocumentModal"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h5 class="fw-bold">Edit Document Information </h5>
+            <div class="p-2">
+              <form action="" method="post" id="update_document">
+                <div class="inputs-forms px-3 my-3" id="updateDocument_data">
+                </div>
+              </form>
+              <div class="mt-5 d-flex justify-content-end">
+                <button class="button mx-2" type="button" data-bs-dismiss="modal">Close</button>
+                <button class="btn-red mx-2 fw-bold" data-bs-toggle="modal" data-bs-target="#UpdateDocuemnt_confirmation"
+                  type="button" id="button_showConfirmationUpdateDocument"> Update </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

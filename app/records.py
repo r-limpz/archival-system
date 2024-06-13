@@ -5,7 +5,7 @@ import base64
 import json
 from . import config
 
-data_fetch = Blueprint('data', __name__)
+fetch_records = Blueprint('fetch_records', __name__)
 
 #decorator for authorization role based
 def authenticate(f):
@@ -85,7 +85,7 @@ def removeRecordData(tagging_id):
         print('Remove Recordds Error :', e)
 
 
-@data_fetch.route("/records_data",methods=["POST","GET"])
+@fetch_records.route("/records_data",methods=["POST","GET"])
 @login_required
 @authenticate
 def records_data():
@@ -170,7 +170,7 @@ def records_data():
         print('Fetch Records Error: ',e)
 
 #preview document image
-@data_fetch.route('/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
+@fetch_records.route('/records/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def previewDocument(image_id):
@@ -187,7 +187,7 @@ def previewDocument(image_id):
         return "No image data found", 404
     
 #fetch entry data
-@data_fetch.route('/tags/getStudent/document/data/<tag_id>', methods=['POST', 'GET'])
+@fetch_records.route('/records/tags/getStudent/document/data/<tag_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def getEntryData(tag_id):
@@ -197,7 +197,8 @@ def getEntryData(tag_id):
         query_result = fetchEntryData(tag_id)
         return jsonify(query_result)
     
-@data_fetch.route('/tags/updateStudent/document/update', methods=['POST', 'GET'])
+#edit records data    
+@fetch_records.route('/records/tags/updateStudent/document/update', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def editEntryData():
@@ -216,8 +217,8 @@ def editEntryData():
 
                 if update_query:
                     return jsonify({'update_query': update_query})
-                
-@data_fetch.route('/tags/removeStudent/document/delete/unlink', methods=['POST', 'GET'])
+#delete records data                
+@fetch_records.route('/records/tags/removeStudent/document/delete/unlink', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def deleteEntryData():
@@ -230,3 +231,5 @@ def deleteEntryData():
 
         if delete_query:
             return jsonify({'delete_query': delete_query})
+        
+
