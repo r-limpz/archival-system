@@ -59,23 +59,13 @@ function updateDocumentName(document_filename) {
                     ? subject
                     : '';
 
-        let doc_name = combination1 && combination2
+        let doc_name = combination1 !== "" && combination2 !== ""
             ? combination1 + '_' + combination2
             : combination1 || combination2 || '';
 
         $(document_filename).val(doc_name);
     }
 }
-
-$("#document_college, #document_course, #document_yearLevel, #document_subject_type, #document_semester").change(function () {
-    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
-    updateDocumentName('#document_filename');
-});
-
-$("#course_section, #document_subject_name, #starting_year, #ending_year").on('input', function () {
-    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
-    updateDocumentName('#document_filename');
-});
 
 function updateObject(college, course, year_level, section, subject, unit, semester, starting_year, ending_year) {
     documentDetails = {
@@ -116,9 +106,9 @@ function updateYearEnd(startingYearInput, endingYearInput) {
     }
 }
 
-// Example usage:
 const customStartingYearInput = document.getElementById('starting_year');
 const customEndingYearInput = document.getElementById('ending_year');
+
 // Event listener for starting year input
 customStartingYearInput.addEventListener('input', function () {
     updateYearStart(customStartingYearInput, customEndingYearInput);
@@ -129,4 +119,12 @@ customEndingYearInput.addEventListener('input', function () {
     updateYearEnd(customStartingYearInput, customEndingYearInput);
 });
 
+$("#document_college, #document_course, #document_yearLevel, #document_subject_type, #document_semester").change(function () {
+    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
+    updateDocumentName('#document_filename');
+});
 
+$("#course_section, #document_subject_name, #starting_year, #ending_year").on('input', function () {
+    updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
+    updateDocumentName('#document_filename');
+});

@@ -161,10 +161,8 @@ def uploader():
     document_subject_name = request.form.get('document_subject_name')
     document_subject_type = request.form.get('document_subject_type')
     document_semester = request.form.get('document_semester')
-    starting_year = request.form.get('starting_year')
-    ending_year = request.form.get('ending_year')
-    document_academicYear = f"{starting_year}-{ending_year}" if starting_year and ending_year else ''
-
+    document_academicYear = request.form.get('document_academicYear')
+   
     document_header = {
         'filename': document_filename,
         'college': int(document_college),

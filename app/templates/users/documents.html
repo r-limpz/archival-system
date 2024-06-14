@@ -75,6 +75,7 @@
 {% endblock%}
 
 {% block scripts %}
+<script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script>
     //populate data table
     var collegesArray = [];
@@ -108,7 +109,7 @@
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
                                 let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description : course_description });
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
                             });
                         }
                     }
@@ -260,10 +261,10 @@
 </script>
 <script>
     //preview
-    function preview(rowID) {
-        console.log(rowID);
+    function preview(ImageID) {
+        console.log(ImageID);
 
-        fetch('/documents/getDocImage/image/data/' + rowID)
+        fetch('/documents/getDocImage/image/data/' + ImageID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -271,7 +272,7 @@
                 return response.text();
             })
             .then(encodedImage => {
-                let previewImageDisplay = document.getElementById('showPreviewDocumentModal');
+                let previewImageDisplay = document.getElementById('previewImageDisplay');
                 previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
 
                 // Show the modal
@@ -338,7 +339,7 @@
                 let html = `
                     <div id="form-item" class="py-2">
                         <label class="fw-medium" for="update_documentfilename">Filename</label>
-                        <input type="text" class="form-control" id="update_filename" name="update_filename" placeholder="${filename}" value="${filename}" disabled required>
+                        <input type="text" class="form-control" id="update_documentfilename" name="update_documentfilename" placeholder="${filename}" value="${filename}" disabled required>
                     </div>
                     <div class="d-flex gap-3 py-2">
                         <div id="form-item" class="flex-fill">
@@ -355,12 +356,12 @@
                         </div>
                     </div>
                     <div class="d-flex gap-3">
-                        <div id="form-item" class="flex-fill py-2">
+                        <div id="form-item" class="flex-fill py-2 w-50" >
                             <label class="fw-medium" for="update_documentCollege">College</label>
                             <select class="form-select pe-5 text-truncate" id="update_documentCollege" name="update_documentCollege" value="${document_college}" required>
                             </select>
                         </div>
-                        <div id="form-item" class="flex-fill py-2">
+                        <div id="form-item" class="flex-fill py-2 w-50">
                             <label class="fw-medium" for="update_documentCourse">Course</label>
                             <select class="form-select pe-5 text-truncate" id="update_documentCourse" name="update_documentCourse" value="${document_course}" required>
                             </select>
@@ -396,7 +397,7 @@
                             <span class="d-flex">
                                 <input type="number" class="form-control text-center" id="update_documentStarting_year"
                                         name="update_documentStarting_year" placeholder="${school_year.starting_year === "" ? 'YYYY' : school_year.starting_year}" value="${school_year.starting_year}" maxlength="4" required>
-                            <span class="mx-2 fa-solid fa-minus fs-default"
+                                <span class="mx-2 fa-solid fa-minus fs-default"
                                         style="padding: 9.1px 0px;max-width: 1rem;"></span>
                                 <input type="number" class="form-control text-center" id="update_documentEnding_year"
                                         name="update_documentEnding_year" placeholder="${school_year.ending_year === "" ? 'YYYY' : school_year.ending_year}" value="${school_year.ending_year}" maxlength="4" required>
@@ -406,17 +407,17 @@
                 `;
                 // Set the HTML of the parent element
                 document.getElementById('updateDocument_data').innerHTML = html;
-
+                //populate the colleges select
                 function setCollegesUpdate(selectedCollegeid) {
                     const collegeUpdateSelect = document.getElementById('update_documentCollege');
 
                     collegeUpdateSelect.innerHTML = '';
-                    collegeUpdateSelect.innerHTML = `<option value=""> College </option>`;
+                    collegeUpdateSelect.innerHTML = `<option value=""> </option>`;
 
                     collegesArray.forEach(college => {
                         const option = document.createElement('option');
                         option.value = college.college_id;
-                        option.textContent = '('+ college.college_name + ') ' + college.college_description ;
+                        option.textContent = '(' + college.college_name + ') ' + college.college_description;
 
                         if (selectedCollegeid !== 0) {
                             if (college.college_id === selectedCollegeid) {
@@ -426,19 +427,19 @@
                         collegeUpdateSelect.appendChild(option);
                     });
                 }
-
+                //populate the course select
                 function setCoursesUpdate(selectedCollegeid, selectedCourseID) {
                     const selected_college_id = parseInt(selectedCollegeid);
                     const courseUpdateSelect = document.getElementById('update_documentCourse');
                     const option = document.createElement('option');
-                    courseUpdateSelect.innerHTML = '<option value="">Course</option>';
+                    courseUpdateSelect.innerHTML = '<option value=""> </option>';
 
                     const selectedCollege = collegesArray.find(college => college.college_id === selected_college_id);
                     if (selectedCollege) {
                         selectedCollege.courses.forEach(course => {
                             const option = document.createElement('option');
                             option.value = course.course_id;
-                            option.textContent =  '(' + course.course_name + ') ' + course.course_description;
+                            option.textContent = '(' + course.course_name + ') ' + course.course_description;
                             if (selectedCourseID !== 0) {
                                 if (course.course_id === selected_college_id) {
                                     option.selected = true;
@@ -448,7 +449,7 @@
                         });
                     }
                 }
-
+                //setting up college and course selection populate values and selected from fetch data
                 setCollegesUpdate(document_college);
                 setCoursesUpdate(document_college, document_course);
 
@@ -458,15 +459,144 @@
                     setCoursesUpdate(selectedCollegeId, 0);
                 });
 
+                //doument file name formatter function
+                $("#update_documentCollege, #update_documentCourse, #update_documentYear_level, #update_documentUnit, #update_documentSemester").change(function () {
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#update_documentStarting_year', '#update_documentEnding_year');
+                    updateDocumentName('#update_documentfilename');
+                });
+                $("#update_documentSubject, #update_documentSection, #update_documentStarting_year, #update_documentEnding_year").on('input', function () {
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#update_documentStarting_year', '#update_documentEnding_year');
+                    updateDocumentName('#update_documentfilename');
+                });
 
+                const customStartingYearInput = document.getElementById('update_documentStarting_year');
+                const customEndingYearInput = document.getElementById('update_documentEnding_year');
+                // Event listener for starting year input
+                customStartingYearInput.addEventListener('input', function () {
+                    updateYearStart(customStartingYearInput, customEndingYearInput);
+                });
+                // Event listener for ending year input
+                customEndingYearInput.addEventListener('input', function () {
+                    updateYearEnd(customStartingYearInput, customEndingYearInput);
+                });
             });
 
         let modal = new bootstrap.Modal(document.getElementById('UpdateDocumentModal'));
         modal.show();
+
+
+        $('#update_document_information').on('click', function (event) {
+            event.preventDefault();
+
+            var document_id = documentEntryId;
+            let update_filename = $('#update_documentfilename').val();
+            let update_college = $('#update_documentCollege').val();
+            let update_course = $('#update_documentCourse').val();
+            let update_year_level = $('#update_documentYear_level').val();
+            let update_section = $('#update_documentSection').val();
+            let update_semester = $('#update_documentSemester').val();
+            let update_subject = $('#update_documentSubject').val();
+            let update_unit = $('#update_documentUnit').val();
+
+            let update_starting_year = $('#update_documentStarting_year').val();
+            let update_ending_year = $('#update_documentEnding_year').val();
+            let update_academicYear = update_starting_year && update_ending_year ? update_starting_year + '-' + update_ending_year : '';
+
+            //set the data
+            let formData = {
+                'document_id': document_id,
+                'update_filename': update_filename,
+                'update_college': update_college,
+                'update_course': update_course,
+                'update_year_level': update_year_level,
+                'update_section': update_section,
+                'update_semester': update_semester,
+                'update_subject': update_subject,
+                'update_unit': update_unit,
+                'update_academicYear': update_academicYear,
+            };
+
+            $.ajax({
+                url: '/documents/manage/data/document_header/update',
+                type: 'POST',
+                data: formData,
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    console.log('Received data:', data);
+                    documentsDataTable.draw();
+                    switch (data.update_query) {
+                        case 'no changes':
+                            break;
+                        case 'success'://the user successfully appended in the database
+                            showToast('Success!', 'Document updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed'://error in processing occured
+                            showToast('Update Error occurred!', 'Failed to modify document data.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'No Selected Document'://user already exist in the database
+                            showToast('Document not Found', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        default:
+                            showToast(data.update_query, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                },
+                //handle the ajax error 
+                error: function (error) {
+                    console.error('Error:', error);
+                    showToast('Error', 'Update error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        });
     }
 
     //delete
-    function deleteRecord(tagsEntryId) {
+    function deleteDocument(documentEntryID) {
+
+        let modal = new bootstrap.Modal(document.getElementById('DeleteDocument_confirmation'));
+        modal.show();
+
+        $('#delete_document_information').on('click', function (event) {
+            event.preventDefault();
+
+            var document_id = documentEntryID; // Ensure that this variable is declared with let or const
+            let formData = { 'document_id': document_id };
+
+            $.ajax({
+                url: '/documents/manage/data/file/delete',
+                type: 'POST',
+                data: (formData),
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    recordsDataTable.draw();
+                    switch (data.delete_query) {
+                        case 'success':
+                            showToast('Success!', 'Document deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed':
+                            showToast('Deletion Error occurred!', 'Failed to delete Document. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        default:
+                            showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                },
+                //handle the ajax error 
+                error: function (error) {
+                    console.error('Error:', error);
+                    showToast('Error', 'Deletion error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        });
     }
 </script>
 {% endblock%}

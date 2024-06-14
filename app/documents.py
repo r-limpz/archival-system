@@ -56,9 +56,9 @@ def editDocumentsData(document_id, document_header):
                 new_semester = document.get('semester')
                 new_academic_year = document.get('academicYear')
 
-                cursor.execute('UPDATE documents SET filename = %s , college = %s , course = %s , section = %s , subject = %s , academic_year = %s , semester = %s , unit = %s , year_level = %s WEHERE docs_id = %s', 
+                cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s WHERE docs_id = %s', 
                                (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
-                config.conn.cursor()
+                config.conn.commit()  # Commit the changes!
 
                 if cursor.rowcount > 0:
                     return 'success'
@@ -67,10 +67,21 @@ def editDocumentsData(document_id, document_header):
 
             return 'No Selected Document'
     except Exception as e:
-        print('edit Documents Error :', e)
+        print('edit Documents Error:', e)
 
-def deleteDocumentsData():
-    pass
+def deleteDocumentsData(document_id):
+    try:
+        with config.conn.cursor() as cursor:
+            if document_id:
+                cursor.execute('UPDATE documents SET delete_status = 1, deleted_time = NOW() WHERE docs_id = %s', (document_id,)) 
+                config.conn.commit()
+
+                if cursor.rowcount > 0:
+                    return 'success'
+                            
+            return 'failed'
+    except Exception as e:
+        print('edit Documents Error:', e)
 
 @fetch_documents.route("/documents_data",methods=["POST","GET"])
 @login_required
@@ -185,35 +196,34 @@ def getEntryData(document_id):
         query_result = fetchDocumentData(document_id)
         return jsonify(query_result)
 
-@fetch_documents.route('/documents/manage/data/document_header/edit', methods=['POST', 'GET'])
+@fetch_documents.route('/documents/manage/data/document_header/update', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def editDocument():
 
     if request.method == "POST":
         document_id = request.form.get('document_id')
-        document_filename = request.form.get('document_filename')
-        document_college = request.form.get('document_college')
-        document_course = request.form.get('document_course')
-        document_yearLevel = request.form.get('document_yearLevel')
-        course_section = request.form.get('course_section')
-        document_subject_name = request.form.get('document_subject_name')
-        document_unit = request.form.get('document_unit')
-        document_semester = request.form.get('document_semester')
-        starting_year = request.form.get('starting_year')
-        ending_year = request.form.get('ending_year')
-        document_academicYear = f"{starting_year}-{ending_year}" if starting_year and ending_year else ''
+        update_filename = request.form.get('update_filename')
+        update_college = request.form.get('update_college')
+        update_course = request.form.get('update_course')
+        update_year_level = request.form.get('update_year_level')
+        update_section = request.form.get('update_section')
+        update_semester = request.form.get('update_semester')
+        update_subject = request.form.get('update_subject')
+        update_unit = request.form.get('update_unit')
+        update_academicYear = request.form.get('update_academicYear')
+        
 
         document_header = {
-            'filename': document_filename,
-            'college': int(document_college),
-            'course': int(document_course),
-            'yearLevel': int(document_yearLevel),
-            'section': course_section,
-            'subject_name': document_subject_name,
-            'document_unit': int(document_unit),
-            'semester': int(document_semester),
-            'academicYear': document_academicYear,
+            'filename': update_filename,
+            'college': int(update_college),
+            'course': int(update_course),
+            'yearLevel': int(update_year_level),
+            'section': update_section,
+            'subject_name': update_subject,
+            'document_unit': int(update_unit),
+            'semester': int(update_semester),
+            'academicYear': update_academicYear,
         }
         
         update_query = editDocumentsData(document_id, document_header)
@@ -221,7 +231,7 @@ def editDocument():
         if update_query:
             return jsonify({'update_query': update_query})
         
-@fetch_documents.route('/documents/manage/data/file/deletie', methods=['POST', 'GET'])
+@fetch_documents.route('/documents/manage/data/file/delete', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def deleteDocument():
