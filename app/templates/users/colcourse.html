@@ -35,17 +35,18 @@
 
     function populateColleges() {
         collegesArray = [];
+        coursesArray = [];
         fetch('/admin/college_manager/display_colleges')
             .then(response => response.json())
             .then(colleges => {
-                coursesArray = [];
+                
                 let collegeDataDiv = document.getElementById('college_displayCards');
                 let collegeSelect = document.getElementById('addon_College');
                 let collegeMoveSelect = document.getElementById('movetoCollege');
                 collegeSelect.innerHTML = `<option value= " "></option>`;
                 collegeMoveSelect.innerHTML = `<option value= " "></option>`;
                 collegeDataDiv.innerHTML = '';
-                
+
                 colleges.forEach(college => {
 
                     let college_id = college.college_id;
@@ -66,7 +67,7 @@
                                 let course_description = course.course_description;
                                 courseslist += `<li class="list-group-item courses_item"><span class="fw-medium me-2">(${course_name})</span> ${course_description} </li>`;
                                 tempCoursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
-                                coursesArray.push(course_name);
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
                             });
                         }
                         else {
@@ -149,13 +150,22 @@
             });
 
     }
+
     populateColleges();
-
-    function checkCollege(inputID, submitButton) {
-        const collegeName = document.getElementById(inputID).value;
-        const foundCollege = collegesArray.find(college => college.college_name.toLowerCase() === collegeName.toLowerCase());
+    console.log(coursesArray)
+    function checkCollege(inputID, submitButton, type) {
         const submit_button = document.getElementById(submitButton);
+        let collegeName = document.getElementById(inputID).value;
+        let foundCollege;
 
+        if (type === "description") {
+            foundCollege = !!collegesArray.find(college => college.college_description.toLowerCase() === collegeName.toLowerCase());
+        }
+        else if (type === "abbrev") {
+            foundCollege = !!collegesArray.find(college => college.college_name.toLowerCase() === collegeName.toLowerCase());
+        }
+
+        console.log('college :' + foundCollege);
         if (foundCollege) {
             document.getElementById(inputID).classList.add('is-invalid');
             submit_button.disabled = true;
@@ -164,10 +174,20 @@
             submit_button.disabled = false;
         }
     }
-    function checkCourses(inputID, submitButton) {
-        const courseName = document.getElementById(inputID).value;
-        const foundCourse = coursesArray.some(course => course.toLowerCase() === courseName.toLowerCase());
+
+    function checkCourses(inputID, submitButton, type) {
         const submit_button = document.getElementById(submitButton);
+        let courseName = document.getElementById(inputID).value;
+        let foundCourse;
+
+        if (type === "description") {
+            foundCourse = !!coursesArray.find(course => course.course_description.toLowerCase() === courseName.toLowerCase());
+        }
+        else if (type === "abbrev") {
+            foundCourse = !!coursesArray.find(course => course.course_name.toLowerCase() === courseName.toLowerCase());
+        }
+        
+        console.log('course :' + foundCourse);
 
         if (foundCourse) {
             document.getElementById(inputID).classList.add('is-invalid');
@@ -177,6 +197,7 @@
             submit_button.disabled = false;
         }
     }
+
 
     function clearForm(form_id) {
         let form = document.querySelector(form_id);
@@ -204,8 +225,6 @@
             } else {
                 cards[i].style.display = "none";
             }
-
-
         }
     }
 
@@ -214,8 +233,10 @@
     $('#confirm_addCollege').on('click', function (event) {
         event.preventDefault();
         let college_name = $('#newcollege_name').val();
+        let newcollege_nameDescription = $('#newcollege_nameDescription').val()
         let formData = {
-            'newcollege_name': college_name,
+            'newcollege_abbrev': college_name,
+            'newcollege_name': newcollege_nameDescription,
         };
         //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
@@ -254,10 +275,12 @@
         event.preventDefault();
         let addon_College = $('#addon_College').val();
         let newcourse_name = $('#newcourse_name').val();
+        let newcourse_nameDescription = $('#newcourse_nameDescription').val();
 
         let formData = {
             'addon_College': addon_College,
-            'newcourse_name': newcourse_name,
+            'newcourse_abbrev': newcourse_name,
+            'newcourse_name': newcourse_nameDescription,
         };
         //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
@@ -433,7 +456,7 @@
             college_name,
             college_description,
             courses_data,
-        }; 
+        };
 
         $.ajax({
             url: '/admin/college_manager/update_data/update_college',
@@ -453,7 +476,7 @@
                         showToast('Upload Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
-                    default ://user already exist in the database
+                    default://user already exist in the database
                         populateColleges();
                         showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();

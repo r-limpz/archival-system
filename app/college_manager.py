@@ -84,15 +84,15 @@ def fetch_course(search):
         return None
 
 #add college function
-def createCollege(college_name):
+def createCollege(college_name, college_description):
     if college_name:
         try:
             with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM college WHERE college_name = %s', (college_name))
+                cursor.execute('SELECT * FROM college WHERE college_name = %s AND college_description = %s ', (college_name, college_description))
                 collegeExist = cursor.fetchone()
 
                 if not collegeExist:
-                    cursor.execute('INSERT INTO college (college_name) VALUES (%s)', (college_name))
+                    cursor.execute('INSERT INTO college (college_name, college_description) VALUES (%s, %s)', (college_name, college_description))
                     config.conn.commit()
 
                     cursor.execute('SELECT * FROM college WHERE college_name = %s', (college_name))
@@ -110,22 +110,23 @@ def createCollege(college_name):
         return 'failed'
 
 #add course function
-def createCourse(addon_College, newcourse_name):
+def createCourse(addon_College, newcourse_name,  newcourse_description):
     if newcourse_name:
         try:
             with config.conn.cursor() as cursor:
                 
-                cursor.execute('SELECT * FROM courses WHERE course_name = %s', (newcourse_name))
+                cursor.execute('SELECT * FROM courses WHERE course_name = %s AND course_description = %s', (newcourse_name, newcourse_description))
                 course_exist = cursor.fetchone()
 
                 college_id = int(addon_College)
 
                 if not course_exist:
-                    cursor.execute('INSERT INTO courses (course_name, registered_college) VALUES (%s, %s)', (newcourse_name, college_id))
+                    cursor.execute('INSERT INTO courses (course_name, course_description, registered_college) VALUES (%s, %s, %s)', (newcourse_name, newcourse_description, college_id))
                     config.conn.commit()
 
-                    cursor.execute('SELECT * FROM courses WHERE course_name = %s', (newcourse_name))
+                    cursor.execute('SELECT * FROM courses WHERE course_name = %s AND course_description = %s', (newcourse_name, newcourse_description))
                     success = cursor.fetchone()
+
                     if success:
                         return 'success'
                     else:
@@ -258,8 +259,9 @@ def display_colcourse():
 @admin_required
 def create_college():
     if request.method == "POST":
+        newcollege_abbrev = request.form.get('newcollege_abbrev')
         newcollege_name = request.form.get('newcollege_name')
-        query_result = createCollege(newcollege_name)
+        query_result = createCollege(newcollege_abbrev, newcollege_name)
 
         if query_result:
             return jsonify({'query_result' : query_result})
@@ -272,9 +274,10 @@ def create_college():
 def create_courses():
     if request.method == "POST":
         addon_College = request.form.get('addon_College')
+        newcourse_abbrev = request.form.get('newcourse_abbrev')
         newcourse_name = request.form.get('newcourse_name')
 
-        query_result = createCourse(addon_College, newcourse_name)
+        query_result = createCourse(addon_College, newcourse_abbrev, newcourse_name)
 
         if query_result:
             return jsonify({'query_result' : query_result})
