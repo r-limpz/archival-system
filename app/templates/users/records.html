@@ -20,8 +20,6 @@
 <section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
         <h5 class="fw-bold">Student Records</h5>
-        <p class="fs-medium fst-italic"> An efficient tool for managing document records and tags, simplifying tracking
-            and retrieval.</p>
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
@@ -107,7 +105,7 @@
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
                                 let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description : course_description });
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
                             });
                         }
                     }
@@ -192,16 +190,34 @@
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
                 { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
-                { data: 'SchoolYear',title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
+                { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
                     'data': 'id',
                     title: 'Action',
                     wrap: true,
                     orderable: false,
                     "render": function (data, type, row) {
-                        const viewLink = '<a id="viewThis" class="flex-fill text-center" onclick="preview(' + row['image_id'] + ')"><span class="fa-solid fa-eye"></span></a>';
-                        const editLink = '<a id="editThis" class="flex-fill text-center" onclick="editRecord(' + row['id'] + ')"><span class="fa-solid fa-pen"></span></a>';
-                        const deleteLink = '<a id="deleteThis" class="flex-fill text-center" onclick="deleteRecord(' + row['id'] + ')"><span class="fa-solid fa-trash text-danger"></span></a>';
+                        const viewLink = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Preview">
+                                                <span class="fa-solid fa-eye"></span>
+                                            </a>`;
+                        const editLink = `<a id="editThis" class="flex-fill text-center" onclick="editRecord(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Edit">
+                                                <span class="fa-solid fa-pen"></span>
+                                            </a>`;
+                        const deleteLink = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteRecord(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Delete">
+                                                <span class="fa-solid fa-trash text-danger"></span>
+                                            </a>`;
 
                         return `<div class="d-flex fs-small align-items-center">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
                     }

@@ -648,3 +648,39 @@
     </div>
   </div>
   {% endif %}
+  {% if request.path == url_for('admin.trashbin') %}
+
+  <div class="modal fade" id="showPreviewTrashFile" data-bs-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="showPreviewTrashFile" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="max-height: 80vh;">
+        <div class="modal-body">
+          <p id="file_info"></p>
+          <div class="imageContainer py-2">
+            <img src="" alt="" id="previewImageDisplay">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="restoreFile_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body mx-3">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3"> Restore</h5>
+            <p class="ms-2"> Are you sure you want to resotre this file?</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+          <button id="restore_file" class="btn-green fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}

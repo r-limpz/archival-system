@@ -20,8 +20,6 @@
 <section>
     <div class="page-header-title p-2 border-bottom border-1 mb-4">
         <h5 class="fw-bold">Archive Documents</h5>
-        <p class="fs-medium fst-italic"> An efficient tool for managing archived document, simplifying tracking and
-            retrieval.</p>
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
@@ -190,7 +188,7 @@
                 { data: 'id', orderable: true, title: '#' },
                 {
                     'data': 'Filename',
-                    title: 'Filename',
+                    title: 'File',
                     orderable: true,
                     wrap: true,
                     "render": function (data, type, row) {
@@ -212,9 +210,27 @@
                     wrap: true,
                     "render": function (data, type, row) {
 
-                        const viewLink = '<a id="viewThis" class="flex-fill text-center" onclick="preview(' + row['image_id'] + ')"><span class="fa-solid fa-eye"></span></a>';
-                        const editLink = '<a id="editThis" class="flex-fill text-center" onclick="editDocument(' + row['id'] + ')"><span class="fa-solid fa-pen"></span></a>';
-                        const deleteLink = '<a id="deleteThis" class="flex-fill text-center" onclick="deleteDocument(' + row['id'] + ')"><span class="fa-solid fa-trash text-danger"></span></a>';
+                        const viewLink = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Preview">
+                                                <span class="fa-solid fa-eye"></span>
+                                            </a>`;
+                        const editLink = `<a id="editThis" class="flex-fill text-center" onclick="editDocument(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Edit">
+                                                <span class="fa-solid fa-pen"></span>
+                                            </a>`;
+                        const deleteLink = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteDocument(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Delete">
+                                                <span class="fa-solid fa-trash text-danger"></span>
+                                            </a>`;
 
                         return `<div class="d-flex fs-small align-items-center">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
                     }
@@ -573,7 +589,7 @@
                 data: (formData),
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    recordsDataTable.draw();
+                    documentsDataTable.draw();
                     switch (data.delete_query) {
                         case 'success':
                             showToast('Success!', 'Document deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
