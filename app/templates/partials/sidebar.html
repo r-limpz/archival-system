@@ -66,6 +66,16 @@
             </li>
             {% endif %}
 
+            {% if current_user.role == 'admin' %}
+            <li class="sidebar-list-item">
+                <a href="{{url_for('trashbin')}}"
+                    class="sidebar-link {% if request.path == url_for('admin.trashbin') and current_user.role == 'admin' %} active {% endif %}">
+                    <span class="sidebar-icon fa-regular fa-trash-can"></span>
+                    <span class="hidden-sidebar"> Trash</span>
+                </a>
+            </li>
+            {% endif %}
+
         </ul>
     </div>
     <div class="bottom-sidebar border-top border-1">

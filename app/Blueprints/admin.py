@@ -49,3 +49,9 @@ def account(user):
 @admin_required
 def account_manager():
     return render_template('users/user_control.html')
+
+@admin_bp.route('/trashbin')
+@login_required
+@admin_required
+def trashbin():
+    return render_template('users/trashbin.html')

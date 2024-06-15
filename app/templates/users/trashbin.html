@@ -1,0 +1,144 @@
+{% extends 'layout/users.html' %}
+{% block title %}Trash | ARDS{% endblock %}
+{% block style %}
+<link href="{{url_for('static',filename='DataTables/datatables.min.css')}}" rel='stylesheet'>
+<script src="{{url_for('static',filename='DataTables/datatables.min.js')}}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/table.css')}}">
+{% endblock %}
+
+{% block content %}
+<style>
+    #trashbinTable_filter {
+        display: none;
+    }
+
+    #trashbinTable_length {
+        display: none;
+    }
+</style>
+<section>
+    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+        <h5 class="fw-bold">Trash</h5>
+        <p class="fs-medium fst-italic"> </p>
+    </div>
+    <div>
+        <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
+            <input type="text" class="form-control w-full text-truncate" id="filterSearch" placeholder="Search...">
+        </div>
+    </div>
+    <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
+        width="100%">
+    </table>
+</section>
+
+{% endblock%}
+
+{% block scripts %}
+<script>
+    var trashDataTable;
+
+    function dataTableFunction() {
+        trashDataTable = $('#trashbinTable').DataTable({
+            stripeClasses: [],
+            language: {
+                paginate: {
+                    previous: '<a class="fa-solid fa-caret-left"></a>',
+                    next: '<a class="fa-solid fa-caret-right"></a>',
+                }
+            },
+            scrollY: '60vh',
+            scrollX: true,
+            scrollCollapse: true,
+            'processing': true,
+            'responsive': true,
+            'serverSide': true,
+            'serverMethod': 'post',
+            'ajax': {
+                'url': '/trashed/documents/trashbin/files',
+                'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
+                'data': function (data) {
+                    data.filterSearch = $('#filterSearch').val();
+                }
+            },
+            'lengthMenu': [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            'deferRender': true,
+            'scroller': true,
+            'columns': [
+                {
+                    'data': 'Filename',
+                    title: 'File',
+                    orderable: true,
+                    wrap: true,
+                    "render": function (data, type, row) {
+                        const student_name = '<span>' + data + '</span>'
+                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
+                    }
+                },
+                { data: 'Trashed', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '180px' },
+                { data: 'deletedOn', title: 'Deleted date', orderable: true, wrap: false, className: 'text-center', width: '180px' },
+                { data: 'editor', title: 'Deleted by', orderable: false, wrap: false, className: 'text-center', width: '120px' },
+                {
+                    'data': 'id',
+                    title: ' ',
+                    orderable: false,
+                    wrap: true,
+                    "render": function (data, type, row) {
+                        const recover = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="right"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Restore">
+                                            <span class="fa-solid fa-clock-rotate-left fc-default"></span>
+                                        </a>`;
+                        return `<div class="d-flex align-items-center">` + recover + `</div>`;
+                    }
+                }
+            ],
+        });
+
+        $('#trashbinTable tbody').on('dblclick', 'tr', function () {
+            var data = trashDataTable.row(this).data();
+            preview(data.image_id);
+        });
+
+        $('#filterSearch').keyup(function () {
+            trashDataTable.draw();
+        });
+    }
+
+    dataTableFunction();
+</script>
+<script>
+    function preview(ImageID) {
+            console.log(ImageID);
+
+            fetch('/trashed/documents/getDocImage/image/data/' + ImageID)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(encodedImage => {
+                    let previewImageDisplay = document.getElementById('previewImageDisplay');
+                    previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
+
+                    // Show the modal
+                    let modal = new bootstrap.Modal(document.getElementById('showPreviewTrashFile'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+    
+        function restoreFile(documentID){
+
+        }
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+</script>
+{% endblock%}

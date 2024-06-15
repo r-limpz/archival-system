@@ -77,21 +77,25 @@ app.register_blueprint(documents_blueprint)
 #text recognition logics
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)
+#Register get colleges list
+from .fetchColleges import fetchColleges as fetchCollegesBlueprint
+app.register_blueprint(fetchCollegesBlueprint)
+
 #upload manager logics
 from .upload_manager import uploader_manager as uploader_blueprint
 app.register_blueprint(uploader_blueprint)
 #Reister authenticated accounts
 app.register_blueprint(admin_bp)
 app.register_blueprint(staff_bp)
+
 #Register account_manager
 from .account_manager import account_manager as user_controlblueprint
 app.register_blueprint(user_controlblueprint)
 #Register college and courses manager 
 from .college_manager import college_manager as college_managerBlueprint
 app.register_blueprint(college_managerBlueprint)
-#Register get colleges list
-from .fetchColleges import fetchColleges as fetchCollegesBlueprint
-app.register_blueprint(fetchCollegesBlueprint)
+from .trashbin import trashbin_data as trashbinBlueprint
+app.register_blueprint(trashbinBlueprint)
 
 #error handling of pages
 @app.errorhandler(Exception)
@@ -152,6 +156,12 @@ def upload():
 @login_required
 def dashboard():
     return redirect(url_for('admin.dashboard'))
+
+#Dashboard page route
+@app.route('/trashbin')
+@login_required
+def trashbin():
+    return redirect(url_for('admin.trashbin'))
 
 #Account Manager page route
 @app.route('/account_manager')

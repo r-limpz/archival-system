@@ -16,6 +16,17 @@ def authenticate(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def getEditor():
+    with config.conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM user WHERE username = %s', (current_user.username))
+        account_uploader = cursor.fetchone()
+
+        if account_uploader:
+            editor = account_uploader['user_id']
+            return editor
+        else:
+            return None
+        
 def fetchDocumentData(document_id):
     try:
         with config.conn.cursor() as cursor:
@@ -38,7 +49,7 @@ def fetchDocumentData(document_id):
         
                 return document_header
     except Exception as e:
-        print('edit Documents Error :', e)
+        print('Fetch Document Info Error :', e)
 
 def editDocumentsData(document_id, document_header):
     try:
@@ -67,21 +78,26 @@ def editDocumentsData(document_id, document_header):
 
             return 'No Selected Document'
     except Exception as e:
-        print('edit Documents Error:', e)
+        print('Edit Documents Error:', e)
 
 def deleteDocumentsData(document_id):
     try:
         with config.conn.cursor() as cursor:
             if document_id:
-                cursor.execute('UPDATE documents SET delete_status = 1, deleted_time = NOW() WHERE docs_id = %s', (document_id,)) 
+                editor = getEditor()
+
+                cursor.execute('UPDATE documents SET delete_status = 1 WHERE docs_id = %s', (document_id,)) 
                 config.conn.commit()
 
                 if cursor.rowcount > 0:
+                    cursor.execute('INSERT INTO trashdocs (document_id, editor, trashed_date, deleted_date) VALUES (%s, %s, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))', (document_id, editor))
+                    config.conn.commit()
+
                     return 'success'
                             
             return 'failed'
     except Exception as e:
-        print('edit Documents Error:', e)
+        print('Delete Documents Error:', e)
 
 @fetch_documents.route("/documents_data",methods=["POST","GET"])
 @login_required
@@ -165,7 +181,7 @@ def documents_data():
 
                 return jsonify(response)
     except Exception as e:
-        print('Fetch Records Error: ',e)
+        print('Fetch documents Error: ',e)
 
 #preview document image
 @fetch_documents.route('/documents/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
