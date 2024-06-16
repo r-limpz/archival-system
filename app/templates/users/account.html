@@ -17,7 +17,7 @@
                 <div class="fa-solid fa-user" style="font-size: 3rem;"></div>
             </div>
             <div style="margin-left: 7rem;">
-                <h5 class="fw-bold">
+                <h5 class="fw-bold" id="profile_username">
                     {{ current_user.username}}
                 </h5>
                 <h6>
@@ -28,3 +28,12 @@
         </div>
 </section>
 {% endblock%}
+{% block scripts %}
+<script>
+    function fetchAccountInfo(){
+        var username = document.getElementById('profile_username').innerText;
+        
+    }
+
+</script>
+{% endblock %}

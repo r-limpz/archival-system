@@ -5,7 +5,7 @@ import base64
 import json
 from . import config
 
-fetch_records = Blueprint('fetch_records', __name__)
+fetch_records = Blueprint('fetch_records', __name__, url_prefix='/documents/records/tags/manage/data')
 
 #decorator for authorization role based
 def authenticate(f):
@@ -84,8 +84,8 @@ def removeRecordData(tagging_id):
     except Exception as e:
         print('Remove Recordds Error :', e)
 
-
-@fetch_records.route("/records_data",methods=["POST","GET"])
+#fetch data for datatable
+@fetch_records.route("/fetch/tags/students_list",methods=["POST","GET"])
 @login_required
 @authenticate
 def records_data():
@@ -169,7 +169,7 @@ def records_data():
         print('Fetch Records Error: ',e)
 
 #preview document image
-@fetch_records.route('/records/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
+@fetch_records.route('/file/fetch_data/<image_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def previewDocument(image_id):
@@ -185,8 +185,8 @@ def previewDocument(image_id):
         
         return "No image data found", 404
     
-#fetch entry data
-@fetch_records.route('/records/tags/getStudent/document/data/<tag_id>', methods=['POST', 'GET'])
+#fetch tag entry student credentials
+@fetch_records.route('/students/request/credentials/<tag_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def getEntryData(tag_id):
@@ -196,8 +196,8 @@ def getEntryData(tag_id):
         query_result = fetchEntryData(tag_id)
         return jsonify(query_result)
     
-#edit records data    
-@fetch_records.route('/records/tags/updateStudent/document/update', methods=['POST', 'GET'])
+#edit records data   
+@fetch_records.route('/students/credentials/update', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def editEntryData():
@@ -217,7 +217,7 @@ def editEntryData():
                 if update_query:
                     return jsonify({'update_query': update_query})
 #delete records data                
-@fetch_records.route('/records/tags/removeStudent/document/delete/unlink', methods=['POST', 'GET'])
+@fetch_records.route('/students/remove/unlink/update/document', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def deleteEntryData():

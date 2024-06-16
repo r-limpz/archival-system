@@ -171,7 +171,7 @@
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
-                'url': '/documents_data',
+                'url': '/documents/manage/data/fetch/',
                 'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
                 'data': function (data) {
                     data.filterSearch = $('#filterSearch').val();
@@ -279,7 +279,7 @@
 <script>
     //preview
     function preview(ImageID) {
-        fetch('/documents/getDocImage/image/data/' + ImageID)
+        fetch('/documents/manage/data/file/fetch_data/' + ImageID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

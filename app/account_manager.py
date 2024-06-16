@@ -7,7 +7,7 @@ import string
 from flask import current_app as app
 from . import config, argon2
 
-account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/account_manager')
+account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/user-manager/manage/data')
 
 # decorator for authorization role based
 def admin_required(f):
@@ -322,7 +322,7 @@ def removeAccount(profile_id):
     except Exception as e:
         print(f"removeAccount() : {e}")
 
-@account_manager.route('/display_staff_users/<active_status>')
+@account_manager.route('/fetch/users-list/filter-status/<active_status>')
 @login_required
 @admin_required
 def users_list(active_status):
@@ -338,7 +338,7 @@ def users_list(active_status):
     else:
         return jsonify(None)
 
-@account_manager.route('/preview/<profile_id>')
+@account_manager.route('/user/preview-profile/account-id/<profile_id>')
 @login_required
 @admin_required
 def preview_account(profile_id):
@@ -359,7 +359,7 @@ def preview_account(profile_id):
     else:
         return redirect(url_for('account_manager'))
     
-@account_manager.route('/manage/new_user' , methods=['POST', 'GET'])
+@account_manager.route('/new-user/data-credentials/register-account' , methods=['POST', 'GET'])
 @login_required
 @admin_required
 def create_account():
@@ -385,7 +385,7 @@ def create_account():
     except Exception as e:
          print(f"create user route error occurred: {e}")
 
-@account_manager.route('/manage/user_state', methods=['POST', 'GET'])
+@account_manager.route('/user/account-status/update', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def change_status():
@@ -423,7 +423,7 @@ def change_status():
         print(f"change status error occurred: {e}")
 
 
-@account_manager.route('/manage/<profile_id>')
+@account_manager.route('/user/fetch/account-credentials/account-id/<profile_id>')
 @login_required
 @admin_required
 def manage_user(profile_id):
@@ -448,7 +448,7 @@ def manage_user(profile_id):
     else:
         return jsonify('error, user not found')
 
-@account_manager.route('/account/update', methods=['POST', 'GET'])
+@account_manager.route('/user/update/account-credentials/new-data', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def edit_user():
@@ -475,7 +475,7 @@ def edit_user():
             print(f"update user credentials  error occurred: {e}")
 
 
-@account_manager.route('/account/deactivate/delete-user', methods=['POST', 'GET'])
+@account_manager.route('/user/update/account-status/deactivate/delete', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def account_delete():
@@ -495,7 +495,7 @@ def account_delete():
             print(f"delete user error occurred: {e}")
 
 
-@account_manager.route('/verify-unique/textdata', methods=['POST', 'GET'])
+@account_manager.route('/fetch/users-list/find-duplicates/verify-status/', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def check_inputVerify():

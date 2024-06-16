@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from functools import wraps
 from . import config 
 
-college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/college_manager')
+college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/colleges/manage/data')
 
 #decorator for authorization role based
 def admin_required(f):
@@ -245,8 +245,8 @@ def removeCourse(course_id):
     else:
         return 'failed'
 
-#A display route to return all data from fetched colleges
-@college_manager.route('/display_colleges' , methods=['GET'])
+#fetch all colleges and courses data
+@college_manager.route('/fetch-colleges/courses-list' , methods=['GET'])
 @login_required
 @admin_required
 def display_colcourse():
@@ -254,7 +254,8 @@ def display_colcourse():
     #each entry in the collgeCourses_list is collgeCourses_list[{college_id:'', college_name:'' courses[{1, course_id:'course_id',course_name:'course_name',}]}]
     return jsonify([college.__dict__ for college in collegeCourses_list])
 
-@college_manager.route('/add/new_college', methods=['POST', 'GET'])
+#regiter new college 
+@college_manager.route('/add/register-data', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def create_college():
@@ -268,7 +269,8 @@ def create_college():
         else:
             return jsonify({'query_result' : 'failed'})
 
-@college_manager.route('/add/new_course' , methods=['POST', 'GET'])
+#register new course entry
+@college_manager.route('/courses/append/register-data' , methods=['POST', 'GET'])
 @login_required
 @admin_required
 def create_courses():
@@ -284,7 +286,8 @@ def create_courses():
         else:
             return jsonify({'query_result' : 'failed'})
 
-@college_manager.route('/update_data/update_college' , methods=['POST', 'GET'])
+#update college data and courses
+@college_manager.route('/college_details/courses/data-list/update' , methods=['POST', 'GET'])
 @login_required
 @admin_required
 def update_college():
@@ -302,20 +305,8 @@ def update_college():
         else:
             return jsonify({'query_result' : 'failed'})
 
-@college_manager.route('/remove_data/delete_college/data')
-@login_required
-@admin_required
-def remove_college():
-    if college_id:
-        college_id = int(college_id)
-        query_result = removeCollege(college_id)
-
-        if query_result:
-            return jsonify({'query_result' : query_result})
-        else:
-            return jsonify({'query_result' : 'failed'})
-
-@college_manager.route('/update_college/course/unlink_college/setup_link' , methods=['POST', 'GET'])
+# move to unlink and register course to college
+@college_manager.route('/courses/unlink-course/move/update/register-college' , methods=['POST', 'GET'])
 @login_required
 @admin_required
 def change_courseCollege():
@@ -324,6 +315,19 @@ def change_courseCollege():
         newCollege = request.form.get('movetoCollege')
 
         query_result = unlink_courseitemCollege(course, newCollege)
+
+        if query_result:
+            return jsonify({'query_result' : query_result})
+        else:
+            return jsonify({'query_result' : 'failed'})
+        
+@college_manager.route('/remove_data/delete_college/data')
+@login_required
+@admin_required
+def remove_college():
+    if college_id:
+        college_id = int(college_id)
+        query_result = removeCollege(college_id)
 
         if query_result:
             return jsonify({'query_result' : query_result})

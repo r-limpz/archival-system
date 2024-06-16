@@ -168,7 +168,7 @@
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
-                'url': '/records_data',
+                'url': '/documents/records/tags/manage/data/fetch/tags/students_list',
                 'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
                 'data': function (data) {
                     data.filterSearch = $('#filterSearch').val();
@@ -266,7 +266,7 @@
 <script>
     //preview
     function preview(rowID) {
-        fetch('/records/getDocImage/image/data/' + rowID)
+        fetch('/documents/records/tags/manage/data/file/fetch_data/' + rowID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -304,7 +304,7 @@
 
     //edit
     function editRecord(documentID) {
-        fetch('/records/tags/getStudent/document/data/' + documentID)
+        fetch('/documents/records/tags//manage/data/students/request/credentials/' + documentID)
             .then(response => response.json())
             .then(recordsData => {
                 let surname = recordsData.surname;
@@ -357,7 +357,7 @@
             };
 
             $.ajax({
-                url: '/records/tags/updateStudent/document/update',
+                url: '/documents/records/tags/manage/data/students/credentials/update',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -405,7 +405,7 @@
             let formData = { 'tagging_id': tagging_id };
 
             $.ajax({
-                url: '/records/tags/removeStudent/document/delete/unlink',
+                url: '/documents/records/tags/manage/data/students/remove/unlink/update/document',
                 type: 'POST',
                 data: (formData),
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },

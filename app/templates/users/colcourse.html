@@ -34,7 +34,7 @@
     function populateColleges() {
         collegesArray = [];
         coursesArray = [];
-        fetch('/admin/college_manager/display_colleges')
+        fetch('/admin/colleges/manage/data/fetch-colleges/courses-list')
             .then(response => response.json())
             .then(colleges => {
 
@@ -258,7 +258,7 @@
         };
         //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
-            url: '/admin/college_manager/add/new_college',
+            url: '/admin/colleges/manage/data/add/register-data',
             type: 'POST',
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -302,7 +302,7 @@
         };
         //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
-            url: '/admin/college_manager/add/new_course',
+            url: '/admin/colleges/manage/data/courses/append/register-data',
             type: 'POST',
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -416,7 +416,7 @@
             };
 
             $.ajax({
-                url: '/admin/college_manager/update_college/course/unlink_college/setup_link',
+                url: '/admin/colleges/manage/data/courses/unlink-course/move/update/register-college',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -479,7 +479,7 @@
         };
 
         $.ajax({
-            url: '/admin/college_manager/update_data/update_college',
+            url: '/admin/colleges/manage/data/college_details/courses/data-list/update',
             type: 'POST',
             data: JSON.stringify(formData),
             contentType: 'application/json',

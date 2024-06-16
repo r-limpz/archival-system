@@ -5,7 +5,7 @@ import base64
 import json
 from . import config
 
-fetch_documents = Blueprint('fetch_documents', __name__)
+fetch_documents = Blueprint('fetch_documents', __name__, url_prefix='/documents/manage')
 
 #decorator for authorization role based
 def authenticate(f):
@@ -99,7 +99,8 @@ def deleteDocumentsData(document_id):
     except Exception as e:
         print('Delete Documents Error:', e)
 
-@fetch_documents.route("/documents_data",methods=["POST","GET"])
+#fetch data for datatable
+@fetch_documents.route("/data/fetch/",methods=["POST","GET"])
 @login_required
 @authenticate
 def documents_data():
@@ -184,7 +185,7 @@ def documents_data():
         print('Fetch documents Error: ',e)
 
 #preview document image
-@fetch_documents.route('/documents/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
+@fetch_documents.route('/data/file/fetch_data/<image_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def previewDocument(image_id):
@@ -200,9 +201,8 @@ def previewDocument(image_id):
         
         return "No image data found", 404
 
-
-#fetch entry data
-@fetch_documents.route('/documents/manage/data/document_header/request/data/<document_id>', methods=['POST', 'GET'])
+#fetch document info
+@fetch_documents.route('/data/document_header/request/data/<document_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def getEntryData(document_id):
@@ -211,8 +211,9 @@ def getEntryData(document_id):
     if document_id:
         query_result = fetchDocumentData(document_id)
         return jsonify(query_result)
-
-@fetch_documents.route('/documents/manage/data/document_header/update', methods=['POST', 'GET'])
+    
+#update document info
+@fetch_documents.route('/data/document_header/update', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def editDocument():
@@ -246,8 +247,9 @@ def editDocument():
 
         if update_query:
             return jsonify({'update_query': update_query})
-        
-@fetch_documents.route('/documents/manage/data/file/delete', methods=['POST', 'GET'])
+
+#delete document temporary
+@fetch_documents.route('/data/file/delete', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def deleteDocument():

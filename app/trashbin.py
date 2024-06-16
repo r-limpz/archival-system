@@ -6,7 +6,7 @@ import base64
 import json
 from . import config
 
-trashbin_data = Blueprint('trashbin', __name__, url_prefix='/trashed/documents')
+trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data/')
 
 #decorator for authorization role based
 def admin_required(f):
@@ -72,7 +72,7 @@ def deleteDocumentFile(document_id):
             print('Recover data Error: ',e)
 
 
-@trashbin_data.route("/trashbin/files",methods=["POST","GET"])
+@trashbin_data.route("/fetch-data/deleted-files/delete-schedule-30days/trash-list",methods=["POST","GET"])
 @login_required
 @admin_required
 def recycleBin():
@@ -143,7 +143,7 @@ def recycleBin():
 
 
 #preview document image
-@trashbin_data.route('/getDocImage/image/data/<image_id>', methods=['POST', 'GET'])
+@trashbin_data.route('/file/fetch_data/<image_id>', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def previewDocument(image_id):
@@ -159,7 +159,7 @@ def previewDocument(image_id):
         
         return "No image data found", 404
 
-@trashbin_data.route('/restore/file', methods=['POST', 'GET'])
+@trashbin_data.route('/item-document/restore-file', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def restoreFile():
@@ -171,7 +171,7 @@ def restoreFile():
         if recover_query:
             return jsonify({'recover_query': recover_query})
 
-@trashbin_data.route('/delete/permanent/file', methods=['POST', 'GET'])
+@trashbin_data.route('/item-document/push-delete-permanent', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def permanent_deletion():

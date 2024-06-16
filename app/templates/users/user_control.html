@@ -50,7 +50,7 @@
 <script>
     // Function to show and hide popup
     function populateUsers(toggle) {
-        fetch('/admin/account_manager/display_staff_users/' + toggle)
+        fetch('/admin/user-manager/manage/data/fetch/users-list/filter-status/' + toggle)
             .then(response => response.json())
             .then(users => {
                 let usersDataDiv = document.getElementById('users_data');
@@ -193,7 +193,7 @@
     }
     //preview user account function
     function previewUser(profile_id) {
-        location.href = ('/admin/account_manager/preview/' + profile_id);
+        location.href = ('/admin/user-manager/manage/data/user/preview-profile/account-id/' + profile_id);
     }
 </script>
 <script>
@@ -223,7 +223,7 @@
         };
         //send the data through ajax and recieve a corresponding status report of query
         $.ajax({
-            url: '/admin/account_manager/manage/new_user',
+            url: '/admin/user-manager/manage/data/new-user/data-credentials/register-account',
             type: 'POST',
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -272,7 +272,7 @@
         $('#update_user_status').on('click', function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/admin/account_manager/manage/user_state',
+                url: '/admin/user-manager/manage/data/user/account-status/update',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -300,7 +300,7 @@
 
     function editProfile(profile_id) {
         // Load user information 
-        fetch('/admin/account_manager/manage/' + profile_id)
+        fetch('/admin/user-manager/manage/data/user/fetch/account-credentials/account-id/' + profile_id)
             .then(response => response.json())
             .then(user_credentials => {
                 if (user_credentials !== null) {
@@ -452,7 +452,7 @@
             //send the data through ajax and recieve a corresponding status report of query
             if (update_fullname !== null && update_username !== null && user_id !== null) {
                 $.ajax({
-                    url: '/admin/account_manager/account/update',
+                    url: '/admin/user-manager/manage/data/user/update/account-credentials/new-data',
                     type: 'POST',
                     data: formData,
                     headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -523,7 +523,7 @@
                 'dataSearch': dataSearch,
             };
             $.ajax({
-                url: '/admin/account_manager/verify-unique/textdata',
+                url: '/admin/user-manager/manage/data/fetch/users-list/find-duplicates/verify-status/',
                 type: 'POST',
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -552,7 +552,7 @@
             };
 
             $.ajax({
-                url: '/admin/account_manager/account/deactivate/delete-user',
+                url: '/admin/user-manager/manage/data/user/update/account-status/deactivate/delete',
                 type: 'POST',
                 data: JSON.stringify(formData),
                 contentType: 'application/json',

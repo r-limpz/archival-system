@@ -54,7 +54,7 @@
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
-                'url': '/trashed/documents/trashbin/files',
+                'url': '/admin/trash/manage/data/fetch-data/deleted-files/delete-schedule-30days/trash-list',
                 'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
                 'data': function (data) {
                     data.filterSearch = $('#filterSearch').val();
@@ -134,7 +134,7 @@
 </script>
 <script>
     function preview(ImageID) {
-        fetch('/trashed/documents/getDocImage/image/data/' + ImageID)
+        fetch('/admin/trash/manage/data/file/fetch_data/' + ImageID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -166,7 +166,7 @@
             let formData = { 'document_id': document_id };
 
             $.ajax({
-                url: '/trashed/documents/restore/file',
+                url: '/admin/trash/manage/data/item-document/restore-file',
                 type: 'POST',
                 data: (formData),
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
@@ -174,7 +174,7 @@
                     trashDataTable.draw();
                     switch (data.recover_query) {
                         case 'success':
-                            showToast('Success!', 'file resoted.', 'fc-default fa-solid fa-circle-check', 'border-dark');
+                            showToast('Success!', 'file resoted.', 'text-success fa-solid fa-circle-check', 'border-dark');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed':
@@ -205,7 +205,7 @@
             let formData = { 'document_id': document_id };
 
             $.ajax({
-                url: '/delete/permanent/file',
+                url: '/admin/trash/manage/data/item-document/push-delete-permanent',
                 type: 'POST',
                 data: (formData),
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
