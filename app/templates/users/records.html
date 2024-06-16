@@ -184,9 +184,8 @@
             'columns': [
                 { data: 'id', orderable: true, title: '#' },
                 { data: 'FullName', title: 'FullName', orderable: true, wrap: true, className: 'fw-medium' },
-                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
-                { data: 'Course', title: 'Course', orderable: true, wrap: false, className: 'text-center' },
-                { data: 'Section', title: 'Section', orderable: true, wrap: false, className: 'text-center' },
+                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center', width: '70px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '90px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
                 { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
@@ -195,7 +194,8 @@
                     'data': 'id',
                     title: 'Action',
                     wrap: true,
-                    orderable: false,
+                    orderable: false, 
+                    width: '70px',
                     "render": function (data, type, row) {
                         const viewLink = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
                                                     data-bs-toggle="tooltip"

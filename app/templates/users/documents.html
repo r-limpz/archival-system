@@ -198,8 +198,7 @@
                     }
                 },
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
-                { data: 'Course', title: 'Course', orderable: true, wrap: false, className: 'text-center' },
-                { data: 'Section', title: 'Section', orderable: true, wrap: false, className: 'text-center' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '70px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
                 { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
@@ -209,6 +208,7 @@
                     title: 'Action',
                     orderable: false,
                     wrap: true,
+                    width: '70px',
                     "render": function (data, type, row) {
 
                         const viewFile = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 

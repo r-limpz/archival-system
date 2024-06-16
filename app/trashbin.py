@@ -127,6 +127,7 @@ def recycleBin():
                             'deletedOn': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
+                            'File_size': row['Filesize'],
                         })
                     
                 response = {

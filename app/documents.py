@@ -163,13 +163,13 @@ def documents_data():
                             'id': row['id'],
                             'Filename': row['Filename'],
                             'College': row['College'],
-                            'Course': row['Course'],
-                            'Section': row['Section'],
+                            'Section': row['Course'] + '-' +  row['Section'],
                             'Subject': row['Subject'],
                             'Unit': row['Unit'],
                             'Semester': row['Semester'],
                             'SchoolYear': row['SchoolYear'],
                             'image_id': row['image_id'],
+                            'File_size': row['Filesize'],
                         })
                     
                 response = {
