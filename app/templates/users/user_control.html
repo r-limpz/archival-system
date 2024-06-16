@@ -228,7 +228,6 @@
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
-                console.log('message :' + data.update_query);
                 switch (data.update_query) {
                     case 'success'://the user successfully appended in the database
                         populateUsers('all-any');
@@ -499,7 +498,6 @@
 
         if (inputForm !== null) {
             checkUnique(credential, profile_id, searchString, function (is_nameExist) {
-                console.log(is_nameExist);
 
                 if (is_nameExist === true) {
                     inputForm.classList.add("is-invalid");
@@ -548,15 +546,11 @@
         $('#delete_user_profile').on('click', function (event) {
             event.preventDefault();
             let user_data = profile_id;
-            let dummy = 'asapnqwiqoiwqnfbv';
-            console.log(user_data);
 
             const formData = {
                 user_data,
-                dummy,
             };
 
-            
             $.ajax({
                 url: '/admin/account_manager/account/deactivate/delete-user',
                 type: 'POST',

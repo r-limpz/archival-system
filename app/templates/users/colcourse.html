@@ -37,7 +37,7 @@
         fetch('/admin/college_manager/display_colleges')
             .then(response => response.json())
             .then(colleges => {
-                
+
                 let collegeDataDiv = document.getElementById('college_displayCards');
                 let collegeSelect = document.getElementById('addon_College');
                 let collegeMoveSelect = document.getElementById('movetoCollege');
@@ -150,52 +150,71 @@
     }
 
     populateColleges();
-    console.log(coursesArray)
-    function checkCollege(inputID, submitButton, type) {
-        const submit_button = document.getElementById(submitButton);
-        let collegeName = document.getElementById(inputID).value;
-        let foundCollege;
 
-        if (type === "description") {
-            foundCollege = !!collegesArray.find(college => college.college_description.toLowerCase() === collegeName.toLowerCase());
-        }
-        else if (type === "abbrev") {
-            foundCollege = !!collegesArray.find(college => college.college_name.toLowerCase() === collegeName.toLowerCase());
-        }
+    function verifyCollege() {
+        let submit_button = document.getElementById('button_showConfirmationAddColleges');
+        let collegeAbbrev = document.getElementById('newcollege_name').value.trim();
+        let collegeName = document.getElementById('newcollege_nameDescription').value.trim();
 
-        console.log('college :' + foundCollege);
-        if (foundCollege) {
-            document.getElementById(inputID).classList.add('is-invalid');
+        let foundCollegeName = !!collegesArray.find(college => college.college_name.toLowerCase() === collegeAbbrev.toLowerCase());
+        let foundCollegeDesc = !!collegesArray.find(college => college.college_description.toLowerCase() === collegeName.toLowerCase());
+
+        // Check for invalid abbrevation
+        if (foundCollegeName) {
+            document.getElementById('newcollege_name').classList.add('is-invalid');
             submit_button.disabled = true;
         } else {
-            document.getElementById(inputID).classList.remove('is-invalid');
+            document.getElementById('newcollege_name').classList.remove('is-invalid');
+        }
+
+        // Check for invalid college name
+        if (foundCollegeDesc) {
+            document.getElementById('newcollege_nameDescription').classList.add('is-invalid');
+            submit_button.disabled = true;
+        } else {
+            document.getElementById('newcollege_nameDescription').classList.remove('is-invalid');
+        }
+
+        if (!foundCollegeName && !foundCollegeDesc && collegeAbbrev !== '' && collegeAbbrev !== null && collegeName !== '' && collegeName !== null) {
             submit_button.disabled = false;
         }
     }
 
-    function checkCourses(inputID, submitButton, type) {
-        const submit_button = document.getElementById(submitButton);
-        let courseName = document.getElementById(inputID).value;
-        let foundCourse;
+    function verifyCourse() {
+        let submit_button = document.getElementById('button_showConfirmationAddCourses');
+        let College = document.getElementById('addon_College').value.trim();
+        let courseAbbrev = document.getElementById('newcourse_name').value.trim();
+        let courseName = document.getElementById('newcourse_nameDescription').value.trim();
 
-        if (type === "description") {
-            foundCourse = !!coursesArray.find(course => course.course_description.toLowerCase() === courseName.toLowerCase());
-        }
-        else if (type === "abbrev") {
-            foundCourse = !!coursesArray.find(course => course.course_name.toLowerCase() === courseName.toLowerCase());
-        }
-        
-        console.log('course :' + foundCourse);
+        let foundCourseName = !!coursesArray.find(course => course.course_name.toLowerCase() === courseAbbrev.toLowerCase());
+        let foundCourseDesc = !!coursesArray.find(course => course.course_description.toLowerCase() === courseName.toLowerCase());
 
-        if (foundCourse) {
-            document.getElementById(inputID).classList.add('is-invalid');
+        // Check for invalid abbrevation
+        if (foundCourseName) {
+            document.getElementById('newcourse_name').classList.add('is-invalid');
             submit_button.disabled = true;
         } else {
-            document.getElementById(inputID).classList.remove('is-invalid');
+            document.getElementById('newcourse_name').classList.remove('is-invalid');
+        }
+
+        // Check for invalid course name
+        if (foundCourseDesc) {
+            document.getElementById('newcourse_nameDescription').classList.add('is-invalid');
+            submit_button.disabled = true;
+        } else {
+            document.getElementById('newcourse_nameDescription').classList.remove('is-invalid');
+        }
+
+        if (!foundCourseName && !foundCourseDesc && College !== "" && courseAbbrev !== '' && courseAbbrev !== null && courseName !== '' && courseName !== null) {
             submit_button.disabled = false;
         }
     }
 
+    document.getElementById('newcollege_name').addEventListener('input', verifyCollege);
+    document.getElementById('newcollege_nameDescription').addEventListener('input', verifyCollege);
+    document.getElementById('addon_College').addEventListener('input', verifyCourse);
+    document.getElementById('newcourse_name').addEventListener('input', verifyCourse);
+    document.getElementById('newcourse_nameDescription').addEventListener('input', verifyCourse);
 
     function clearForm(form_id) {
         let form = document.querySelector(form_id);
@@ -228,6 +247,7 @@
 
 </script>
 <script>
+
     $('#confirm_addCollege').on('click', function (event) {
         event.preventDefault();
         let college_name = $('#newcollege_name').val();
@@ -351,7 +371,7 @@
                     containerPopulate.innerHTML += inputField;
                 });
             }
-            else{
+            else {
                 containerPopulate.innerHTML += `<div class="p-3 mt-3 text-center">No Courses Registered ...</div>`;
             }
             // Show the modal
@@ -401,7 +421,6 @@
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    console.log('message :' + data.query_result);
                     switch (data.query_result) {
                         case 'success'://the user successfully appended in the database
                             populateColleges();

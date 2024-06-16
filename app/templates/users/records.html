@@ -204,6 +204,7 @@
                                                     title="Preview">
                                                 <span class="fa-solid fa-eye"></span>
                                             </a>`;
+
                         const editLink = `<a id="editThis" class="flex-fill text-center" onclick="editRecord(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
@@ -211,6 +212,7 @@
                                                     title="Edit">
                                                 <span class="fa-solid fa-pen"></span>
                                             </a>`;
+                                            
                         const deleteLink = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteRecord(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
@@ -264,8 +266,6 @@
 <script>
     //preview
     function preview(rowID) {
-        console.log(rowID);
-
         fetch('/records/getDocImage/image/data/' + rowID)
             .then(response => {
                 if (!response.ok) {

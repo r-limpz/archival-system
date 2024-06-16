@@ -30,8 +30,6 @@
 <script>
     const channel = new BroadcastChannel("sess_channel");
     const userRole = "{{ current_user.role }}";
-    console.log(userRole);
-
     channel.onmessage = function (event) {
         if (event.data === 'session online') {
 

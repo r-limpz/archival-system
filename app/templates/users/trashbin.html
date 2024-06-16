@@ -69,29 +69,52 @@
                     title: 'File',
                     orderable: true,
                     wrap: true,
+                    className: 'text-start',
                     "render": function (data, type, row) {
                         const student_name = '<span>' + data + '</span>'
                         return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
                     }
                 },
                 { data: 'Trashed', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '180px' },
-                { data: 'deletedOn', title: 'Deleted date', orderable: true, wrap: false, className: 'text-center', width: '180px' },
-                { data: 'editor', title: 'Deleted by', orderable: false, wrap: false, className: 'text-center', width: '120px' },
+                { data: 'deletedOn', title: 'Delete', orderable: true, wrap: false, className: 'text-center', width: '180px' },
+                {
+                    data: 'editor',
+                    title: 'Deleted by',
+                    orderable: false,
+                    wrap: false,
+                    className: 'text-center',
+                    width: '120px',
+                    "render": function (data, type, row) {
+                        const editor = '<span>' + data + '</span>'
+                        return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-small align-self-center"></span>` + editor + `</div>`;
+                    }
+                },
+
                 {
                     'data': 'id',
                     title: ' ',
                     orderable: false,
                     wrap: true,
+                    width: '80px',
                     "render": function (data, type, row) {
-                        const recover = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
+                        const recoverfile = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="right"
                                                     data-bs-trigger="hover"
                                                     data-bs-html="true"
                                                     title="Restore">
-                                            <span class="fa-solid fa-clock-rotate-left fc-default"></span>
-                                        </a>`;
-                        return `<div class="d-flex align-items-center">` + recover + `</div>`;
+                                                <span class="fa-solid fa-clock-rotate-left fc-default"></span>
+                                            </a>`;
+
+                        const deleteFile = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteTrash(` + row['id'] + `)"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    title="Delete">
+                                                <span class="fa-solid fa-trash text-danger"></span>
+                                            </a>`;
+
+                        return `<div class="d-flex align-items-center">` + recoverfile + '' + deleteFile + `</div>`;
                     }
                 }
             ],
@@ -111,34 +134,102 @@
 </script>
 <script>
     function preview(ImageID) {
-            console.log(ImageID);
+        fetch('/trashed/documents/getDocImage/image/data/' + ImageID)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(encodedImage => {
+                let previewImageDisplay = document.getElementById('previewImageDisplay');
+                previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
 
-            fetch('/trashed/documents/getDocImage/image/data/' + ImageID)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                // Show the modal
+                let modal = new bootstrap.Modal(document.getElementById('showPreviewTrashFile'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    }
+
+    function restoreFile(documentID) {
+
+        let modal = new bootstrap.Modal(document.getElementById('restoreFile_confirmation'));
+        modal.show();
+
+        $('#restore_file').on('click', function (event) {
+            event.preventDefault();
+
+            var document_id = documentID; // Ensure that this variable is declared with let or const
+            let formData = { 'document_id': document_id };
+
+            $.ajax({
+                url: '/trashed/documents/restore/file',
+                type: 'POST',
+                data: (formData),
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    trashDataTable.draw();
+                    switch (data.recover_query) {
+                        case 'success':
+                            showToast('Success!', 'file resoted.', 'fc-default fa-solid fa-circle-check', 'border-dark');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed':
+                            showToast('Error!', 'Failed to Restore file. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
                     }
-                    return response.text();
-                })
-                .then(encodedImage => {
-                    let previewImageDisplay = document.getElementById('previewImageDisplay');
-                    previewImageDisplay.src = 'data:image/jpeg;base64,' + encodedImage;
+                },
+                //handle the ajax error 
+                error: function (error) {
+                    console.error('Error:', error);
+                    showToast('Error', 'Restore error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        });
+    }
 
-                    // Show the modal
-                    let modal = new bootstrap.Modal(document.getElementById('showPreviewTrashFile'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-        }
-    
-        function restoreFile(documentID){
+    function deleteTrash(documentID) {
 
-        }
+        let modal = new bootstrap.Modal(document.getElementById('deleteTrash_confirmation'));
+        modal.show();
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        $('#delete_trash').on('click', function (event) {
+            event.preventDefault();
 
+            var document_id = documentID; // Ensure that this variable is declared with let or const
+            let formData = { 'document_id': document_id };
+
+            $.ajax({
+                url: '/delete/permanent/file',
+                type: 'POST',
+                data: (formData),
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    trashDataTable.draw();
+                    switch (data.delete_query) {
+                        case 'success':
+                            showToast('Success!', 'File Deleted permanently', 'text-success fa-solid fa-circle-check', 'border-dark');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed':
+                            showToast('Error!', 'Failed to delete file. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                },
+                //handle the ajax error 
+                error: function (error) {
+                    console.error('Error:', error);
+                    showToast('Error', 'Delete error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                }
+            });
+        });
+    }
 </script>
 {% endblock%}

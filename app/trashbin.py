@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
+from datetime import datetime, timedelta
 import base64
 import json
 from . import config
@@ -18,11 +19,55 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def recoverData(deletec_id):
+def get_deletionTime(delete_sched):
+    if delete_sched:
+        now = datetime.now().date() 
+        diff = delete_sched - now  # Calculate the difference between the future date and now
+        
+        # If the difference is negative, it means the deletion time has passed
+        if diff.days < 0:
+            return "Deletion time has passed."
+        
+        # Format the time difference as a string indicating days left
+        if diff.days > 0:
+            time_str = f"{diff.days} days left" 
+            return time_str
+    else:
+        return "Deletion schedule not provided."
+    
+def restoreDocumentFile(document_id):
     try:
         with config.conn.cursor() as cursor:
 
+            cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
+            config.conn.commit()
+
+            if cursor.rowcount > 0:
+                    cursor.execute('DELETE FROM trashdocs WHERE document_id = %s', (document_id))
+                    config.conn.commit()
+
+                    return 'success'
+
             return 'failed'
+    except Exception as e:
+            print('Recover data Error: ',e)
+
+def deleteDocumentFile(document_id):
+    try:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute('DELETE FROM documents WHERE docs_id = %s', (document_id,)) 
+            rows_deleted = cursor.rowcount  # Get the number of affected rows
+            config.conn.commit()
+
+            if rows_deleted > 0:
+                    cursor.execute('DELETE FROM trashdocs WHERE document_id = %s', (document_id))
+                    config.conn.commit()
+
+                    return 'success'
+
+            return 'failed'
+        
     except Exception as e:
             print('Recover data Error: ',e)
 
@@ -74,11 +119,12 @@ def recycleBin():
                 data = []
                 if recordlist:
                     for row in recordlist:
+                        
                         data.append({
                             'id': row['id'],
                             'Filename': row['Filename'],
-                            'Trashed': row['Trash_date'],
-                            'deletedOn': row['Deletion_Sched'],
+                            'Trashed': row['Trash_date'].strftime('%B %d, %Y'),
+                            'deletedOn': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
                         })
@@ -112,23 +158,27 @@ def previewDocument(image_id):
         
         return "No image data found", 404
 
-@trashbin_data.route('/recover/file', methods=['POST', 'GET'])
+@trashbin_data.route('/restore/file', methods=['POST', 'GET'])
 @login_required
 @admin_required
-def recovery():
-    deleted_id = int(deleted_id)
+def restoreFile():
+    if request.method == "POST":
+        document_id = request.form.get('document_id')
+        document_id = int(document_id)
+        recover_query = restoreDocumentFile(document_id)
 
-    recover_query = ''
-
-    if recover_query:
-        return jsonify({'recover_query': recover_query})
+        if recover_query:
+            return jsonify({'recover_query': recover_query})
 
 @trashbin_data.route('/delete/permanent/file', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def permanent_deletion():
-    deleted_id = int(deleted_id)
 
-    delete_query = ''
-    if delete_query:
-        return jsonify({'recover_query': delete_query})
+    if request.method == "POST":
+        document_id = request.form.get('document_id')
+        document_id = int(document_id)
+        delete_query = deleteDocumentFile(document_id)
+
+        if delete_query:
+            return jsonify({'delete_query': delete_query})

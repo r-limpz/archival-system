@@ -191,6 +191,7 @@
                     title: 'File',
                     orderable: true,
                     wrap: true,
+                    class: 'text-start',
                     "render": function (data, type, row) {
                         const student_name = '<span>' + data + '</span>'
                         return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
@@ -210,21 +211,21 @@
                     wrap: true,
                     "render": function (data, type, row) {
 
-                        const viewLink = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
+                        const viewFile = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
                                                     data-bs-html="true"
                                                     title="Preview">
                                                 <span class="fa-solid fa-eye"></span>
                                             </a>`;
-                        const editLink = `<a id="editThis" class="flex-fill text-center" onclick="editDocument(` + row['id'] + `)"
+                        const editFile = `<a id="editThis" class="flex-fill text-center" onclick="editDocument(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
                                                     data-bs-html="true"
                                                     title="Edit">
                                                 <span class="fa-solid fa-pen"></span>
                                             </a>`;
-                        const deleteLink = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteDocument(` + row['id'] + `)"
+                        const deleteFile = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteDocument(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
                                                     data-bs-html="true"
@@ -232,7 +233,7 @@
                                                 <span class="fa-solid fa-trash text-danger"></span>
                                             </a>`;
 
-                        return `<div class="d-flex fs-small align-items-center">` + viewLink + ' ' + editLink + ' ' + deleteLink + `</div>`;
+                        return `<div class="d-flex fs-small align-items-center">` + viewFile + ' ' + editFile + ' ' + deleteFile + `</div>`;
                     }
                 }
             ],
@@ -278,8 +279,6 @@
 <script>
     //preview
     function preview(ImageID) {
-        console.log(ImageID);
-
         fetch('/documents/getDocImage/image/data/' + ImageID)
             .then(response => {
                 if (!response.ok) {
@@ -538,7 +537,6 @@
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    console.log('Received data:', data);
                     documentsDataTable.draw();
                     switch (data.update_query) {
                         case 'no changes':
