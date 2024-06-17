@@ -18,7 +18,7 @@
 </style>
 
 <section>
-    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+    <div class="page-header-title p-2 border-bottom border-1 mb-2">
         <h5 class="fw-bold">Student Records</h5>
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
@@ -194,7 +194,7 @@
                     'data': 'id',
                     title: 'Action',
                     wrap: true,
-                    orderable: false, 
+                    orderable: false,
                     width: '70px',
                     "render": function (data, type, row) {
                         const viewLink = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
@@ -212,7 +212,7 @@
                                                     title="Edit">
                                                 <span class="fa-solid fa-pen"></span>
                                             </a>`;
-                                            
+
                         const deleteLink = `<a id="deleteThis" class="flex-fill text-center" onclick="deleteRecord(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
@@ -225,6 +225,17 @@
                     }
                 }
             ],
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var rows = api.rows({ page: 'current' }).count();
+                if (rows <= 1) { // Adjust this value based on your needs
+                    // Hide pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').hide();
+                } else {
+                    // Show pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').show();
+                }
+            }
         });
 
         $('#recordsTable tbody').on('dblclick', 'tr', function () {

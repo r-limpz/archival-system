@@ -1,7 +1,6 @@
 from flask import current_app as app
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
-from werkzeug.utils import secure_filename
 import pytesseract
 from PIL import Image
 import os

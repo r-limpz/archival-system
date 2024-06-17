@@ -18,7 +18,7 @@
 </style>
 
 <section>
-    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+    <div class="page-header-title p-2 border-bottom border-1 mb-2">
         <h5 class="fw-bold">Archive Documents</h5>
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
@@ -237,6 +237,17 @@
                     }
                 }
             ],
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var rows = api.rows({ page: 'current' }).count();
+                if (rows <= 1) { // Adjust this value based on your needs
+                    // Hide pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').hide();
+                } else {
+                    // Show pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').show();
+                }
+            }
         });
 
         $('#documentsTable tbody').on('dblclick', 'tr', function () {

@@ -1,12 +1,15 @@
 /* table ui*/
 #recordsTable,
 #documentsTable,
+#trashbinTable,
 #recordsTable_wrapper,
-#documentsTable_wrapper {
+#documentsTable_wrapper,
+#trashbinTable_wrapper {
     height: 100%;
 }
-.dataTables_scrollBody{
-min-height: 60vh;
+
+.dataTables_scrollBody {
+    min-height: 60vh;
 }
 
 table.dataTable thead th {
@@ -22,6 +25,7 @@ table.dataTable td {
 
 #recordsTable,
 #documentsTable,
+#trashbinTable,
 .dataTables_scrollHeadInner,
 .dataTables_scrollBody,
 .dataTables_scrollHeadInner table,
@@ -36,7 +40,8 @@ table.dataTable td {
 table.dataTable thead th,
 table.dataTable tbody,
 #recordsTable_wrapper .dataTables_scrollBody,
-#documentsTable_wrapper .dataTables_scrollBody {
+#documentsTable_wrapper .dataTables_scrollBody,
+#trashbinTable_wrapper .dataTables_scrollBody {
     border-top: none;
     border-bottom: none;
 }
@@ -71,24 +76,29 @@ table.dataTable tbody tr {
 }
 
 #recordsTable_paginate .paginate_button#recordsTable_previous:hover,
-#documentsTable_paginate .paginate_button#documentsTable_previous:hover,
 #recordsTable_paginate .paginate_button#recordsTable_next:hover,
-#documentsTable_paginate .paginate_button#documentsTable_next:hover {
+#documentsTable_paginate .paginate_button#documentsTable_previous:hover,
+#documentsTable_paginate .paginate_button#documentsTable_next:hover,
+#trashbinTable_paginate .paginate_button#documentsTable_previous:hover,
+#trashbinTable_paginate .paginate_button#documentsTable_next:hover {
     font-weight: normal;
     border: none;
 }
 
 #recordsTable_wrapper #recordsTable_paginate .paginate_button:hover,
-#documentsTable_wrapper #documentsTable_paginate .paginate_button:hover {
-    background: none;
-    background-color: white;
-    color: rgb(29, 27, 27) !important;
-    border: rgb(154, 154, 154) solid 1px;
-    text-decoration: none;
+#documentsTable_wrapper #documentsTable_paginate .paginate_button:hover,
+#trashbinTable_wrapper #documentsTable_paginate .paginate_button:hover
+{
+background: none;
+background-color: white;
+color: rgb(29, 27, 27) !important;
+border: rgb(154, 154, 154) solid 1px;
+text-decoration: none;
 }
 
 #recordsTable_wrapper #recordsTable_paginate .paginate_button.current,
-#documentsTable_wrapper #documentsTable_paginate .paginate_button.current {
+#documentsTable_wrapper #documentsTable_paginate .paginate_button.current,
+#trashbinTable_wrapper #documentsTable_paginate .paginate_button.current{
     background: none;
     color: rgb(255, 255, 255) !important;
     background: linear-gradient(275.52deg, #973939 0.28%, #DC7171 100%) !important;

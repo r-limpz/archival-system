@@ -17,14 +17,18 @@
     }
 </style>
 <section>
-    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+    <div class="page-header-title p-2 border-bottom border-1 mb-2">
         <h5 class="fw-bold">Trash</h5>
         <p class="fs-medium fst-italic"> </p>
     </div>
-    <div>
+    <div class="d-flex justify-content-between">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate" id="filterSearch" placeholder="Search...">
         </div>
+    </div>
+    <div class="my-3 p-2 rounded-3 bg-light d-flex justify-content-between align-items-center fs-medium ">
+        <span class="px-3 ">Documents in trash will be deleted permanently after 30 days.</span>
+        <button class="button btn-gray fw-medium" data-bs-toggle="modal" data-bs-target="#clearTrash_confirmation">Empty Trash</button>
     </div>
     <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
         width="100%">
@@ -88,8 +92,8 @@
                         return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem"></span>` + editor + `</div>`;
                     }
                 },
-                { data: 'Trashed', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '120px' },
-                { data: 'deletedOn', title: 'Delete', orderable: true, wrap: false, className: 'text-center', width: '120px' },
+                { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '120px' },
+                { data: 'Deletion_Sched', title: 'Delete', orderable: true, wrap: false, className: 'text-center', width: '120px' },
                 {
                     'data': 'id',
                     title: ' ',
@@ -118,6 +122,17 @@
                     }
                 }
             ],
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var rows = api.rows({ page: 'current' }).count();
+                if (rows <= 1) { // Adjust this value based on your needs
+                    // Hide pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').hide();
+                } else {
+                    // Show pagination controls
+                    $(api.table().container()).find('.dataTables_paginate').show();
+                }
+            }
         });
 
         $('#trashbinTable tbody').on('dblclick', 'tr', function () {
@@ -229,6 +244,37 @@
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                 }
             });
+        });
+    }
+
+    function clearAllTrash(){
+        var x = Math.floor((Math.random() * 100000) + 1);
+        let formData = { 'value': x };
+
+         $.ajax({
+            url: '/admin/trash/manage/data/all-document/clear-trashbin/push-delete-permanent',
+            type: 'POST',
+            data: (formData),
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                trashDataTable.draw();
+                switch (data.delete_query) {
+                    case 'success':
+                        showToast('Success!', 'File Deleted permanently', 'text-success fa-solid fa-circle-check', 'border-dark');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                    case 'failed':
+                        showToast('Error!', 'Failed to delete file. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        break;
+                }
+            },
+            //handle the ajax error 
+            error: function (error) {
+                console.error('Error:', error);
+                showToast('Error', 'Delete error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+            }
         });
     }
 </script>

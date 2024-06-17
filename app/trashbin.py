@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
-from datetime import datetime, timedelta
+from datetime import datetime
 import base64
 import json
 from . import config
 
-trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data/')
+trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
 
 #decorator for authorization role based
 def admin_required(f):
@@ -71,7 +71,7 @@ def deleteDocumentFile(document_id):
     except Exception as e:
             print('Recover data Error: ',e)
 
-
+#fetch trash data for datatable
 @trashbin_data.route("/fetch-data/deleted-files/delete-schedule-30days/trash-list",methods=["POST","GET"])
 @login_required
 @admin_required
@@ -123,8 +123,8 @@ def recycleBin():
                         data.append({
                             'id': row['id'],
                             'Filename': row['Filename'],
-                            'Trashed': row['Trash_date'].strftime('%B %d, %Y'),
-                            'deletedOn': get_deletionTime(row['Deletion_Sched']),
+                            'Trash_date': row['Trash_date'].strftime('%B %d, %Y'),
+                            'Deletion_Sched': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
                             'File_size': row['Filesize'],
@@ -140,7 +140,6 @@ def recycleBin():
                 return jsonify(response)
     except Exception as e:
         print('Fetch documents Error: ',e)
-
 
 #preview document image
 @trashbin_data.route('/file/fetch_data/<image_id>', methods=['POST', 'GET'])
@@ -159,6 +158,7 @@ def previewDocument(image_id):
         
         return "No image data found", 404
 
+#restore file
 @trashbin_data.route('/item-document/restore-file', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -171,6 +171,7 @@ def restoreFile():
         if recover_query:
             return jsonify({'recover_query': recover_query})
 
+#permanent delete one item
 @trashbin_data.route('/item-document/push-delete-permanent', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -183,3 +184,27 @@ def permanent_deletion():
 
         if delete_query:
             return jsonify({'delete_query': delete_query})
+
+#clear all trashed data 
+@trashbin_data.route('/all-document/clear-trashbin/push-delete-permanent', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def clear_trashbin():
+    try:
+        if request.method == "POST":
+            randomString = request.form.get('value')
+
+            if randomString:
+                with config.conn.cursor() as cursor:
+                    cursor.execute('''DELETE documents FROM documents INNER JOIN trashdocs ON documents.docs_id = trashdocs.document_id''')
+                    rows_deleted = cursor.rowcount
+                    config.conn.commit()
+
+                    if rows_deleted > 0:
+                        delete_query = 'success'
+                    else:
+                        delete_query = 'failed'
+
+                    return jsonify({'delete_query': delete_query})
+    except Exception as e:
+            print('clear trashbin Error: ',e)

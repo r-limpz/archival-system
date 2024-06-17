@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request, jsonify
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
@@ -88,6 +88,9 @@ app.register_blueprint(uploader_blueprint)
 app.register_blueprint(admin_bp)
 app.register_blueprint(staff_bp)
 
+#Register Dashboard
+from .dashboard import dashboard_data as dashboard_dateblueprint
+app.register_blueprint(dashboard_dateblueprint)
 #Register account_manager
 from .account_manager import account_manager as user_controlblueprint
 app.register_blueprint(user_controlblueprint)

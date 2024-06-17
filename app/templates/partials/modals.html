@@ -700,5 +700,25 @@
     </div>
   </div>
 
+    <div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content mx-3 border-orange border-3">
+          <div class="modal-body ">
+            <div class="mx-3">
+              <h5 class="fw-bold my-3">Confirm Clear Trash</h5>
+              <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all documents in the trash bin?</p>
+            </div>
+          </div>
+          <div class="modal-footer mx-3">
+            <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+            <button id="clear_trash" class="btn-orange fw-bold text-decoration-none button" data-bs-dismiss="modal" onclick="clearAllTrash()">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
   {% endif %}

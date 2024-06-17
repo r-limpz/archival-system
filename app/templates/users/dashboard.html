@@ -1,18 +1,263 @@
 {% extends 'layout/users.html' %}
 {% block title %}Admin | ARDS{% endblock %}
 {% block style %}
+<script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
+
 {% endblock %}
 
 {% block content %}
 
 <section>
-    <div class="page-header-title p-2 border-bottom border-1 mb-4">
+    <div class="page-header-title p-2 border-bottom border-1 mb-2">
         <h5 class="fw-bold">Dashboard</h5>
     </div>
-</section>
 
+    <div class="d-flex justify-content-between gap-3" id="countContainer">
+        <div class="card p-2 flex-fill">
+            <div class="fw-bold d-flex gap-3">
+                <span class="fa-solid fa-file-lines p-2"></span>
+                <span class="align-self-center">Archives</span>
+            </div>
+            <div class="p-2 d-flex gap-5">
+                <div class="fs-medium">Uploaded Documents:
+                    <h3 class="fw-bold fc-orange" id="document_counts">88888</h3>
+                </div>
+                <div class="fs-medium">Students:
+                    <h3 class="fw-bold fc-orange" id="student_counts">88888</h3>
+                </div>
+            </div>
+        </div>
+        <div class="card p-2 flex-fill">
+            <div class="fw-bold d-flex gap-3">
+                <span class="fa-solid fa-database p-2"></span>
+                <span class="align-self-center">Storage</span>
+            </div>
+            <div class="p-2 d-flex gap-5">
+                <div class="fs-medium">Database size: 
+                    <h3 class="fw-bold fc-green" id="database_size">8888 GB</h3>
+                </div>
+            </div>
+        </div>
+        <div class="card p-2 flex-fill">
+            <div class="fw-bold d-flex gap-3">
+                <span class="fa-solid fa-trash-can p-2"></span>
+                <span class="align-self-center">Trash</span>
+            </div>
+            <div class="p-2 d-flex gap-5">
+                <div class="fs-medium">Trashed items :
+                    <h3 class="fw-bold fc-red" id="trashed_counts">88888</h3>
+                </div>
+                <div class="fs-medium">Trashed size :
+                    <h3 class="fw-bold" id="trashed_size">0 MB</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between gap-3 my-3" id="graphContainer">
+        <div class="w-full p-2 card flex-grow-1 p-2" id="progressReport">
+            <div class="d-flex justify-content-between p-2">
+                <h5 class="fw-bold">Overview</h5>
+                <div class="d-flex justify-content-end bg-light rounded-3 p-2">
+                    <div class="d-flex justify-content-between gap-2" style="max-width: 380px;"
+                        id="statsFilterContainer">
+                        <button type="button" class="btn-light fw-medium fs-medium" id="filter_daily">Daily</button>
+                        <button type="button" class="btn-light fw-medium fs-medium" id="filter_weekly">Weekly</button>
+                        <button type="button" class="btn-light fw-medium fs-medium" id="filter_monthly">Monthly</button>
+                        <button type="button" class="btn-light fw-medium fs-medium" id="filter_yearly">Yearly</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chartbox" style="height: 50vh;">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="p-2 card d-flex">
+        COUNT CONTAINER
+    </div>
+
+</section>
 {% endblock%}
 
 {% block scripts %}
+<script>
+    var chart;
 
+    function updateChartData(data) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, '#1a9f04');
+        gradient.addColorStop(0.33, '#24ac0c');
+        gradient.addColorStop(0.66, '#29cc0e');
+        gradient.addColorStop(1, '#29cc0e');
+
+        var maxCount = Math.max(...data.map(d => d.count));
+        var suggestedMax = Math.ceil(maxCount / 5) * 6;
+
+        function getStepSize(count) {
+            if (count < 20) {
+                return 1;
+            } else if (count >= 20 && count < 50) {
+                return 5;
+            } else if (count >= 50 && count < 100) {
+                return 10;
+            } else if (count <= 500) {
+                return 50;
+            }
+            else {
+                return 100;
+            }
+        }
+
+        var stepSize = getStepSize(suggestedMax)
+
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(function (d) {
+                    return d.label;
+                }),
+                datasets: [{
+                    label: 'Archived Document',
+                    data: data.map(function (d) {
+                        return d.count;
+                    }),
+                    borderColor: gradient,
+                    borderWidth: 2,
+                    tension: 0.25,
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        position: 'nearest',
+                    },
+                    legend: {
+                        display: false,
+                    },
+
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                onClick: function (e) {
+                    var activePoints = this.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+                    if (activePoints.length > 0) {
+                        var firstPoint = activePoints[0];
+                        var label = this.data.labels[firstPoint.index];
+                        var value = this.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                        // Do something with the clicked data
+                        console.log(label, value);
+                    }
+                },
+                scales: {
+                    y: {
+                        suggestedMin: 0,
+                        suggestedMax: suggestedMax,
+
+                        grid: {
+                            display: true,
+                        },
+                        ticks: {
+                            stepSize: stepSize,
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                        },
+                    }
+                },
+            },
+        });
+    }
+
+    function calculateTotalCount(data) {
+        var total = 0;
+        data.forEach(function (d) {
+            total += +d.count;
+        });
+        $('#totalCount').text(total);
+    }
+
+    function requestUpdate(optionFormat, starting_date, end_date) {
+        let option = optionFormat || 'all';
+        let started_date = starting_date ? new Date(starting_date).toISOString().slice(0, 10) : '';
+        let ended_date = end_date ? new Date(end_date).toISOString().slice(0, 10) : '';
+
+        formData = {
+            'option': option,
+            'started_date': started_date,
+            'end_date': ended_date
+        };
+
+        $.ajax({
+            url: '/dashboard/manage/data/fetch/statistics-results/filtered',
+            type: 'POST',
+            data: (formData),
+            dataType: 'json',
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                updateChartData(data);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    function adjustButtonOpacity(clickedId) {
+        const container = document.querySelector('#statsFilterContainer');
+        const buttons = container.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.id === clickedId) {
+                button.style.opacity = '1'; // 100% opacity for clicked button
+                button.style.fontWeight = '700';
+                button.style.color = 'black';
+            } else {
+                button.style.opacity = '0.6'; // 50% opacity for other buttons
+                button.style.fontWeight = '600';
+                button.style.color = '';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        var currentDate = new Date().toISOString().slice(0, 10);
+        document.querySelector('#filter_daily').addEventListener('click', function () {
+            adjustButtonOpacity('filter_daily');
+            requestUpdate('daily', currentDate, '');
+        });
+        document.querySelector('#filter_weekly').addEventListener('click', function () {
+            adjustButtonOpacity('filter_weekly');
+            requestUpdate('weekly', currentDate, '');
+        });
+        document.querySelector('#filter_monthly').addEventListener('click', function () {
+            adjustButtonOpacity('filter_monthly');
+            requestUpdate('monthly', currentDate, '');
+        });
+        document.querySelector('#filter_yearly').addEventListener('click', function () {
+            adjustButtonOpacity('filter_yearly');
+            requestUpdate('yearly', currentDate, '');
+        });
+    });
+
+
+    function reload() {
+        var currentDate = new Date().toISOString().slice(0, 10);
+        adjustButtonOpacity('filter_daily');
+        requestUpdate('daily', currentDate, '');
+    }
+
+    reload();
+</script>
 {% endblock%}
