@@ -1,11 +1,10 @@
------------add to staged
-git add . 
-git add <filename.type>
+installed all needed python libraries 
 
------------Update the file content-version of the repository
-git commit
+source .venv/Scripts/activate
+pip install -r requirements.txt
 
+---------------------------------------------
 
-list all installed files 
-.venv/Scripts/activate
-pip freeze > requirements.txt
+install all necessary nodejs api
+cd app/static
+npm install 
