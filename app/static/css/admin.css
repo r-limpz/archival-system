@@ -1,5 +1,10 @@
 @import url(main.css);
 
+#statsFilterContainer button:hover{
+    opacity: 0.9;
+    color: black;
+}
+
 .inputs-forms {
     display: block;
     margin: auto;

@@ -197,7 +197,7 @@ def load_user(session_id):
     except Exception as e:
         print(f"login loader: {e}")
 
-#login user
+#setup route for login procedure
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -262,7 +262,7 @@ def login():
     loginAttempt('count')           
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
-#logout user
+#setup route for logout user 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -282,8 +282,7 @@ def logout():
 
     return redirect(url_for('home'))
 
-
-#check for session timeout
+#setup route for requesting heartbeat session status
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
     if current_user:
@@ -298,7 +297,7 @@ def heartbeat(username):
         session_expired(username)
         return jsonify(session_Inactive = True)
     
-#return to logout to prevent rendering expired csrf token
+#setup route for redirecting to logout to prevent expired CSRF token
 @auth.route('/authenticate-user/check-token/timeout/')
 def user_timeout():
     return redirect(url_for('auth.logout'))

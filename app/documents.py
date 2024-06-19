@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
 import base64
-import json
 from . import config
 
 fetch_documents = Blueprint('fetch_documents', __name__, url_prefix='/documents/manage')
@@ -26,7 +25,17 @@ def getEditor():
             return editor
         else:
             return None
-        
+
+def filesize_format(filesize):
+    if filesize >= 1024 * 1024 * 1024:  # Greater than or equal to 1 GB
+        formatted_size = f"{filesize / (1024 * 1024 * 1024):.2f} GB"
+    elif filesize >= 1024 * 1024:  # Greater than or equal to 1 MB
+        formatted_size = f"{filesize / (1024 * 1024):.2f} MB"
+    else:
+        formatted_size = f"{filesize / 1024:.2f} KB"
+    
+    return formatted_size
+
 def fetchDocumentData(document_id):
     try:
         with config.conn.cursor() as cursor:
@@ -159,19 +168,36 @@ def documents_data():
 
                 data = []
                 if recordlist:
-                    for row in recordlist:
-                        data.append({
-                            'id': row['id'],
-                            'Filename': row['Filename'],
-                            'College': row['College'],
-                            'Section': row['Course'] + '-' +  row['Section'],
-                            'Subject': row['Subject'],
-                            'Unit': row['Unit'],
-                            'Semester': row['Semester'],
-                            'SchoolYear': row['SchoolYear'],
-                            'image_id': row['image_id'],
-                            'File_size': row['Filesize'],
-                        })
+                    if current_user.role == 'staff':
+                        for row in recordlist:
+                            data.append({
+                                'id': row['id'],
+                                'Filename': row['Filename'],
+                                'College': row['College'],
+                                'Section': row['Course'] + '-' +  row['Section'],
+                                'Subject': row['Subject'],
+                                'Unit': row['Unit'],
+                                'Semester': row['Semester'],
+                                'SchoolYear': row['SchoolYear'],
+                                'image_id': row['image_id'],
+                                'Uploader': '',
+                            })
+                
+                    if current_user.role == 'admin':
+                        for row in recordlist:
+                            data.append({
+                                'id': row['id'],
+                                'Filename': row['Filename'],
+                                'College': row['College'],
+                                'Section': row['Course'] + '-' +  row['Section'],
+                                'Subject': row['Subject'],
+                                'Unit': row['Unit'],
+                                'Semester': row['Semester'],
+                                'SchoolYear': row['SchoolYear'],
+                                'image_id': row['image_id'],
+                                'File_size':filesize_format(row['Filesize']) ,
+                                'Uploader': row['Uploader'],
+                            })
                     
                 response = {
                     'draw': draw,

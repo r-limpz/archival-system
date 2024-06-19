@@ -451,7 +451,7 @@ button {
     user-select: none;
 }
 
-button:hover {
+button:not(.not-hover):hover {
     color: var(--fc-dark);
     font-weight: 700 !important;
 }
@@ -469,7 +469,7 @@ button:disabled {
     opacity: 0.50;
 }
 
-.button:hover {
+.button:not(.not-hover):hover {
     font-weight: 700;
 }
 
@@ -479,7 +479,7 @@ button:disabled {
     color: var(--fc-light);
 }
 
-.btn-red:hover {
+.btn-red:not(.not-hover):hover {
     color: var(--fc-light);
     background: var(--button-bg-red-gradient-active);
 }
@@ -490,7 +490,7 @@ button:disabled {
     color: var(--fc-light);
 }
 
-.btn-orange:hover {
+.btn-orange:not(.not-hover):hover {
     color: var(--fc-light);
     background: var(--button-bg-orange-gradient-active);
 }
@@ -501,7 +501,7 @@ button:disabled {
     color: var(--fc-light);
 }
 
-.btn-green:hover {
+.btn-green:not(.not-hover):hover {
     color: var(--fc-light);
     background: var(--button-bg-green-gradient-active);
 }
@@ -512,7 +512,7 @@ button:disabled {
     color: var(--fc-light);
 }
 
-.btn-gray:hover {
+.btn-gray:not(.not-hover):hover {
     color: var(--fc-light);
     background: var(--button-bg-default-active);
     font-weight: bold;

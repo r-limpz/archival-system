@@ -245,7 +245,7 @@ def removeCourse(course_id):
     else:
         return 'failed'
 
-#fetch all colleges and courses data
+#setup route to fetch college and couses data to populate
 @college_manager.route('/fetch-colleges/courses-list' , methods=['GET'])
 @login_required
 @admin_required
@@ -254,7 +254,7 @@ def display_colcourse():
     #each entry in the collgeCourses_list is collgeCourses_list[{college_id:'', college_name:'' courses[{1, course_id:'course_id',course_name:'course_name',}]}]
     return jsonify([college.__dict__ for college in collegeCourses_list])
 
-#regiter new college 
+#setup route to regiter new college 
 @college_manager.route('/add/register-data', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -269,7 +269,7 @@ def create_college():
         else:
             return jsonify({'query_result' : 'failed'})
 
-#register new course entry
+#setup route ot register a course entry 
 @college_manager.route('/courses/append/register-data' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -286,7 +286,7 @@ def create_courses():
         else:
             return jsonify({'query_result' : 'failed'})
 
-#update college data and courses
+#setup route to update college data and courses
 @college_manager.route('/college_details/courses/data-list/update' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -305,7 +305,7 @@ def update_college():
         else:
             return jsonify({'query_result' : 'failed'})
 
-# move to unlink and register course to college
+#setup routet to change a course registered college under cetain conditions
 @college_manager.route('/courses/unlink-course/move/update/register-college' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -320,7 +320,8 @@ def change_courseCollege():
             return jsonify({'query_result' : query_result})
         else:
             return jsonify({'query_result' : 'failed'})
-        
+
+#setup route to remove a collge data   
 @college_manager.route('/remove_data/delete_college/data')
 @login_required
 @admin_required

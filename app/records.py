@@ -15,7 +15,7 @@ def authenticate(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+# fetch the student credentials fo edit
 def fetchEntryData(tag_id):
     try:
         with config.conn.cursor() as cursor:
@@ -34,6 +34,7 @@ def fetchEntryData(tag_id):
     except Exception as e:
         print('Fetch Recordds Error :', e)
 
+# update the tagged student information/credentials
 def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix):
     try:
         with config.conn.cursor() as cursor:
@@ -65,6 +66,7 @@ def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_
     except Exception as e:
         print('Unlink Recordds Error :', e)
 
+#remove record data 
 def removeRecordData(tagging_id):
     try:
         with config.conn.cursor() as cursor:
@@ -83,7 +85,7 @@ def removeRecordData(tagging_id):
     except Exception as e:
         print('Remove Recordds Error :', e)
 
-#fetch data for datatable
+#setup route to fetch data for datatable
 @fetch_records.route("/fetch/tags/students_list",methods=["POST","GET"])
 @login_required
 @authenticate
@@ -167,7 +169,7 @@ def records_data():
     except Exception as e:
         print('Fetch Records Error: ',e)
 
-#preview document image
+#setup route to preview document image
 @fetch_records.route('/file/fetch_data/<image_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
@@ -184,7 +186,7 @@ def previewDocument(image_id):
         
         return "No image data found", 404
     
-#fetch tag entry student credentials
+#setup route to fetch tag entry student credentials
 @fetch_records.route('/students/request/credentials/<tag_id>', methods=['POST', 'GET'])
 @login_required
 @authenticate
@@ -195,32 +197,31 @@ def getEntryData(tag_id):
         query_result = fetchEntryData(tag_id)
         return jsonify(query_result)
     
-#edit records data   
+#setup route to edit records data   
 @fetch_records.route('/students/credentials/update', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def editEntryData():
-
     if request.method == "POST":
-            tagging_id = request.form.get('tagging_id')
-            new_surname = request.form.get('update_surname')
-            new_firstname = request.form.get('update_firstname')
-            new_middlename = request.form.get('update_middlename')
-            new_suffix = request.form.get('update_suffix')
+        tagging_id = request.form.get('tagging_id')
+        new_surname = request.form.get('update_surname')
+        new_firstname = request.form.get('update_firstname')
+        new_middlename = request.form.get('update_middlename')
+        new_suffix = request.form.get('update_suffix')
 
-            tagging_id = int(tagging_id)
+        tagging_id = int(tagging_id)
 
-            if tagging_id:
-                update_query = editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix)
+        if tagging_id:
+            update_query = editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix)
 
-                if update_query:
-                    return jsonify({'update_query': update_query})
-#delete records data                
+            if update_query:
+                return jsonify({'update_query': update_query})
+        
+#setup route to delete records data                
 @fetch_records.route('/students/remove/unlink/update/document', methods=['POST', 'GET'])
 @login_required
 @authenticate
 def deleteEntryData():
-
     if request.method == "POST":
         tagging_id = request.form.get('tagging_id')
         tagging_id = int(tagging_id)

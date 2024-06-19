@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from functools import wraps
 from datetime import datetime
 import base64
-import json
 from . import config
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
@@ -18,6 +17,16 @@ def admin_required(f):
             return redirect(url_for('staff.records'))
         return f(*args, **kwargs)
     return decorated_function
+
+def filesize_format(filesize):
+    if filesize >= 1024 * 1024 * 1024:  # Greater than or equal to 1 GB
+        formatted_size = f"{filesize / (1024 * 1024 * 1024):.2f} GB"
+    elif filesize >= 1024 * 1024:  # Greater than or equal to 1 MB
+        formatted_size = f"{filesize / (1024 * 1024):.2f} MB"
+    else:
+        formatted_size = f"{filesize / 1024:.2f} KB"
+    
+    return formatted_size
 
 def get_deletionTime(delete_sched):
     if delete_sched:
@@ -127,7 +136,7 @@ def recycleBin():
                             'Deletion_Sched': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
-                            'File_size': row['Filesize'],
+                            'File_size': filesize_format(row['Filesize']),
                         })
                     
                 response = {

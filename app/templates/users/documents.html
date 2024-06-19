@@ -68,6 +68,7 @@
     <table id='documentsTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
         width="100%">
     </table>
+
 </section>
 
 {% endblock%}
@@ -193,8 +194,25 @@
                     wrap: true,
                     class: 'text-start',
                     "render": function (data, type, row) {
-                        const student_name = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
+                        const file_name = '<span>' + data + '</span>'
+                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + file_name + `</div>`;
+                    }
+                },
+                {
+                    data: 'File_size',
+                    title: 'File size',
+                    orderable: true,
+                    wrap: true,
+                    className: 'text-center',
+                    width: '100px',
+                    visible: true,
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return data;
+                        }
+                        else{
+                            return '';
+                        }
                     }
                 },
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
@@ -203,6 +221,21 @@
                 { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
+                {
+                    data: 'Uploader',
+                    title: ' ',
+                    orderable: false,
+                    wrap: false,
+                    visible: true,
+                    "render": function (data, type, row) {
+                        if (data) {
+                            const Uploader = '<span>' + data + '</span>'
+                            return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
+                        } else {
+                            return '';
+                        }
+                    }
+                },
                 {
                     'data': 'id',
                     title: 'Action',
@@ -421,12 +454,12 @@
                         <div id="form-item" style="max-width: 170px;">
                             <label class="fw-bold ps-2" for="documnt_academicYear">Academic Year</label>
                             <span class="d-flex">
-                                <input type="number" class="form-control text-center" id="update_documentStarting_year"
-                                        name="update_documentStarting_year" placeholder="${school_year.starting_year === "" ? 'YYYY' : school_year.starting_year}" value="${school_year.starting_year}" maxlength="4" required>
+                                <input type="number" class="form-control text-center" id="starting_year"
+                                        name="starting_year" placeholder="${school_year.starting_year === "" ? 'YYYY' : school_year.starting_year}" value="${school_year.starting_year}" min="1978" max="9999" required>
                                 <span class="mx-2 fa-solid fa-minus fs-default"
                                         style="padding: 9.1px 0px;max-width: 1rem;"></span>
-                                <input type="number" class="form-control text-center" id="update_documentEnding_year"
-                                        name="update_documentEnding_year" placeholder="${school_year.ending_year === "" ? 'YYYY' : school_year.ending_year}" value="${school_year.ending_year}" maxlength="4" required>
+                                <input type="number" class="form-control text-center" id="ending_year"
+                                        name="ending_year" placeholder="${school_year.ending_year === "" ? 'YYYY' : school_year.ending_year}" value="${school_year.ending_year}" min="1978" max="9999" required>
                             </span>
                         </div>
                     </div>
@@ -487,16 +520,16 @@
 
                 //doument file name formatter function
                 $("#update_documentCollege, #update_documentCourse, #update_documentYear_level, #update_documentUnit, #update_documentSemester").change(function () {
-                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#update_documentStarting_year', '#update_documentEnding_year');
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year');
                     updateDocumentName('#update_documentfilename');
                 });
-                $("#update_documentSubject, #update_documentSection, #update_documentStarting_year, #update_documentEnding_year").on('input', function () {
-                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#update_documentStarting_year', '#update_documentEnding_year');
+                $("#update_documentSubject, #update_documentSection, #starting_year, #ending_year").on('input', function () {
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year');
                     updateDocumentName('#update_documentfilename');
                 });
 
-                const customStartingYearInput = document.getElementById('update_documentStarting_year');
-                const customEndingYearInput = document.getElementById('update_documentEnding_year');
+                const customStartingYearInput = document.getElementById('starting_year');
+                const customEndingYearInput = document.getElementById('ending_year');
                 // Event listener for starting year input
                 customStartingYearInput.addEventListener('input', function () {
                     updateYearStart(customStartingYearInput, customEndingYearInput);
@@ -524,8 +557,8 @@
             let update_subject = $('#update_documentSubject').val();
             let update_unit = $('#update_documentUnit').val();
 
-            let update_starting_year = $('#update_documentStarting_year').val();
-            let update_ending_year = $('#update_documentEnding_year').val();
+            let update_starting_year = $('#starting_year').val();
+            let update_ending_year = $('#ending_year').val();
             let update_academicYear = update_starting_year && update_ending_year ? update_starting_year + '-' + update_ending_year : '';
 
             //set the data

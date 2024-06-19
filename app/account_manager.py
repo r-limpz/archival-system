@@ -20,59 +20,57 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# calculate account last onlien  function
-def get_currentTime(last_online):
-    # Check if the get_currentTime parameter is provided
-    if last_online:
-        now = datetime.now() # Get the current date and time
-        diff = now - last_online # Calculate the difference between the current time and the last online time
-        weeks, days = divmod(diff.days, 7) # Divide the difference in days by 7 to get weeks and remaining days
-        hours, remainder = divmod(diff.seconds, 3600) # Divide the difference in seconds by 3600 to get hours and remaining seconds
-        minutes, seconds = divmod(remainder, 60) # Divide the remaining seconds by 60 to get minutes and remaining seconds
-
-        # Check the time difference and format it as a string
-        if weeks > 0:
-            if days > 0:
-                last_online_str = f"Offline {weeks} weeks and {days} days ago"
-            else:
-                last_online_str = f"Offline {weeks} weeks ago"
-        elif days > 0:
-            last_online_str = f"Offline {days} days ago"
-        elif hours > 0:
-            last_online_str = f"Offline {hours} hours and {minutes} minutes ago"
-        elif minutes > 0:
-            last_online_str = f"Offline {minutes} minutes ago"
-        else:
-            last_online_str = f"Offline {seconds} seconds ago"
-
-        # Return the formatted string
-        return last_online_str
-    else:
-        return None
-
-
 # key generator function 
 def generate_key(length=256):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(characters) for i in range(length))
 
+# Calculate the time elapsed since the last online timestamp.
+def get_currentTime(last_online):
+    if not last_online:
+        return None
+    else:
+        # Calculate the difference between the current time and the last online time
+        now = datetime.now()
+        diff = now - last_online 
+        # Break down the difference into weeks, days, hours, minutes, and seconds
+        weeks, days = divmod(diff.days, 7)
+        hours, remainder = divmod(diff.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        # Format the time difference based on the largest non-zero time unit
+        if weeks > 0:
+            if days > 0:
+                return f"Offline {weeks} weeks and {days} days ago"
+            else:
+                return f"Offline {weeks} weeks ago"
+        elif days > 0:
+            return f"Offline {days} days ago"
+        elif hours > 0:
+            return f"Offline {hours} hours and {minutes} minutes ago"
+        elif minutes > 0:
+            return f"Offline {minutes} minutes ago"
+        else:
+            return f"Offline {seconds} seconds ago"
+
+
 # role format function
 def get_role(role):
-    # Check if the role parameter is provided
-    if role: 
-        if isinstance(role, str) and len(role) > 1: #if the input type is string use dictionary fixed values
-            return {'admin': 1, 'staff':2}.get(role, 2)
-        elif role in [1, 2 ,'1', '2']: # convert it to integer instead   
-            return int(role)
-        else: #if data type is not string or int return a default value 
-            return 2
-    else:
-        # if the role parameter is not provided return 0
+    if not role:
         return 0
-
+    else:
+        #if the input type is string use dictionary fixed values
+        if isinstance(role, str) and len(role) > 1: 
+            return {'admin': 1, 'staff':2}.get(role, 2)
+        # convert it to integer instead   
+        elif role in [1, 2 ,'1', '2']: 
+            return int(role)
+    
+#fetch all uer accounts
 def fetchallAccount(displayController):
-    # Check if the displayController parameter is provided
-    if displayController:
+    if not displayController:
+        return None
+    else:
         # Split the displayController into status and role
         inputstate = displayController.split('-')
         def_status = inputstate[0]
@@ -136,20 +134,16 @@ def fetchallAccount(displayController):
                     return users_list
                 else:
                     return None
-        # Catch and print any exceptions that occur during the process
+                
         except Exception as e:
             print(f"An error occurred while fetching all accounts: {e}")
-    else:
-        # If the displayController parameter is not provided, return None
-        return None
 
-
+#check duplicate entries
 def checkDuplicateAccount(user_id, credential, dataSearch):
-    # Check if all required parameters are provided
-    if user_id and credential and dataSearch:
-        user_id = int(user_id)# Convert user_id to integer
-        
-        # Map the credential parameter to the corresponding database field
+    if not user_id and not credential and not dataSearch:
+        return False
+    else:
+        user_id = int(user_id)
         credential = {'username': 'username', 'fullname': 'fullname'}.get(credential, 'fullname')
 
         # Initialize the query and parameters
@@ -181,18 +175,15 @@ def checkDuplicateAccount(user_id, credential, dataSearch):
                 else:
                     return False
 
-        # Catch and print any exceptions that occur during the process
         except Exception as e:
             print(f"An error occurred while checking for duplicate accounts: {e}")
-    else:
-        # If not all required parameters are provided, return False
-        return False
 
-    
 # account creation function
 def addNewUser( add_fullname, add_username, add_password):
-    # Check if all required parameters are provided
-    if add_fullname and add_username and add_password:
+
+    if not add_fullname and not add_username and not add_password:
+        return 'failed'
+    else:
         try:
             with config.conn.cursor() as cursor: 
                 # Check if the username or fullname already exists
@@ -221,13 +212,10 @@ def addNewUser( add_fullname, add_username, add_password):
                 else:
                     data = 'duplicate user'
                 return data
-        # Catch and print any errors that occur during the user creation process
+            
         except Exception as e:
                 print(f"addNewUser() : {e}")
-    else:
-        # If not all required parameters are provided, return 'failed'
-        return 'failed'
-
+    
 # dynamic update user data function
 def updateAccount(user_id, fullname, username, role, password):
     # Initialize the query and parameters
@@ -238,27 +226,23 @@ def updateAccount(user_id, fullname, username, role, password):
 
     try:
         with config.conn.cursor() as cursor:
-                # Fetch the user details from the database
             cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
             user = cursor.fetchone()
 
-                # If the user does not exist, return 'user not found'
             if not user:
                 return 'user not found'
+            
             else:
-                    # If the fullname has changed, add it to the query and parameters
                 if user['fullname'] != fullname:
                     query += 'fullname = %s, '
                     params.append(fullname)
                     hasChanged.update({"fullname": fullname})
 
-                    # If the username has changed, add it to the query and parameters
                 if user['username'] != username:
                     query += 'username = %s, '
                     params.append(username)
                     hasChanged.update({"username": username})
 
-                    # If the role has changed, add it to the query and parameters
                 if user['role'] != role:
                     query += 'role = %s, '
                     params.append(role)
@@ -286,15 +270,15 @@ def updateAccount(user_id, fullname, username, role, password):
                 cursor.execute(verifyQuery, (user_id,))
                 user_update = cursor.fetchone()
 
-                # Return 'success' if the update was successful, 'failed' otherwise
                 if user_update == hasChanged:
                     return 'success'
                 else:
                     return 'failed'
-    # Catch and print any exceptions that occur during the update process
+                
     except Exception as e:
         print(f"updateAccount() : {e}")
 
+#temporary disbale and delete account schedule
 def removeAccount(profile_id):
     try:
         with config.conn.cursor() as cursor:
@@ -304,7 +288,7 @@ def removeAccount(profile_id):
             userExist = cursor.fetchone()
 
             if userExist:
-                cursor.execute('INSERT IGNORE INTO removed_sched_deact (user_id, sched_removal) VALUES (%s, DATE_ADD(NOW(), INTERVAL 30 DAY))', (profile_id))
+                cursor.execute('INSERT IGNORE INTO removed_sched_deact (user_id, removed_date, sched_removal) VALUES (%s, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))', (profile_id))
                 config.conn.commit()
 
                 cursor.execute('SELECT * FROM removed_sched_deact WHERE user_id =%s', (profile_id))
@@ -322,11 +306,14 @@ def removeAccount(profile_id):
     except Exception as e:
         print(f"removeAccount() : {e}")
 
+#setup route to fetch account list 
 @account_manager.route('/fetch/users-list/filter-status/<active_status>')
 @login_required
 @admin_required
 def users_list(active_status):
-    if active_status:
+    if not active_status:
+        return jsonify(None)
+    else:
         try:
             users_list = fetchallAccount(active_status)
             if users_list:
@@ -335,14 +322,15 @@ def users_list(active_status):
                 return jsonify(None)
         except Exception as e:
             print(f"display user error occurred: {e}")
-    else:
-        return jsonify(None)
 
+#setup route to preview an account data 
 @account_manager.route('/user/preview-profile/account-id/<profile_id>')
 @login_required
 @admin_required
 def preview_account(profile_id):
-    if profile_id:
+    if not profile_id:
+        return redirect(url_for('account_manager'))
+    else:
         try:
             profile_id = int(profile_id)
             with config.conn.cursor() as cursor:
@@ -356,9 +344,8 @@ def preview_account(profile_id):
                 
         except Exception as e:
             print(f"preview user route error occurred: {e}")
-    else:
-        return redirect(url_for('account_manager'))
-    
+
+#setup route to create an user account
 @account_manager.route('/new-user/data-credentials/register-account' , methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -385,6 +372,7 @@ def create_account():
     except Exception as e:
          print(f"create user route error occurred: {e}")
 
+#setup route to update account status activate/deactivated
 @account_manager.route('/user/account-status/update', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -422,7 +410,7 @@ def change_status():
     except Exception as e:
         print(f"change status error occurred: {e}")
 
-
+#setup route to fetch account credentials for editing 
 @account_manager.route('/user/fetch/account-credentials/account-id/<profile_id>')
 @login_required
 @admin_required
@@ -448,6 +436,7 @@ def manage_user(profile_id):
     else:
         return jsonify('error, user not found')
 
+#setup route to update account credentials
 @account_manager.route('/user/update/account-credentials/new-data', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -474,7 +463,7 @@ def edit_user():
     except Exception as e:
             print(f"update user credentials  error occurred: {e}")
 
-
+#setup route to deactivate and account for deletion 30 days permanent deletion
 @account_manager.route('/user/update/account-status/deactivate/delete', methods=['POST', 'GET'])
 @login_required
 @admin_required
@@ -494,7 +483,7 @@ def account_delete():
     except Exception as e:
             print(f"delete user error occurred: {e}")
 
-
+#setup route to veirfy credenials unique or duplicate
 @account_manager.route('/fetch/users-list/find-duplicates/verify-status/', methods=['POST', 'GET'])
 @login_required
 @admin_required

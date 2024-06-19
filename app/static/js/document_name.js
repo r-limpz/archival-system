@@ -106,16 +106,24 @@ function updateYearEnd(startingYearInput, endingYearInput) {
     }
 }
 
+function enforceMaxLength(inputElement, maxLength) {
+    if (inputElement.value.length > maxLength) {
+        inputElement.value = inputElement.value.slice(0, maxLength);
+    }
+}
+
 const customStartingYearInput = document.getElementById('starting_year');
 const customEndingYearInput = document.getElementById('ending_year');
 
 // Event listener for starting year input
 customStartingYearInput.addEventListener('input', function () {
+    enforceMaxLength(customStartingYearInput, 4);
     updateYearStart(customStartingYearInput, customEndingYearInput);
 });
 
 // Event listener for ending year input
 customEndingYearInput.addEventListener('input', function () {
+    enforceMaxLength(customEndingYearInput, 4);
     updateYearEnd(customStartingYearInput, customEndingYearInput);
 });
 

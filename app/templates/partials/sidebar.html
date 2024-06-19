@@ -111,11 +111,25 @@
         const sidebar = document.getElementById("side-navigation");
 
         toggleNavbar.addEventListener("click", function () {
+            toggleSidebar();
+        });
+
+        sidebar.addEventListener("click", function (event) {
+            if (!isInsideSidebarListItem(event.target)) {
+                toggleSidebar();
+            }
+        });
+
+        function toggleSidebar() {
             var icon = document.getElementById('toggle-icon');
             sidebar.classList.toggle('open');
             icon.classList.toggle('fa-chevron-left');
             icon.classList.toggle('fa-chevron-right');
-        });
+        }
+
+        function isInsideSidebarListItem(element) {
+            return element.classList.contains('sidebar-list-item') || element.closest('.sidebar-list-item') !== null;
+        }
     });
 
 </script>
