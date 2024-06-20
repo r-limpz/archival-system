@@ -20,6 +20,20 @@
   </div>
 </div>
 
+<div class="modal fade" id="showPreviewUploadFile" data-bs-keyboard="false" tabindex="-1" role="dialog"
+  aria-labelledby="showPreviewTrashFile" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="max-height: 80vh;">
+      <div class="modal-body">
+        <p id="file_info"></p>
+        <div class="imageContainer py-2">
+          <img src="" alt="" id="previewImageDisplay">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% if current_user.role == 'admin' and request.path == url_for('admin.account_manager')%}
 <! --add account form -->
   <div class="modal fade" id="addUser_modal" tabindex="-1" role="dialog" aria-labelledby="addUser_modal"
@@ -189,12 +203,12 @@
                 <div id="form-item" style="width: 120px;">
                   <label class="fw-medium" for="newcollege_name">Abbrevation.</label>
                   <input type="text" class="form-control" id="newcollege_name" name="newcollege_name"
-                  placeholder="e.g CIC" required>
+                    placeholder="e.g CIC" required>
                 </div>
                 <div id="form-item" class="flex-fill">
                   <label class="fw-medium" for="newcourse_name">Course</label>
                   <input type="text" class="form-control text-truncate flex-fill" id="newcollege_nameDescription"
-                    name="newcollege_nameDescription"placeholder="e.g College of Information and Computing" required>
+                    name="newcollege_nameDescription" placeholder="e.g College of Information and Computing" required>
                 </div>
               </div>
             </form>
@@ -232,8 +246,8 @@
                   <div id="form-item" class="flex-fill">
                     <label class="fw-medium" for="newcourse_name">Course</label>
                     <input type="text" class="form-control text-truncate flex-fill" id="newcourse_nameDescription"
-                      name="newcourse_nameDescription"
-                      placeholder="e.g Bachelor of Science in Information Security" required>
+                      name="newcourse_nameDescription" placeholder="e.g Bachelor of Science in Information Security"
+                      required>
                   </div>
                 </div>
               </div>
@@ -323,7 +337,8 @@
         <div class="modal-body">
           <div class="mx-3">
             <h5 class="fw-bold mb-3"> Add College data </h5>
-            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to add this college to the database?</p>
+            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to add this college to
+              the database?</p>
           </div>
         </div>
         <div class="modal-footer">
@@ -343,7 +358,8 @@
         <div class="modal-body">
           <div class="mx-3">
             <h5 class="fw-bold mb-3"> Add Courses data </h5>
-            <p class="ms-s"> Please review all entered data are correct. Are you sure you want to add this course to the database?</p>
+            <p class="ms-s"> Please review all entered data are correct. Are you sure you want to add this course to the
+              database?</p>
           </div>
         </div>
         <div class="modal-footer">
@@ -363,7 +379,8 @@
         <div class="modal-body">
           <div class="mx-3">
             <h5 class="fw-bold mb-3"> Update College </h5>
-            <p class="ms-2">Please review all entered data are correct. Are you sure you want to change the college information?</p>
+            <p class="ms-2">Please review all entered data are correct. Are you sure you want to change the college
+              information?</p>
           </div>
         </div>
         <div class="modal-footer">
@@ -457,7 +474,8 @@
         <div class="modal-body">
           <div class="px-3">
             <h5 class="fw-bold mb-3"> Upload Document </h5>
-            <p class="ms-2">Please review all entered data are correct. Are you sure you want to upload this document data to the database?</p>
+            <p class="ms-2">Please review all entered data are correct. Are you sure you want to upload this document
+              data to the database?</p>
           </div>
         </div>
         <div class="modal-footer">
@@ -522,7 +540,8 @@
         <div class="modal-body mx-3">
           <div class="mx-3">
             <h5 class="fw-bold my-3"> Update Student Credentials </h5>
-            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to update the credentials of the student tagged to this document?</p>
+            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to update the credentials
+              of the student tagged to this document?</p>
           </div>
         </div>
         <div class="modal-footer mx-3">
@@ -608,7 +627,8 @@
         <div class="modal-body mx-3">
           <div class="mx-3">
             <h5 class="fw-bold my-3"> Confirm Document Update </h5>
-            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to apply the changes to this document?</p>
+            <p class="ms-2"> Please review all entered data are correct. Are you sure you want to apply the changes to
+              this document?</p>
           </div>
         </div>
         <div class="modal-footer mx-3">
@@ -629,7 +649,8 @@
         <div class="modal-body mx-3">
           <div class="mx-3">
             <h5 class="fw-bold my-3"> Delete Document </h5>
-            <p class="ms-2">Are you sure you want to delete this document? It will be permanently deleted after 30 days.</p>
+            <p class="ms-2">Are you sure you want to delete this document? It will be permanently deleted after 30 days.
+            </p>
           </div>
         </div>
         <div class="modal-footer mx-3">
@@ -700,25 +721,25 @@
     </div>
   </div>
 
-    <div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content mx-3 border-orange border-3">
-          <div class="modal-body ">
-            <div class="mx-3">
-              <h5 class="fw-bold my-3">Confirm Clear Trash</h5>
-              <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all documents in the trash bin?</p>
-            </div>
+  <div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mx-3 border-orange border-3">
+        <div class="modal-body ">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3">Confirm Clear Trash</h5>
+            <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all documents in
+              the trash bin?</p>
           </div>
-          <div class="modal-footer mx-3">
-            <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
-            <button id="clear_trash" class="btn-orange fw-bold text-decoration-none button" data-bs-dismiss="modal" onclick="clearAllTrash()">
-              Confirm
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="button me-3">Cancel</button>
+          <button id="clear_trash" class="btn-orange fw-bold text-decoration-none button" data-bs-dismiss="modal"
+            onclick="clearAllTrash()">
+            Confirm
+          </button>
         </div>
       </div>
     </div>
-
-
+  </div>
   {% endif %}
