@@ -2,7 +2,7 @@
     <div class="header-sidebar mb-3 border-bottom border-1">
         <ul class="sidebar-list">
             <li class="sidebar-list-item">
-                <div class="header-info">
+                <div class="header-info align-items-center">
                     <img class="sidebar-logo rounded-circle logo-medium" style="margin-top:2px;"
                         src="{{url_for('static',filename='logo/usep-logo.png')}}" alt="USeP Logo">
                     <span class="hidden-sidebar fw-bold"> USeP- ARDS</span>
@@ -16,7 +16,7 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('dashboard')}}"
-                    class="sidebar-link {% if request.path == url_for('admin.dashboard') %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.dashboard') %} active {% endif %}">
                     <span class="sidebar-icon fa-solid fa-bars-progress"></span>
                     <span class="hidden-sidebar">Dashboard</span>
                 </a>
@@ -24,7 +24,7 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('account_manager')}}"
-                    class="sidebar-link {% if request.path == url_for('admin.account_manager') %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.account_manager') %} active {% endif %}">
                     <span class="sidebar-icon fa-solid fa-user-group"></span>
                     <span class="hidden-sidebar"> User Manager </span>
                 </a>
@@ -32,7 +32,7 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('col_course_manager')}}"
-                    class="sidebar-link {% if request.path == url_for('admin.col_course_manager') %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.col_course_manager') %} active {% endif %}">
                     <span class="sidebar-icon fa-solid fa-graduation-cap"></span>
                     <span class="hidden-sidebar"> College and Course </span>
                 </a>
@@ -43,7 +43,7 @@
             {% endif %}
             <li class="sidebar-list-item">
                 <a href="{{url_for('records')}}"
-                    class="sidebar-link {% if request.path == url_for('staff.records') or request.path == url_for('admin.records') %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('staff.records') or request.path == url_for('admin.records') %} active {% endif %}">
                     <span class="sidebar-icon fa-solid fa-user-tag"></span>
                     <span class="hidden-sidebar">Students Records</span>
                 </a>
@@ -51,7 +51,7 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('documents')}}"
-                    class="sidebar-link {% if request.path == url_for('staff.documents') or request.path == url_for('admin.documents') %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('staff.documents') or request.path == url_for('admin.documents') %} active {% endif %}">
                     <span class="sidebar-icon fa-solid fa-box-archive"></span>
                     <span class="hidden-sidebar">Archive Documents</span>
                 </a>
@@ -59,7 +59,7 @@
             {% if current_user.role == 'staff' %}
             <li class="sidebar-list-item">
                 <a href="{{url_for('upload')}}"
-                    class="sidebar-link {% if request.path == url_for('staff.upload') and current_user.role == 'staff' %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('staff.upload') and current_user.role == 'staff' %} active {% endif %}">
                     <span class="sidebar-icon fa-regular fa-square-plus"></span>
                     <span class="hidden-sidebar"> Upload</span>
                 </a>
@@ -69,7 +69,7 @@
             {% if current_user.role == 'admin' %}
             <li class="sidebar-list-item">
                 <a href="{{url_for('trashbin')}}"
-                    class="sidebar-link {% if request.path == url_for('admin.trashbin') and current_user.role == 'admin' %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.trashbin') and current_user.role == 'admin' %} active {% endif %}">
                     <span class="sidebar-icon fa-regular fa-trash-can"></span>
                     <span class="hidden-sidebar"> Trash</span>
                 </a>
@@ -83,7 +83,7 @@
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('account')}}"
-                    class="sidebar-link {% if request.path == url_for('staff.account', user = current_user.username) or request.path == url_for('admin.account', user = current_user.username) %} active {% endif %}">
+                    class="sidebar-link align-items-center {% if request.path == url_for('staff.account', user = current_user.username) or request.path == url_for('admin.account', user = current_user.username) %} active {% endif %}">
                     <span
                         class="sidebar-icon fa-solid {% if current_user.role == 'staff' %} fa-user {% elif current_user.role == 'admin' %}fa-solid fa-user-tie {% endif %}"></span>
                     <span id="account_username" class="hidden-sidebar">{{current_user.username}}</span>
@@ -99,20 +99,12 @@
 
         </ul>
     </div>
-    <a id="toggle_navbar" class="border border-1 text-decoration-none position-absolute bg-white rounded-circle">
-        <span id="toggle-icon" class="fa-solid fa-chevron-right"></span>
-    </a>
 </aside>
 
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
-        const toggleNavbar = document.getElementById("toggle_navbar");
         const sidebar = document.getElementById("side-navigation");
-
-        toggleNavbar.addEventListener("click", function () {
-            toggleSidebar();
-        });
 
         sidebar.addEventListener("click", function (event) {
             if (!isInsideSidebarListItem(event.target)) {
@@ -123,8 +115,6 @@
         function toggleSidebar() {
             var icon = document.getElementById('toggle-icon');
             sidebar.classList.toggle('open');
-            icon.classList.toggle('fa-chevron-left');
-            icon.classList.toggle('fa-chevron-right');
         }
 
         function isInsideSidebarListItem(element) {
