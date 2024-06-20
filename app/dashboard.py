@@ -109,8 +109,8 @@ def get_countMonthly(input_date):
             count_results = cursor.fetchall()
 
             for row in count_results:
-                year, month = row['month'].split('-')  # Split the 'YYYY-MM' format
-                month_abbr = calendar.month_abbr[int(month)]  # Get the full month name
+                year, month = row['month'].split('-') 
+                month_abbr = calendar.month_abbr[int(month)]
                 monthly_counts[f"{month_abbr}"] = row['count']
                     
             results = [{'label': month, 'count': count} for month, count in monthly_counts.items()]

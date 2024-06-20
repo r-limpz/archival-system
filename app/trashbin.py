@@ -185,7 +185,6 @@ def restoreFile():
 @login_required
 @admin_required
 def permanent_deletion():
-
     if request.method == "POST":
         document_id = request.form.get('document_id')
         document_id = int(document_id)

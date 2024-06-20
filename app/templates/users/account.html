@@ -1,7 +1,13 @@
 {% extends 'layout/users.html' %}
 {% block title %} {{ current_user.username }} | ARDS{% endblock %}
 {% block style %}
-
+<script src="{{ url_for('static', filename='node_modules/d3/dist/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/cal-heatmap/dist/cal-heatmap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/cal-heatmap/dist/plugins/CalendarLabel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/cal-heatmap/dist/plugins/LegendLite.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/@popperjs/core/dist/umd/popper.min.js') }}"></script>
+<script src="{{ url_for('static', filename='node_modules/cal-heatmap/dist/plugins/Tooltip.min.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='node_modules/cal-heatmap/dist/cal-heatmap.css')}}">
 {% endblock %}
 
 {% block content %}
@@ -10,7 +16,7 @@
     <div
         class=" p-4 rounded-top-3 w-full {% if current_user.role == 'staff' %} bg-red-gradient {% elif current_user.role == 'admin' %} bg-gray {% endif %}">
     </div>
-    <div class="d-flex justify-content-between w-full mb-3">
+    <div class="d-flex justify-content-between w-full">
         <div class="d-fex text-start p-2">
             <div class="rounded-circle p-2 bg-white border-4 border text-center position-absolute ms-2"
                 style="width:5rem; height:5rem; top:1rem">
@@ -26,14 +32,144 @@
                 </h6>
             </div>
         </div>
+    </div>
+
+    <div class="p-3 d-flex gap-3">
+        <div class="flex-grow-1 card" id="account_history">
+            <table class="">
+
+            </table>
+        </div>
+        <div class="p-2 card">
+            <div class="d-flex gap-2" id="progress_container">
+                <div>
+                    <div class="p-2" id="progressReport_container">
+                        <h5 class="fw-bold">Progress</h5>
+                        <div class="overflow-x-auto" id="progress-heatmap" style="height:170;"></div>
+                    </div>
+                    <div class="d-flex justify-content-end p-2">
+                        <span class="mx-2 d-flex fs-medium align-items-center gap-3">Less <span
+                                id="progress_legend"></span>
+                            More</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 {% endblock%}
+
 {% block scripts %}
 <script>
-    function fetchAccountInfo(){
-        var username = document.getElementById('profile_username').innerText;
-        
+
+    function initializeCalHeatMap(progress_report) {
+
+         if (!progress_report || progress_report.length === 0) {
+            // Generate dummy items with 0 value for current date and tomorrow's date
+            const currentDate = new Date();
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(currentDate.getDate() + 1);
+
+            progress_report = [
+                { date: currentDate.toISOString(), value: 0 },
+                { date: tomorrowDate.toISOString(), value: 0 }
+            ];
+        }
+
+        console.log(progress_report);
+
+        const oldestDate = progress_report.reduce((minDate, report) => {
+            const currentDate = new Date(report.date);
+            return currentDate < minDate ? currentDate : minDate;
+        }, new Date(progress_report[0].date));
+
+        const initialYear = oldestDate.getFullYear();
+        const initialStartDate = `${initialYear}-01-01`;
+
+        const cal = new CalHeatmap();
+        cal.paint(
+            {
+                data: {
+                    source: progress_report,
+                    x: 'date',
+                    y: 'value',
+                    groupY: 'max',
+                },
+                itemSelector: '#progress-heatmap',
+                date: {
+                    start: new Date(initialStartDate),
+                },
+                range: 12,
+                scale: {
+                    color: {
+                        type: 'threshold',
+                        range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
+                        domain: [10, 50, 100],
+                    },
+                },
+                domain: {
+                    type: 'month',
+                    gutter: 4,
+                    label: {
+                        text: 'MMM',
+                        textAlign: 'start',
+                        position: 'top'
+                    },
+                },
+                subDomain: {
+                    type: 'ghDay',
+                    radius: 5,
+                    width: 15,
+                    height: 15,
+                    gutter: 4
+                },
+                animationDuration: 0,
+
+            },
+            [
+                [
+                    Tooltip,
+                    {
+                        text: function (date, value, dayjsDate) {
+                            return (
+                                (value ? 'Uploaded ' + value + ' document on ' : 'No Activity on ') +
+                                dayjsDate.format('dddd, MMMM D, YYYY')
+                            );
+                        },
+                    },
+                ],
+                [
+                    LegendLite,
+                    {
+                        includeBlank: true,
+                        itemSelector: '#progress_legend',
+                        radius: 5,
+                        width: 15,
+                        height: 15,
+                        gutter: 4,
+                    },
+                ],
+                [
+                    CalendarLabel,
+                    {
+                        width: 30,
+                        textAlign: 'start',
+                        text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+                        padding: [25, 0, 0, 0],
+                    },
+                ],
+            ]
+        );
     }
+
+    $.ajax({
+        url: '/account/manage/user-profile/profile_details/account_status/list-progress/' + '{{ current_user.username }}',
+        method: 'GET', // or 'POST' if that's what you intend
+        success: function (data) {
+            initializeCalHeatMap(data.progress_report);
+        },
+    });
 
 </script>
 {% endblock %}

@@ -107,8 +107,18 @@ function updateYearEnd(startingYearInput, endingYearInput) {
 }
 
 function enforceMaxLength(inputElement, maxLength) {
+    var currentDate = new Date();
+    currentYear = currentDate.getFullYear();
+    // Check if the current value exceeds the maxLength
     if (inputElement.value.length > maxLength) {
+        // If so, slice the value to the maxLength
         inputElement.value = inputElement.value.slice(0, maxLength);
+    }
+
+    if ((Number(inputElement.value) < inputElement.min || Number(inputElement.value) >= currentYear + 2) && inputElement.value.length === maxLength) {
+        inputElement.classList.add("is-invalid");
+    } else {
+        inputElement.classList.remove("is-invalid");
     }
 }
 

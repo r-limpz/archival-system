@@ -16,6 +16,7 @@
     "broadcast-channel": "^7.0.0",
     "cal-heatmap": "^4.2.4",
     "chart.js": "^4.4.3",
+    "d3": "^7.9.0",
     "uninstall": "^0.0.0"
   }
 }

@@ -526,8 +526,6 @@ button:disabled {
     padding: 0.25rem 1rem 0.25rem 0.5rem;
 }
 
-
-
 .form-control:focus {
     outline: none !important;
     box-shadow: none !important;

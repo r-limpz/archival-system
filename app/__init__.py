@@ -80,7 +80,9 @@ app.register_blueprint(ocr_blueprint)
 #Register get colleges list
 from .fetchColleges import fetchColleges as fetchCollegesBlueprint
 app.register_blueprint(fetchCollegesBlueprint)
-
+#Register account profile
+from .profile import profile_data as proifileBlueprint
+app.register_blueprint(proifileBlueprint)
 #upload manager logics
 from .upload_manager import uploader_manager as uploader_blueprint
 app.register_blueprint(uploader_blueprint)
