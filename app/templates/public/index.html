@@ -63,5 +63,28 @@
 
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
 <script src="{{url_for('static',filename='js/switch_account.js')}}"></script>
+<script>
+    const channel = new BroadcastChannel("sess_channel");
+    const userRole = "{{ current_user.role }}";
+    channel.onmessage = function (event) {
+        if (event.data === 'session online') {
+
+            if (userRole !== null || userRole !== "") {
+                if (userRole === 'admin') {
+                    window.location.href = "/dashboard";
+                }
+                else if (userRole === 'staff') {
+                    window.location.href = "/records";
+                }
+                else {
+                    history.back();
+                }
+            }
+        }
+    };
+</script>
 {% endblock %}

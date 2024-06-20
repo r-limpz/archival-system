@@ -10,9 +10,6 @@ channel.onmessage = function (event) {
         case 'session expired':
             window.location.href = timeoutUrl;
             break;
-        case 'offline alert':
-            alert("The network connection has been lost.");
-            break;
     }
 };
 
@@ -39,11 +36,6 @@ function sendHeartbeat() {
 
 setTimeout(sendHeartbeat, 1000);
 setInterval(() => sendHeartbeat(), 600000);
-
-window.onoffline = (event) => {
-    alert("The network connection has been lost.");
-    channel.postMessage('offline alert');
-};
 
 document.getElementById('logout_currentUser').addEventListener('click', function () {
     channel.postMessage('session expired');
