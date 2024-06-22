@@ -20,8 +20,8 @@
   </div>
 </div>
 
-<div class="modal fade" id="showPreviewUploadFile" data-bs-keyboard="false" tabindex="-1" role="dialog"
-  aria-labelledby="showPreviewTrashFile" aria-hidden="true">
+<div class="modal fade" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
+  aria-labelledby="showPreviewModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="max-height: 80vh;">
       <div class="modal-body">
@@ -579,25 +579,6 @@
 
   {% if request.path == url_for('staff.documents') or request.path == url_for('admin.documents')%}
 
-  <div class="modal fade" id="showPreviewDocumentModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
-    aria-labelledby="showPreviewDocumentModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="max-height: 80vh;">
-        <div class="modal-body">
-          <p id="file_info"></p>
-          <div class="imageContainer py-2">
-            <img src="" alt="" id="previewImageDisplay">
-          </div>
-          <div class="d-flex justify-content-end">
-            <button class="button fs-medium fw-medium" onclick="downloadImage()"><span
-                class="fa-solid fa-download mx-2"></span>
-              Download</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="modal fade" id="UpdateDocumentModal" tabindex="-1" role="dialog" aria-labelledby="UpdateDocumentModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -666,20 +647,6 @@
   {% endif %}
 
   {% if request.path == url_for('admin.trashbin') %}
-
-  <div class="modal fade" id="showPreviewTrashFile" data-bs-keyboard="false" tabindex="-1" role="dialog"
-    aria-labelledby="showPreviewTrashFile" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="max-height: 80vh;">
-        <div class="modal-body">
-          <p id="file_info"></p>
-          <div class="imageContainer py-2">
-            <img src="" alt="" id="previewImageDisplay">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div class="modal fade" id="restoreFile_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">

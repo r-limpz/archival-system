@@ -26,39 +26,35 @@ def filesize_format(filesize):
     
     return formatted_size
 
-# get the daily count of the month 
-def get_countDaily(input_date, account):
+def get_countAll(account):
     try:
         with config.conn.cursor() as cursor:
-        
-            # Extract the year and month from the input date
-            input_year = input_date.year
-            input_month = input_date.month
+            cursor.execute("SELECT MIN(Upload_date) as min_date, MAX(Upload_date) as max_date FROM documentstbl")
+            min_max_dates = cursor.fetchone()
 
-            days_in_month = calendar.monthrange(input_year, input_month)[1]
-            daily_counts = {str(day): 0 for day in range(1, days_in_month + 1)}
+            start_date_obj = min_max_dates['min_date'].date()
+            end_date_obj = min_max_dates['max_date'].date()
 
-            # Query to get counts per day within the input month
-            cursor.execute('SELECT DAY(Upload_date) as day, COUNT(*) as count FROM documentstbl WHERE YEAR(Upload_date) = %s AND MONTH(Upload_date) = %s AND Uploader = %s GROUP BY day', (input_year, input_month, account))
-            count_results = cursor.fetchall()
+            if start_date_obj and end_date_obj:
+                date_diff = (end_date_obj - start_date_obj).days
+            else:
+                date_diff = 0
 
-            # Update the dictionary with actual counts
-            for row in count_results:
-                daily_counts[str(row['day'])] = row['count']
+            if date_diff <= 7:
+                return get_countWeekly(start_date_obj, account)
+            elif date_diff >7 and date_diff <= 31:
+                return get_countDaily(start_date_obj, account)
+            elif date_diff >31 and date_diff <= 365:
+                return get_countMonthly(start_date_obj, account)
             
-            results = [{'label': str(day), 'count': count} for day, count in daily_counts.items()]
-
-            return results
-        
     except Exception as e:
-        print(f"Error fetching daily data: {e}")
+        print('fetch data all: ', e)
 
 #get the total count per day within a week
 def get_countWeekly(input_date, account):
     try:
         with config.conn.cursor() as cursor:
             days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            
             # Get the start and end dates of the week
             start_of_week = input_date - timedelta(input_date.weekday())
             end_of_week = start_of_week + timedelta(days=6)
@@ -66,7 +62,6 @@ def get_countWeekly(input_date, account):
             # Query to count uploads for each day of the week
             cursor.execute(f"SELECT DAYNAME(Upload_date) as day, COUNT(*) as count FROM documentstbl WHERE Uploader = %s AND Upload_date BETWEEN '{start_of_week}' AND '{end_of_week}' GROUP BY day", (account))
             count_results = cursor.fetchall()
-
             # Initialize a dictionary to hold counts for each day
             day_counts = {day: 0 for day in days_of_week}
 
@@ -86,6 +81,31 @@ def get_countWeekly(input_date, account):
         return results
     except Exception as e:
         print('fetch data week: ', e)
+
+# get the daily count of the month 
+def get_countDaily(input_date, account):
+    try:
+        with config.conn.cursor() as cursor:
+            # Extract the year and month from the input date
+            input_year = input_date.year
+            input_month = input_date.month
+            days_in_month = calendar.monthrange(input_year, input_month)[1]
+            daily_counts = {str(day): 0 for day in range(1, days_in_month + 1)}
+
+            # Query to get counts per day within the input month
+            cursor.execute('SELECT DAY(Upload_date) as day, COUNT(*) as count FROM documentstbl WHERE YEAR(Upload_date) = %s AND MONTH(Upload_date) = %s AND Uploader = %s GROUP BY day', (input_year, input_month, account))
+            count_results = cursor.fetchall()
+
+            # Update the dictionary with actual counts
+            for row in count_results:
+                daily_counts[str(row['day'])] = row['count']
+            
+            results = [{'label': str(day), 'count': count} for day, count in daily_counts.items()]
+
+            return results
+        
+    except Exception as e:
+        print(f"Error fetching daily data: {e}")
 
 # get monthly total counts within a year
 def get_countMonthly(input_date, account):
@@ -135,19 +155,9 @@ def getAccountData(user_username):
 @authenticate
 def fetch_accountInfo(username):
     progress_report = getAccountData(username)
-    input_date = date.today()
-    
-    if progress_report:
-        if len(progress_report)<=7:
-            chartData = get_countWeekly(input_date, username)
-        elif len(progress_report)>7 and len(progress_report)<=30:
-            chartData = get_countDaily(input_date, username)
-        elif len(progress_report)>30 and len(progress_report)<=12 :
-            chartData = get_countMonthly(input_date, username)
-    else:
-        chartData = get_countWeekly(input_date, username)
+    chartData = get_countAll(username)
 
-    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData}
+    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData, 'TotalUploads':''}
     
     if data:
         return jsonify(data)
