@@ -157,7 +157,13 @@ def fetch_accountInfo(username):
     progress_report = getAccountData(username)
     chartData = get_countAll(username)
 
-    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData, 'TotalUploads':''}
+    total_sum = 0
+
+    if chartData:
+        for data_point in chartData:
+            total_sum += data_point['value']
+            
+    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData, 'TotalUploads':total_sum}
     
     if data:
         return jsonify(data)
