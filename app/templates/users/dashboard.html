@@ -171,8 +171,6 @@
                         var firstPoint = activePoints[0];
                         var label = this.data.labels[firstPoint.index];
                         var value = this.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
-                        // Do something with the clicked data
-                        console.log(label, value);
                     }
                 },
                 scales: {
@@ -205,7 +203,8 @@
         document.getElementById('trashed_counts').innerHTML = data.trash_count.toString().toUpperCase();
         document.getElementById('trashed_size').innerHTML = data.trash_size.toString().toUpperCase();
         var icon;
-
+        console.log(data.trash_count);
+        
         if (data.documents_status) {
             if (data.documents_status > 0) {
                 icon = `<span class="fs-medium align-self-center fa-solid fa-up-long me-2"> </span> +`;

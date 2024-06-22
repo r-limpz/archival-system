@@ -225,7 +225,7 @@ def getStatus_db():
             # Get trash count and size
             cursor.execute('SELECT COUNT(*) as trashCount, COALESCE(SUM(Filesize), 0) as sizes FROM trashtbl')
             trash_data = cursor.fetchone()
-            result['trash_counts'] = format_count(trash_data['trashCount'] if trash_data['trashCount'] is not None else 0)
+            result['trash_count'] = format_count(trash_data['trashCount'] if trash_data['trashCount'] is not None else 0)
             result['trash_size'] = filesize_format(trash_data['sizes'])
 
             # Get database size in MB
