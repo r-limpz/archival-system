@@ -130,12 +130,12 @@ def get_countMonthly(input_date, account):
     except Exception as e:
         print(f"Error fetching monthly data: {e}")
 
-def getAccountData(user_username):
+def getAccountData(user_username, customYear):
     try:
         with config.conn.cursor() as cursor:
             progress_report =[]
 
-            cursor.execute('SELECT YEAR(Upload_date) as year, MONTH(Upload_date) as month, DAY(Upload_date) as day, COUNT(*) as count FROM documentstbl WHERE Uploader = %s GROUP BY YEAR(Upload_date), MONTH(Upload_date), DAY(Upload_date) ORDER BY YEAR(Upload_date), MONTH(Upload_date), DAY(Upload_date)', (user_username))
+            cursor.execute('SELECT YEAR(Upload_date) as year, MONTH(Upload_date) as month, DAY(Upload_date) as day, COUNT(*) as count FROM documentstbl WHERE Uploader = %s AND YEAR(Upload_date) = %s GROUP BY YEAR(Upload_date), MONTH(Upload_date), DAY(Upload_date) ORDER BY YEAR(Upload_date), MONTH(Upload_date), DAY(Upload_date)', (user_username, customYear))
             count_results = cursor.fetchall()
                     
             for row in count_results:
@@ -150,21 +150,25 @@ def getAccountData(user_username):
     except Exception as e:
         print(f"preview user route error occurred: {e}")
 
-@profile_data.route('/profile_details/account_status/list-progress/<username>', methods=['POST', 'GET'])
+@profile_data.route('/profile_details/account_status/list-progress/<username_year>', methods=['POST', 'GET'])
 @login_required
 @authenticate
-def fetch_accountInfo(username):
-    progress_report = getAccountData(username)
+def fetch_accountInfo(username_year):
+    inputstate = username_year.split('-')
+    username = inputstate[0]
+    currentYear = inputstate[1]
+
+    progress_report = getAccountData(username, currentYear)
     chartData = get_countAll(username)
+    totalUploadCount = 0
 
-    total_sum = 0
+    if not progress_report or len(progress_report) < 1:
+        totalUploadCount = 0
+    else:
+        totalUploadCount = sum(row['value'] for row in progress_report if row['value'] > 0)
 
-    if chartData:
-        for data_point in chartData:
-            total_sum += data_point['value']
-            
-    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData, 'TotalUploads':total_sum}
-    
+    data = {'account_id':username,'progress_report':progress_report, 'chartData':chartData, 'totalUploadCount':totalUploadCount }
+
     if data:
         return jsonify(data)
 
