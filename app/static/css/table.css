@@ -1,5 +1,4 @@
 /* table ui*/
-
 #recordsTable,
 #documentsTable,
 #trashbinTable,
@@ -62,7 +61,7 @@ table.dataTable tbody tr {
 }
 
 #recordsTable_length,
-#upload_Logs_length,
+#documentsTable_length,
 #trashbinTable_length,
 #upload_Logs_length{
     display: none;
