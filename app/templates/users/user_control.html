@@ -12,13 +12,13 @@
     </div>
     <div class="d-flex justify-content-end">
         <div class="mx-3" style="width: 30vw;min-width:400px;">
-            <input type="text" name="filterCards" class="rounded-3 mx-3 form-control border-1" id="filterCards"
+            <input type="text" name="filterCards" class="rounded-3 mx-3 form-control border-1 fs-medium" id="filterCards"
                 oninput="searchCards()" placeholder="Search for Account...">
         </div>
         <div class="mx-4"></div>
         <div class="d-flex justify-content-between">
             <div style="max-width: 350px;">
-                <select class='form-select rounded-3 text-start' id="changeDisplay-roles" style="width: 170px;">
+                <select class='form-select rounded-3 text-start fs-medium' id="changeDisplay-roles" style="width: 170px;">
                     <option value="any"> All Users</option>
                     <option value="staff"> Staff Accounts</option>
                     <option value="admin"> Admin Accounts</option>
@@ -26,7 +26,7 @@
             </div>
             <div class="mx-2"></div>
             <div style="max-width: 320px;">
-                <select class='form-select rounded-3 text-start' id="changeDisplay-status" style="width: 140px;">
+                <select class='form-select rounded-3 text-start fs-medium' id="changeDisplay-status" style="width: 140px;">
                     <option value="all"> All Statuses </option>
                     <option value="active"> Active</option>
                     <option value="deactivated"> Deactivated</option>
@@ -34,11 +34,11 @@
             </div>
         </div>
         <div class="mx-3"></div>
-        <button class="btn-red button fw-medium" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
-                class="fs-medium fa-solid fa-user-plus me-2"> </span> User</button>
+        <button class="btn-red button fw-medium fs-medium" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
+                class="fa-solid fa-user-plus me-2"> </span> User</button>
     </div>
 
-    <div class="my-5" id="users_data"></div>
+    <div class="my-5 mx-auto" id="users_data" style="max-width: 1020px;"></div>
     <div class="toast-container position-fixed start-50 translate-middle-x" id="toastContainer" style="top:1rem">
         <!-- Toasts will be added here -->
     </div>
@@ -58,7 +58,7 @@
                 users.forEach(user => {
                     var popup_id = Math.random();
                     let statusClass = user.deleteStatus === 'deleted' ? 'text-danger' : (user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'text-warning'));
-                    let card = `<div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})" style="width:65vw;")>
+                    let card = `<div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})")>
                                     <div class="card-body d-flex justify-content-between flex-nowrap">
                                         <div class="me-4 account_info d-flex">
                                             <div class="p-2 me-3 border border-2 rounded-4 d-flex justify-content-center align-items-center" style="width:50px;height: 50px;">
