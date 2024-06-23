@@ -281,7 +281,7 @@
 
     function updateData(year) {
         $.ajax({
-            url: '/account/manage/user-profile/profile_details/account_status/list-progress/' + '{{ current_user.username }}',
+            url: '/account/manage/user-profile/profile_details/account_status/list-progress/' + '{{ current_user.username }}' + '-' + year,
             method: 'GET', // or 'POST' if that's what you intend
             success: function (data) {
                 initializeCalHeatMap(data.progress_report);
