@@ -191,7 +191,7 @@ def getIncreaseData():
         old_value = cursor.fetchone()['count']
 
         # Calculate the difference
-        if old_value > 0:
+        if old_value > 0 and old_value != new_value:
             percentage_difference  = calculate_percentage_increase(old_value, new_value)
             return percentage_difference
         

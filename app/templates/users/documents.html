@@ -339,17 +339,6 @@
         document.getElementById('previewImageDisplay').src = '';
     })
 
-    function downloadImage() {
-        // Assuming 'image' is a global variable holding your image data
-        var image = document.getElementById('previewImageDisplay').src;
-        var link = document.createElement('a');
-        link.href = image;
-        link.download = 'download.jpg';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
     //edit
     function editDocument(documentEntryId) {
 

@@ -3,7 +3,6 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required
 import pytesseract
 from PIL import Image
-import os
 import re
 
 ocr_App = Blueprint('ocr', __name__)
