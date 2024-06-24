@@ -103,23 +103,13 @@ def fetchallAccount(displayController):
                 # If users are found, create a list of user dictionaries
                 if users:
                     users_list = []
-                    del_status = 'active'
-                    expected_removed = None
 
                     for user in users:
-                        if deleted_accounts:
-                            for deleted in deleted_accounts:
-                                if deleted['user_id'] == user['user_id']:
-                                    del_status = 'deleted'
-                                    expected_removed = deleted['sched_removal']
+                        del_status = 'deleted' if any(deleted['user_id'] == user['user_id'] for deleted in deleted_accounts) else None
+                        expected_removed = next((deleted['sched_removal'] for deleted in deleted_accounts if deleted['user_id'] == user['user_id']), None)
+                        last_online = "Online Now" if user['online'] == 1 else "No activity yet"
 
-                        if user['last_online'] is None:
-                            if user['online'] == 1:
-                                last_online = "Online Now"
-                            elif user['online'] == 0:
-                                last_online = "No activity yet"
-
-                        user_dict = {
+                        users_list.append({
                             'user_id': user['user_id'],
                             'fullname': user['fullname'],
                             'username': user['username'],
@@ -129,12 +119,10 @@ def fetchallAccount(displayController):
                             'role': {1: 'admin', 2: 'staff'}.get(user['role']),
                             'deleteStatus': del_status,
                             'sched_deletion': expected_removed
-                        }
-                        users_list.append(user_dict)
+                        })
                     return users_list
-                else:
-                    return None
-                
+            return None
+
         except Exception as e:
             print(f"An error occurred while fetching all accounts: {e}")
 
