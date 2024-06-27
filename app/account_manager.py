@@ -53,6 +53,21 @@ def get_currentTime(last_online):
         else:
             return f"Offline {seconds} seconds ago"
 
+def get_deletionTime(delete_sched):
+    if delete_sched:
+        now = datetime.now().date() 
+        diff = delete_sched - now  # Calculate the difference between the future date and now
+        
+        # If the difference is negative, it means the deletion time has passed
+        if diff.days < 0:
+            return "Deletion time has passed."
+        
+        # Format the time difference as a string indicating days left
+        if diff.days > 0:
+            time_str = f"{diff.days} days left" 
+            return time_str
+    else:
+        return "Deletion schedule not provided."
 
 # role format function
 def get_role(role):
@@ -107,13 +122,19 @@ def fetchallAccount(displayController):
                     for user in users:
                         del_status = 'deleted' if any(deleted['user_id'] == user['user_id'] for deleted in deleted_accounts) else None
                         expected_removed = next((deleted['sched_removal'] for deleted in deleted_accounts if deleted['user_id'] == user['user_id']), None)
-                        last_online = "Online Now" if user['online'] == 1 else "No activity yet"
+
+                        if user['last_online'] and not expected_removed:
+                            last_online = get_currentTime(user['last_online'])
+                        if expected_removed:
+                            last_online = get_deletionTime(expected_removed) if expected_removed else None
+                        else:
+                            last_online = "Online Now" if user['online'] == 1 else "No activity yet"
 
                         users_list.append({
                             'user_id': user['user_id'],
                             'fullname': user['fullname'],
                             'username': user['username'],
-                            'last_online': get_currentTime(user['last_online']) if user['last_online'] else last_online,
+                            'last_online': last_online,
                             'online': {1: 'online', 0: 'offline'}.get(user['online']),
                             'status': {0: 'deactivated', 1: 'active'}.get(user['status']),
                             'role': {1: 'admin', 2: 'staff'}.get(user['role']),
