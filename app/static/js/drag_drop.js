@@ -53,17 +53,6 @@ function handleFiles(event) {
     }
 }
 
-cancel_selectedDocument.addEventListener('click', function (event) {
-    event.stopPropagation();
-    preview.src = '';
-    ocr_button.classList.add('d-none');
-    save_button.classList.add('d-none');
-    previewContainer.classList.add('d-none');
-    dragText.classList.remove('d-none');
-    documentImageInput.value = '';
-    image_saved = false;
-});
-
 cancel_image.addEventListener('click', function (event) {
     event.stopPropagation();
     preview.src = '';
