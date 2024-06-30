@@ -56,14 +56,14 @@ table.dataTable tbody tr {
 #recordsTable_filter,
 #documentsTable_filter,
 #trashbinTable_filter,
-#upload_Logs_filter{
+#upload_Logs_filter {
     display: none;
 }
 
 #recordsTable_length,
 #documentsTable_length,
 #trashbinTable_length,
-#upload_Logs_length{
+#upload_Logs_length {
     display: none;
 }
 
@@ -80,6 +80,12 @@ table.dataTable tbody tr {
     padding-top: 0.75rem;
     font-size: small;
 }
+
+#upload_Logs_info,
+#upload_Logs_paginate {
+    display: none;
+}
+
 
 #recordsTable_paginate .paginate_button,
 #documentsTable_paginate .paginate_button,
