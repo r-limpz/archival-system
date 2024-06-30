@@ -23,7 +23,7 @@
             <span class="fc-default fa-solid fa-plus me-2 align-self-center">
             </span>Courses</button>
     </div>
-    <div id="college_displayCards" class="mt-3 mb-5 d-flex align-content-start flex-wrap"></div>
+    <div id="college_displayCards" class="mt-3 mb-5 d-flex align-content-start flex-wrap gap-3 p-3"></div>
 </section>
 
 {% endblock%}
@@ -76,16 +76,16 @@
                         }
                     }
 
-                    let card = `<div class="college-entry card my-3 mx-2 border-0" id="college_cards border-0 prevent-select">
+                    let card = `<div class="college-entry card border-0" id="college_cards border-0 prevent-select">
                                     <div class="accordion" id="parent${college_id}">
                                         <div class="accordion-item">
                                             <div class="accordion-header p-0 border-0 m-0" id="label${college_id}">
-                                                <button class="w-full accordion-button collapsed py-3 px-4 d-flex justify-content-between shadow-none" 
+                                                <button class="w-full accordion-button collapsed px-4 d-flex justify-content-between shadow-none" 
                                                 type="button" data-bs-toggle="collapse" 
                                                 data-bs-target="#${college_id}" 
                                                 aria-expanded="false"
                                                 aria-controls="${college_id}"
-                                                style="min-width:370px; min-height:90px;">
+                                                style="min-width:370px; min-height:50px;">
                                                             <h5 class="fc-light ps-2 pe-4" id="card_collegeName">
                                                               <span class="fw-bold me-2">(${college_name})</span> <span class="fw-medium">${college_description}</span>
                                                             </h5>
