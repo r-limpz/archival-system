@@ -59,12 +59,12 @@
                     var popup_id = Math.random();
                     let statusClass = user.deleteStatus === 'deleted' ? 'text-danger' : (user.status === 'deactivated' ? 'fc-gray' : (user.online === 'online' ? 'fc-green' : 'text-warning'));
                     let card = `<div class="users-entry card my-3 rounded-3 prevent-select mx-auto" ondblclick = "previewUser(${user.user_id})")>
-                                    <div class="card-body d-flex justify-content-between flex-nowrap">
+                                    <div class="px-3 py-2 card-body d-flex justify-content-between flex-nowrap">
                                         <div class="me-4 account_info d-flex">
                                             <div class="p-2 me-3 border border-2 rounded-4 d-flex justify-content-center align-items-center" style="width:50px;height: 50px;">
                                                 <h1 class="fs-large fa-solid fa-user-large w-full"></h1>
                                             </div>
-                                            <span class="position-absolute" style="bottom:1rem; left:50px">
+                                            <span class="position-absolute" style="bottom:0.5rem; left:50px">
                                                 <i class="fa-solid fa-circle me-3 ${statusClass}" 
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="top"
