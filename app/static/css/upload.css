@@ -25,7 +25,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    background-color: #686868;
+    background-color: #c9c9c9;
     border-radius: 0.5rem;
     overflow: auto;
     /* Ensures the image doesn't overflow the container */

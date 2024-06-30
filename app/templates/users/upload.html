@@ -2,6 +2,8 @@
 {% block title %}Upload | ARDS{% endblock %}
 
 {% block style %}
+<script src="{{ url_for('static', filename='node_modules/croppie/croppie.min.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='node_modules/croppie/croppie.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
 {% endblock %}
 {% block content %}

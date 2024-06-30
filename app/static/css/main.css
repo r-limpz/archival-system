@@ -578,7 +578,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .dashed-border {
-    border: 2px dashed var(--border-darker);
+    border: 2px dashed var(--border-default);
     border-radius: 0.5rem;
 }
 .ch-domain-text,
