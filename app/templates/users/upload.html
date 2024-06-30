@@ -9,7 +9,7 @@
 {% block content %}
 
 <section>
-    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem ); min-height: 700px;">
+    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 3rem ); min-height: 650px;">
         <div class="flex-grow-1 p-2">
             <div class="rounded-3 h-100">
                 <div class="h-100 w-100 d-flex justify-content-center align-items-center dashed-border" id="dropzone">
@@ -18,16 +18,11 @@
                     </form>
                     <div id="previewContainer" class="d-none border">
                         <img class="m-auto" id="preview" alt="Preview">
-                        <div class="d-flex justify-content-end gap-3"
-                            style="position: absolute; top: 0rem; right: 0rem;">
-                            <button class=" bg-transparent fc-light border-0 py-2 px-3"
-                                id="cancel_selectedDocument"><span class="fa-solid fa-xmark"></span></button>
-                        </div>
-                        <div class="d-flex justify-content-end gap-3"
+                        <div class="d-flex justify-content-end gap-3 fs-medium"
                             style="position: absolute; right: 1rem; bottom: 0.5rem">
-                            <button class="fc-light border-0 py-2 px-4 btn-gray" id="cancel_image">Cancel</button>
-                            <button id="continueButton" class="fw-medium py-2 px-4"> Save </button>
-                            <button id="submitOCR" class="fw-medium border-0 btn-orange fc-light d-none">
+                            <button id="cancel_image" class="border-1 fw-medium px-4" >Cancel</button>
+                            <button id="continueButton" class="border-0 fw-medium btn-green px-4"> Save </button>
+                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none">
                                 <span class="fa-solid fa-expand me-3"></span> Scan Text
                             </button>
                         </div>
@@ -156,7 +151,7 @@
                         </button>
                     </span>
 
-                    <button class="btn-red fw-medium" id="uploadRecord" data-bs-toggle="modal"
+                    <button class="fs-medium border-0 fw-medium btn-red px-4" id="uploadRecord" data-bs-toggle="modal"
                         data-bs-target="#newRecords_confirmation"> Upload </button>
                 </div>
             </div>
