@@ -209,7 +209,6 @@
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
                 { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '70px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
-                { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
@@ -232,16 +231,8 @@
                     title: 'Action',
                     orderable: false,
                     wrap: true,
-                    width: '70px',
+                    width: '50px',
                     "render": function (data, type, row) {
-
-                        const viewFile = `<a id="viewThis" class="flex-fill text-center" onclick="preview(` + row['image_id'] + `)" 
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-trigger="hover"
-                                                    data-bs-html="true"
-                                                    title="Preview">
-                                                <span class="fa-solid fa-eye"></span>
-                                            </a>`;
                         const editFile = `<a id="editThis" class="flex-fill text-center" onclick="editDocument(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-trigger="hover"
@@ -257,7 +248,7 @@
                                                 <span class="fa-solid fa-trash text-danger"></span>
                                             </a>`;
 
-                        return `<div class="d-flex fs-small align-items-center">` + viewFile + ' ' + editFile + ' ' + deleteFile + `</div>`;
+                        return `<div class="d-flex fs-small align-items-center">` + editFile + ' ' + deleteFile + `</div>`;
                     }
                 }
             ],
