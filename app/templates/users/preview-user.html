@@ -322,7 +322,8 @@
                 paginate: {
                     previous: '<a class="fa-solid fa-caret-left"></a>',
                     next: '<a class="fa-solid fa-caret-right"></a>',
-                }
+                },
+                'emptyTable': 'No account activites found. Please check back or refresh the page' 
             },
             scrollY: '60vh',
             scrollX: true,
@@ -336,6 +337,13 @@
                 'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
                 'data': function (data) {
                     data.account_username = '{{ preview_username }}';
+                },
+                'dataSrc': function (json) {
+                    if (json === null || json.length === 0) {
+                        return []; // Return an empty array to prevent DataTable from showing an error
+                    } else {
+                        return json;
+                    }
                 }
             },
             'lengthMenu': [[25, 50, 100, -1], [25, 50, 100, "All"]],

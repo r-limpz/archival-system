@@ -153,7 +153,8 @@
                 paginate: {
                     previous: '<a class="fa-solid fa-caret-left"></a>',
                     next: '<a class="fa-solid fa-caret-right"></a>',
-                }
+                },
+                'emptyTable': 'No documents found. Please check back or refresh the page'
             },
             scrollY: '60vh',
             scrollX: true,
@@ -171,6 +172,13 @@
                     data.filterCourse = $('#filterCourse').val();
                     data.filterSemester = $('#filterSemester').val();
                     data.filterYear = $('#filterYear').val();
+                },
+                'dataSrc': function (json) {
+                    if (json === null || json.length === 0) {
+                        return []; // Return an empty array to prevent DataTable from showing an error
+                    } else {
+                        return json;
+                    }
                 }
             },
             'lengthMenu': [[25, 50, 100, -1], [25, 50, 100, "All"]],
@@ -201,7 +209,7 @@
                         if (data) {
                             return data;
                         }
-                        else{
+                        else {
                             return '';
                         }
                     }
