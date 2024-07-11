@@ -6,6 +6,8 @@ import secrets
 import string
 from flask import current_app as app
 from . import config, argon2
+from .date_formatter import onlineStatus, sched_accountDeletion
+from .randomizer import generate_key
 
 account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/user-manager/manage/data')
 
@@ -19,55 +21,6 @@ def admin_required(f):
             return redirect(url_for('staff.records'))
         return f(*args, **kwargs)
     return decorated_function
-
-# key generator function 
-def generate_key(length=256):
-    characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(secrets.choice(characters) for i in range(length))
-
-# Calculate the time elapsed since the last online timestamp.
-def get_currentTime(last_online):
-    if not last_online:
-        return None
-    else:
-        # Calculate the difference between the current time and the last online time
-        now = datetime.now()
-        diff = now - last_online 
-        # Break down the difference into weeks, days, hours, minutes, and seconds
-        weeks, days = divmod(diff.days, 7)
-        hours, remainder = divmod(diff.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-
-        # Format the time difference based on the largest non-zero time unit
-        if weeks > 0:
-            if days > 0:
-                return f"Offline {weeks} weeks and {days} days ago"
-            else:
-                return f"Offline {weeks} weeks ago"
-        elif days > 0:
-            return f"Offline {days} days ago"
-        elif hours > 0:
-            return f"Offline {hours} hours and {minutes} minutes ago"
-        elif minutes > 0:
-            return f"Offline {minutes} minutes ago"
-        else:
-            return f"Offline {seconds} seconds ago"
-
-def get_deletionTime(delete_sched):
-    if delete_sched:
-        now = datetime.now().date() 
-        diff = delete_sched - now  # Calculate the difference between the future date and now
-        
-        # If the difference is negative, it means the deletion time has passed
-        if diff.days < 0:
-            return "Deletion time has passed."
-        
-        # Format the time difference as a string indicating days left
-        if diff.days > 0:
-            time_str = f"{diff.days} days left" 
-            return time_str
-    else:
-        return "Deletion schedule not provided."
 
 # role format function
 def get_role(role):
@@ -124,9 +77,9 @@ def fetchallAccount(displayController):
                         expected_removed = next((deleted['sched_removal'] for deleted in deleted_accounts if deleted['user_id'] == user['user_id']), None)
 
                         if user['last_online'] and not expected_removed:
-                            last_online = get_currentTime(user['last_online'])
+                            last_online = onlineStatus(user['last_online'])
                         if expected_removed:
-                            last_online = get_deletionTime(expected_removed) if expected_removed else None
+                            last_online = sched_accountDeletion(expected_removed) if expected_removed else None
                         else:
                             last_online = "Online Now" if user['online'] == 1 else "No activity yet"
 

@@ -1,83 +1,3 @@
-function addRows(count) {
-    var table = document.getElementById('studentList');
-    var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
-
-    for (var i = 0; i < count; i++) {
-        var row = tbody.insertRow(-1) // Insert a new row at the end of the table
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        var cell5 = row.insertCell(4);
-        var cell6 = row.insertCell(5);
-
-        cell1.innerHTML = `<div class="my-2 text-center" ><input type="checkbox" class="checkbox" id="${i}"></div>`;
-        cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" placeholder = ""> `; // Last Name
-        cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" placeholder = ""> `; // First Name
-        cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" pattern="[a-zA-Z]{1}\.?" placeholder = ""> `; // MI
-        cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" placeholder = ""> `; // Suffix
-        cell6.innerHTML = `<button class="text-center border-0" id="deleteButton${i}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
-
-        (function (row) {
-            cell6.querySelector(`#deleteButton${i}`).addEventListener('click', function () {
-                row.remove();
-            });
-        })(row);
-    }
-}
-
-addRows(10);
-
-//student list tools
-function populateResults(students) {
-    var table = document.getElementById('studentList');
-    var tbody = table.getElementsByTagName('tbody')[0];
-    clearEmptyRows();
-
-    if (students.length > 0) {
-        students.forEach(function (student, index) {
-            var isDuplicate = false;
-            tbody.querySelectorAll('tr').forEach(function (row) {
-                var surname = row.querySelector('[name="student_surname"]').value;
-                var firstname = row.querySelector('[name="student_firstname"]').value;
-                var middlename = row.querySelector('[name="student_middlename"]').value;
-                var suffixname = row.querySelector('[name="student_suffixname"]').value;
-                if (surname === student.surname &&
-                    firstname === student.firstname &&
-                    middlename === student.middlename &&
-                    suffixname === student.suffix) {
-                    isDuplicate = true;
-                    return;
-                }
-            });
-
-            if (!isDuplicate) {
-                var row = tbody.insertRow(-1); // Insert a new row at the end of the table
-
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-                var cell4 = row.insertCell(3);
-                var cell5 = row.insertCell(4);
-                var cell6 = row.insertCell(5);
-
-                cell1.innerHTML = `<div class="my-2 text-center"><input type="checkbox" class="checkbox" id="${index}"></div>`;
-                cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${student.surname}" placeholder="">`; // Last Name
-                cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${student.firstname}" placeholder="">`; // First Name
-                cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="2" value="${student.middlename}" pattern="[a-zA-Z]{1}\.?" placeholder="">`; // MI
-                cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${student.suffix}" placeholder="">`; // Suffix
-                cell6.innerHTML = `<button class="px-2 border-0" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
-
-                cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
-                    row.remove();
-                });
-            }
-        });
-    }
-}
-
-
-
 function clearEmptyRows() {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0];
@@ -96,6 +16,79 @@ function clearEmptyRows() {
         }
     }
 }
+
+function populateList(index, surname, fname, midname, sfxname, tbody) {
+    index = parseInt(index);
+    var row = tbody.insertRow(-1) // Insert a new row at the end of the table
+
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
+
+    cell1.innerHTML = `<div class="text-center p-2" style="width: 12px;height:12px;"><input type="checkbox" class="checkbox form-check-input m-auto" id="${index}"></div>`;
+    cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${surname}" placeholder = "${surname}"> `; // Last Name
+    cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${fname}" placeholder = "${fname}"> `; // First Name
+    cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="1" value="${midname}" placeholder = "${midname}"> `; // MI
+    cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${sfxname}" placeholder = "${sfxname}"> `; // Suffix
+    cell6.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+
+    (function (row) {
+        cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
+            row.style.transition = 'opacity 250ms ease-out';
+            row.style.opacity = '0';
+
+            setTimeout(function () {
+                setTimeout(function () {
+                    row.remove();
+                }, 100);
+            }, 250);
+        });
+    })(row);
+}
+
+function addRows(count) {
+    var table = document.getElementById('studentList');
+    var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
+    for (var i = 0; i < count; i++) {
+        populateList(i, "", "", "", "", tbody);
+    }
+}
+
+addRows(10);
+
+function populateResults(students) {
+    var table = document.getElementById('studentList');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    clearEmptyRows();
+
+    if (students.length > 0) {
+        students.forEach(function (student, index) {
+            var isDuplicate = false;
+            tbody.querySelectorAll('tr').forEach(function (row) {
+                var surname = row.querySelector('[name="student_surname"]').value;
+                var firstname = row.querySelector('[name="student_firstname"]').value;
+                var middlename = row.querySelector('[name="student_middlename"]').value;
+                var suffixname = row.querySelector('[name="student_suffixname"]').value;
+
+                if (surname == student.surname &&
+                    firstname === student.firstname &&
+                    middlename === student.middlename &&
+                    suffixname === student.suffix) {
+                    isDuplicate = true;
+                    return;
+                }
+            });
+
+            if (!isDuplicate) {
+                populateList(index, student.surname, student.firstname, student.middlename, student.suffix, tbody);
+            }
+        });
+    }
+}
+
 
 document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
 document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
@@ -124,6 +117,7 @@ function noSelectedData(event, message, buttonFunction) {
 function handleRemoveOrClear(event) {
     var checkboxes = document.querySelectorAll('tbody .checkbox:checked');
     var selectAll = document.querySelector('#select-all');
+    var checkboxes = document.querySelectorAll('.checkbox');
 
     if (checkboxes.length === 0) {
         if (event.target.id === 'removeButton') {
@@ -148,6 +142,9 @@ function handleRemoveOrClear(event) {
                 });
                 showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = false;
+                });
             }
         });
     }
@@ -162,6 +159,7 @@ function handleRemoveOrClear(event) {
 function handleRemoveOrClear_allData(event) {
     var rows = document.querySelectorAll('tbody tr'); // Get all rows
     var inputFields = document.querySelectorAll('tbody input[type="text"]'); // Get all input fields
+    var checkboxes = document.querySelectorAll('.checkbox');
 
     if (event.target.id === 'removeAllRows') {
         rows.forEach(function (row) {
@@ -170,14 +168,21 @@ function handleRemoveOrClear_allData(event) {
         addRows(10);
         showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+
     } else if (event.target.id === 'clearAllRows') {
         inputFields.forEach(function (input) {
             input.value = ''; // Clear input fields
         });
         showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = false;
+        });
     }
 }
+
+
+
 
 // Event listener for the "Select All" checkbox
 document.querySelector('#select-all').addEventListener('change', function () {

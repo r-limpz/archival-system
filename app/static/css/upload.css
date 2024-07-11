@@ -10,12 +10,9 @@
     background: white;
     z-index: 10;
 }
-.form-control {
-    padding: 0.25rem 0.5rem;
-}
 
-.form-select {
-    padding: 0.25rem 1rem 0.25rem 0.5rem;
+tr {
+    transition: opacity 350ms ease-out;
 }
 
 #previewContainer {
@@ -40,4 +37,20 @@
     padding: 0.25rem;
     transition: transform 0.1s ease-in-out;
     /* Smooth transition for zoom */
+}
+
+.form-check-input {
+    padding: 0.25rem !important;
+}
+
+.form-check-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: none !important;
+}
+
+.form-check-input:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: none !important;
 }

@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from functools import wraps
 import base64
 from . import config
+from .filesize_selector import filesize_format
 
 fetch_documents = Blueprint('fetch_documents', __name__, url_prefix='/documents/manage')
 
@@ -25,16 +26,6 @@ def getEditor():
             return editor
         else:
             return None
-
-def filesize_format(filesize):
-    if filesize >= 1024 * 1024 * 1024:  # Greater than or equal to 1 GB
-        formatted_size = f"{filesize / (1024 * 1024 * 1024):.2f} GB"
-    elif filesize >= 1024 * 1024:  # Greater than or equal to 1 MB
-        formatted_size = f"{filesize / (1024 * 1024):.2f} MB"
-    else:
-        formatted_size = f"{filesize / 1024:.2f} KB"
-    
-    return formatted_size
 
 def fetchDocumentData(document_id):
     try:

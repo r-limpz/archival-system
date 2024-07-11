@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
-from datetime import datetime
 import base64
 from . import config
+from . import filesize_selector
+from .date_formatter import get_deletionTime
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
 
@@ -17,32 +18,6 @@ def admin_required(f):
             return redirect(url_for('staff.records'))
         return f(*args, **kwargs)
     return decorated_function
-
-def filesize_format(filesize):
-    if filesize >= 1024 * 1024 * 1024:  # Greater than or equal to 1 GB
-        formatted_size = f"{filesize / (1024 * 1024 * 1024):.2f} GB"
-    elif filesize >= 1024 * 1024:  # Greater than or equal to 1 MB
-        formatted_size = f"{filesize / (1024 * 1024):.2f} MB"
-    else:
-        formatted_size = f"{filesize / 1024:.2f} KB"
-    
-    return formatted_size
-
-def get_deletionTime(delete_sched):
-    if delete_sched:
-        now = datetime.now().date() 
-        diff = delete_sched - now  # Calculate the difference between the future date and now
-        
-        # If the difference is negative, it means the deletion time has passed
-        if diff.days < 0:
-            return "Deletion time has passed."
-        
-        # Format the time difference as a string indicating days left
-        if diff.days > 0:
-            time_str = f"{diff.days} days left" 
-            return time_str
-    else:
-        return "Deletion schedule not provided."
     
 def restoreDocumentFile(document_id):
     try:
@@ -136,7 +111,7 @@ def recycleBin():
                             'Deletion_Sched': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
-                            'File_size': filesize_format(row['Filesize']),
+                            'File_size': filesize_selector.filesize_format(row['Filesize']),
                         })
                     
                 response = {

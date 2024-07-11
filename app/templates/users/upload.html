@@ -20,9 +20,10 @@
                         <img class="m-auto" id="preview" alt="Preview">
                         <div class="d-flex justify-content-end gap-3 fs-medium"
                             style="position: absolute; right: 1rem; bottom: 0.5rem">
-                            <button id="cancel_image" class="border-1 fw-medium px-4" >Cancel</button>
+                            <button id="cancel_image" class="border-1 fw-medium px-4">Cancel</button>
                             <button id="continueButton" class="border-0 fw-medium btn-green px-4"> Save </button>
-                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none">
+                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none" data-bs-toggle="modal"
+                                data-bs-target="#ocr_confirmation">
                                 <span class="fa-solid fa-expand me-3"></span> Scan Text
                             </button>
                         </div>
@@ -106,11 +107,11 @@
                             <label class="fw-bold ps-2" for="documnt_academicYear">Academic Year</label>
                             <span class="d-flex">
                                 <input type="number" class="form-control text-center" id="starting_year"
-                                    name="ending_year" placeholder="YYYY"  min="1978" max="9999" required>
+                                    name="ending_year" placeholder="YYYY" min="1978" max="9999" required>
                                 <span class="mx-2 fa-solid fa-minus fs-default"
                                     style="padding: 9.1px 0px;max-width: 1rem;"></span>
                                 <input type="number" class="form-control text-center" id="ending_year"
-                                    name="ending_year" placeholder="YYYY"  min="1978" max="9999" required>
+                                    name="ending_year" placeholder="YYYY" min="1978" max="9999" required>
                             </span>
                         </div>
                     </div>
@@ -120,15 +121,15 @@
                     <table class="table w-100 table-sm table-borderless" id="studentList">
                         <thead class="border-bottom">
                             <tr>
-                                <th data-field="state" data-checkbox="true" style="width: 25px;"
-                                    class="text-center px-3">
-                                    <input id="select-all" type="checkbox" class="checkbox">
+                                <th data-field="state" data-checkbox="true" 
+                                    class="text-center px-2">
+                                    <input id="select-all" type="checkbox" class="checkbox form-check-input">
                                 </th>
                                 <th>Surname</th>
                                 <th>First name</th>
                                 <th style="width:50px"> M.I.</th>
                                 <th style="width:60px"> Suffix </th>
-                                <th class="px-2 text-center" style="width:25px">
+                                <th class="px-2 text-center" style="width:24px">
                                     <button class="px-2 py-0 border-0" id="populateInputs" onclick="addRows(1)">
                                         <span class="fa-solid fa-plus">
                                     </button>
@@ -189,7 +190,7 @@
                                 let course_name = course.course_name;
                                 let course_id = course.course_id;
                                 let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description : course_description });
+                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
                             });
                         }
                         else {
@@ -236,8 +237,8 @@
 </script>
 <script>
     let ocr_resultsList = [];
-    submitOCR.addEventListener('click', function (event) {
-        event.stopPropagation();
+
+    function autoScanOCR() {
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
 
@@ -257,18 +258,120 @@
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                     else {
-                        populateResults(data);
-                        showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        if (data.length > 0) {
+                            populateResults(data);
+                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        } else {
+                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            modal.show();
+                        }
                     }
                 },
                 error: function (error) {
                     console.error(error);
-                    showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                    modal.show();
                 }
             });
         }
+    }
+
+    $('#ocr_auto').on('click', function (event) {
+        event.stopPropagation();
+        autoScanOCR();
+    });
+
+    document.getElementById('ocr_manual').addEventListener('click', function () {
+        const fileInput = document.getElementById('document_image');
+        const selectedFile = fileInput.files[0];
+
+        if (selectedFile) {
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                window.src = reader.result;
+                $('#document_image').val();
+            }, false);
+            reader.readAsDataURL(selectedFile);
+        }
+    });
+
+    let cropper;
+
+    $('#ManualScanImageModal').on('shown.bs.modal', function () {
+        let width = document.getElementById('crop-image-container').offsetWidth - 20;
+        let height = width * 1.2; // Set the height to be 50% of the width
+
+        // Initialize Croppie only if it hasn't been initialized already
+        if (!$('#crop-image-container').data('croppie')) {
+            $('#crop-image-container').height(height + 'px');
+            cropper = $('#crop-image-container').croppie({
+                viewport: {
+                    width: width,
+                    height: height // Set the height to be 50% of the width
+                }
+            });
+        }
+
+        $('.modal-body1').height(document.getElementById('crop-image-container').offsetHeight + 5 + 'px');
+        cropper.croppie('bind', {
+            url: window.src,
+        }).then(function () {
+            cropper.croppie('setZoom', 0);
+        });
+    });
+
+    // Destroy the rendered image in the modal Croppie when the modal is hidden
+    $('#ManualScanImageModal').on('hidden.bs.modal', function () {
+        cropper.croppie('destroy');
+    });
+
+    const buttonManualCroppie = $('#crop_customOcr');
+
+    $(document).on('click', '#crop_customOcr', function (ev) {
+        // Getting the cropped image using Croppie and converting it to a Blob
+        cropper.croppie('result', {
+            type: 'blob',
+            format: 'jpeg',
+            size: 'original'
+        }).then(function (blob) {
+            buttonManualCroppie.text("Scanning...");
+            // Creating a FormData object 
+            let formData = new FormData();
+            formData.append('document_image', blob, 'cropped_image.jpg');
+            
+            $.ajax({
+                url: '/scanner',
+                type: 'POST',
+                data: formData,
+                processData: false,  // Tell jQuery not to process the data
+                contentType: false,  // Tell jQuery not to set contentType
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    if (data === 'No file uploaded') {
+                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    }
+                    else {
+                        if (data.length > 0) {
+                            populateResults(data);
+                            buttonManualCroppie.text("Extract Text");
+                            //$('#ManualScanImageModal').modal('hide');
+                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        } else {
+                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            modal.show();
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                    modal.show();
+                }
+            });
+        });
     });
 </script>
 <script>

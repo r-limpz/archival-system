@@ -1,15 +1,12 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 import datetime
-import socket
-import httpagentparser
-from device_detector import DeviceDetector
 import hashlib
-import secrets
-import string
 from . import config, login_manager, argon2, captcha 
 from flask import current_app as app
 from .forms import LoginForm
+from .randomizer import generate_key, generate_token, check_token
+from .deviceInfo import getUserInfo
 
 auth = Blueprint('auth', __name__)
 
@@ -17,37 +14,6 @@ logged_devices = []
 blocklist = []
 MAX_ATTEMPTS = 10
 BLOCK_THRESHOLD = datetime.timedelta(hours=1) 
-
-#generate id random character string
-def generate_id(length=256):
-    characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(secrets.choice(characters) for i in range(length))
-
-#generate token based on data, key and key2 for session
-def generate_token(data, key, key2):
-    combined_data = str(data) + app.config['SECRET_KEY'] + key + key2
-    hashed_data = hashlib.sha256(combined_data.encode()).hexdigest()
-    return hashed_data
-
-#verify the token and return true
-def check_token(token, data, key, key2):
-    expected_token = generate_token(data, key, key2)
-    return token == expected_token
-
-#generate device information of user
-def getUserInfo():
-    device_data = {'device': '', 'os': '', 'browser': '', 'ip_address': ''}
-    ip_address = socket.gethostbyname(socket.gethostname())
-    agent = request.headers.get('User-Agent')
-    browser_info = httpagentparser.detect(agent)
-
-    browser_name = browser_info.get('browser', {}).get('name', 'Unknown')
-    device = DeviceDetector(agent).parse()
-    deviceType= device.device_type()
-    os = f"{device.os_name()} {device.os_version()}" 
-
-    device_data = {'device': (deviceType), 'os': os, 'browser': browser_name, 'ip_address': ip_address}
-    return device_data
 
 #get the user from the array
 def find_device(user):
@@ -237,7 +203,7 @@ def login():
                         if session_data and len(session_data['session_id']) == 256:
                             session_id = session_data['session_id']
                         else:
-                            session_id = generate_id()
+                            session_id = generate_key()
                             cursor.execute('INSERT INTO session(session_id, user_id, username, role) VALUES (%s,%s,%s,%s)', (session_id, user['user_id'], username, role))
                             config.conn.commit()
                             

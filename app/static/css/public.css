@@ -46,7 +46,7 @@ button:focus,
 
 .form-item input:focus+label,
 .form-item input:valid+label {
-    top: -0.75rem;
+    top: -0.5rem;
     font-size: var(--fs-small);
 }
 
@@ -58,6 +58,9 @@ button:focus,
 .form-item input:focus+label {
     color: var(--border-black);
 }
+
+
+
 
 #error_message {
     padding: 0.5rem 0.25rem;
