@@ -65,6 +65,23 @@ def checkConnection():
     except Exception as e:
         print(f"Failed to reconnect: {e}")
 
+#error handling of pages
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = 500
+    error_message = '500 Internal Server Error'
+    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
+    print(e)
+    if isinstance(e, HTTPException):
+        code = e.code
+        code_message = f"{code} {e.name}"
+        description = e.description
+    else:
+        code_message = "500 Internal Server Error"
+        description = str(e)
+        
+    return render_template('errors/error.html', error_number=code_message, error_message=description), code
+
 #Register authentication logic
 from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
@@ -86,10 +103,6 @@ app.register_blueprint(proifileBlueprint)
 #upload manager logics
 from .upload_manager import uploader_manager as uploader_blueprint
 app.register_blueprint(uploader_blueprint)
-#Reister authenticated accounts
-app.register_blueprint(admin_bp)
-app.register_blueprint(staff_bp)
-
 #Register Dashboard
 from .dashboard import dashboard_data as dashboard_dateblueprint
 app.register_blueprint(dashboard_dateblueprint)
@@ -101,22 +114,9 @@ from .college_manager import college_manager as college_managerBlueprint
 app.register_blueprint(college_managerBlueprint)
 from .trashbin import trashbin_data as trashbinBlueprint
 app.register_blueprint(trashbinBlueprint)
-
-#error handling of pages
-@app.errorhandler(Exception)
-def handle_error(e):
-    code = 500
-    error_message = '500 Internal Server Error'
-    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
-    if isinstance(e, HTTPException):
-        code = e.code
-        code_message = f"{code} {e.name}"
-        description = e.description
-    else:
-        code_message = "500 Internal Server Error"
-        description = str(e)
-        
-    return render_template('errors/error.html', error_number=code_message, error_message=description), code
+#Reister authenticated accounts
+app.register_blueprint(admin_bp)
+app.register_blueprint(staff_bp)
 
 #Non-authentication needed pages
 @app.route('/ards/')
