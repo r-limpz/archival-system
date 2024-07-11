@@ -1,13 +1,11 @@
-
 import socket
 import httpagentparser
 from device_detector import DeviceDetector
 
 #generate device information of user
-def getUserInfo():
+def deviceID_selector(agent):
     device_data = {'device': '', 'os': '', 'browser': '', 'ip_address': ''}
     ip_address = socket.gethostbyname(socket.gethostname())
-    agent = request.headers.get('User-Agent')
     browser_info = httpagentparser.detect(agent)
 
     browser_name = browser_info.get('browser', {}).get('name', 'Unknown')

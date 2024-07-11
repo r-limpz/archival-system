@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from functools import wraps
 import base64
 from . import config
-from . import filesize_selector
+from .filesize_selector import filesize_format
 from .date_formatter import get_deletionTime
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
@@ -111,7 +111,7 @@ def recycleBin():
                             'Deletion_Sched': get_deletionTime(row['Deletion_Sched']),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
-                            'File_size': filesize_selector.filesize_format(row['Filesize']),
+                            'File_size': filesize_format(row['Filesize']),
                         })
                     
                 response = {

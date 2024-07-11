@@ -6,7 +6,7 @@ from . import config, login_manager, argon2, captcha
 from flask import current_app as app
 from .forms import LoginForm
 from .randomizer import generate_key, generate_token, check_token
-from .deviceInfo import getUserInfo
+from .deviceInfo import deviceID_selector
 
 auth = Blueprint('auth', __name__)
 
@@ -21,6 +21,11 @@ def find_device(user):
         if device['user'] == user:
             return device
     return None
+
+def getUserInfo():
+    agent = request.headers.get('User-Agent')
+    deviceID_selector(agent)
+    return deviceID_selector(agent)
 
 #determine if user is blocked and remove if time exceeds the threshold
 def is_blocked(user):
