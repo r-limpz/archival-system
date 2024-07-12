@@ -323,7 +323,7 @@
                     previous: '<a class="fa-solid fa-caret-left"></a>',
                     next: '<a class="fa-solid fa-caret-right"></a>',
                 },
-                'emptyTable': 'No account activites found. Please check back or refresh the page' 
+                'emptyTable': 'No account activites found. Please check back or refresh the page.' 
             },
             scrollY: '60vh',
             scrollX: true,
@@ -338,12 +338,19 @@
                 'data': function (data) {
                     data.account_username = '{{ preview_username }}';
                 },
-                'dataSrc': function (json) {
-                    if (json === null || json.length === 0) {
-                        return []; // Return an empty array to prevent DataTable from showing an error
+               'dataSrc': function (json) {
+                    if (!json.aaData) {
+                        return [];
                     } else {
-                        return json;
+                        return json.aaData;
                     }
+                },
+                'error': function (xhr, error, thrown) {
+                    // Custom error handling
+                    const errorMessage = `An error occurred while loading the data. Please try again later.`;
+                    const errStatus = `AJAX error: ${xhr.status} ${xhr.statusText}.`;
+                    alert(errorMessage);
+                    console.error(errStatus, error, thrown); // Log error for debugging
                 }
             },
             'lengthMenu': [[25, 50, 100, -1], [25, 50, 100, "All"]],
