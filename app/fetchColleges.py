@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
-from . import config 
 from .college_selector import fetch_course
 
 fetchColleges = Blueprint('fetchCollege_data', __name__)
@@ -17,4 +16,5 @@ class Colleges:
 def display_colcourse():
     if current_user.is_authenticated and (current_user.role == 'admin' or current_user.role == 'staff') and current_user.is_active:
         collegeCourses_list = fetch_course('all')
-        return jsonify([college.__dict__ for college in collegeCourses_list])
+        if collegeCourses_list:
+            return jsonify([college.__dict__ for college in collegeCourses_list])
