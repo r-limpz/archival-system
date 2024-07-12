@@ -7,6 +7,7 @@ from flask import current_app as app
 from .forms import LoginForm
 from .randomizer import generate_key, generate_token, check_token
 from .deviceInfo import deviceID_selector
+from .user_blocker import is_blocked, loginAttempt
 
 auth = Blueprint('auth', __name__)
 
@@ -26,47 +27,6 @@ def getUserInfo():
     agent = request.headers.get('User-Agent')
     deviceID_selector(agent)
     return deviceID_selector(agent)
-
-#determine if user is blocked and remove if time exceeds the threshold
-def is_blocked(user):
-    current_time = datetime.datetime.now()
-    existing_device = find_device(user)
-    for device in blocklist:
-        if device['user'] == user:
-            if current_time - device['blocked_datetime'] < BLOCK_THRESHOLD:
-                return True
-            else:
-                blocklist.remove(device)
-                if existing_device:
-                    existing_device['attempts'] = 0
-                return False
-    return False
-
-#limit the unsuccessful login attempts request of an ip address 
-def loginAttempt(action):
-    user_info = getUserInfo()
-    ipaddress = user_info['ip_address']
-    user = hashlib.sha256(ipaddress.encode()).hexdigest()
-    existing_device = find_device(user)
-    
-    if is_blocked(user):
-        print( ipaddress," is currently blocked from making login attempts.")
-    
-    else:
-        if action == 'reset':
-            if existing_device:
-                existing_device['attempts'] = 0
-            else:
-                logged_devices.append({'user': user, 'attempts': 0})
-
-        elif action == 'count':
-            if existing_device:
-                existing_device['attempts'] += 1
-                if existing_device['attempts'] >= MAX_ATTEMPTS:
-                    if not any(device['user'] == user for device in blocklist):
-                        blocklist.append({'user': user, 'blocked_datetime': datetime.datetime.now()})
-            else:
-                logged_devices.append({'user': user, 'attempts': 1})
 
 #generate a user device information and append to the database login history
 def loginHistory(user_id, session_data):
@@ -217,7 +177,7 @@ def login():
                             token = generate_token(user['password'], user['pass_key'], session_id)
                             login_user(User(session_id, username, user_role, token), remember=False)
                             loginHistory((user['user_id']), session_id)
-                            loginAttempt('reset')
+                            loginAttempt('reset', request.headers.get('User-Agent'))
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
 
                             if redirect_url:#redirect if user is authenicated and authorized
@@ -230,7 +190,7 @@ def login():
                         error = invalidError
                 else:
                     error = captchaError
-    loginAttempt('count')           
+    loginAttempt('count', request.headers.get('User-Agent'))           
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
 #setup route for logout user 
