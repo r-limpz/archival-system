@@ -145,6 +145,13 @@
 </script>
 <script>
     var documentsDataTable;
+    var visFilesize = false;
+    var visLog = false;
+
+    if('{{ current_user.role }}' === 'admin'){
+        visFilesize = true;
+        visLog = true
+    }
 
     function dataTableFunction() {
         documentsDataTable = $('#documentsTable').DataTable({
@@ -211,7 +218,7 @@
                     wrap: true,
                     className: 'text-center',
                     width: '100px',
-                    visible: true,
+                    visible: visFilesize,
                     "render": function (data, type, row) {
                         if (data) {
                             return data;

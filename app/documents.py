@@ -188,7 +188,7 @@ def documents_data():
                                 'image_id': row['image_id'],
                                 'File_size':filesize_format(row['Filesize']) ,
                                 'Uploader': row['Uploader'],
-                            })
+                        })
                     
                 response = {
                     'draw': draw,
