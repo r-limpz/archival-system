@@ -2,8 +2,8 @@
 {% block title %}Upload | ARDS{% endblock %}
 
 {% block style %}
-<script src="{{ url_for('static', filename='node_modules/croppie/croppie.min.js') }}"></script>
-<link rel="stylesheet" href="{{url_for('static', filename='node_modules/croppie/croppie.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='node_modules/cropperjs/dist/cropper.min.css')}}">
+<script src="{{ url_for('static', filename='node_modules/cropperjs/dist/cropper.min.js') }}"></script>
 <link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
 {% endblock %}
 {% block content %}
@@ -121,8 +121,7 @@
                     <table class="table w-100 table-sm table-borderless" id="studentList">
                         <thead class="border-bottom">
                             <tr>
-                                <th data-field="state" data-checkbox="true" 
-                                    class="text-center px-2">
+                                <th data-field="state" data-checkbox="true" class="text-center px-2">
                                     <input id="select-all" type="checkbox" class="checkbox form-check-input">
                                 </th>
                                 <th>Surname</th>
@@ -281,65 +280,55 @@
         event.stopPropagation();
         autoScanOCR();
     });
+</script>
+<script>
+    var cropImage = document.getElementById('crop_imageSrc');
+    var cropper, reader, file;
 
-    document.getElementById('ocr_manual').addEventListener('click', function () {
-        const fileInput = document.getElementById('document_image');
-        const selectedFile = fileInput.files[0];
+    $(document).ready(function () {
 
-        if (selectedFile) {
-            let reader = new FileReader();
-            reader.addEventListener("load", function () {
-                window.src = reader.result;
-                $('#document_image').val();
-            }, false);
-            reader.readAsDataURL(selectedFile);
-        }
-    });
+        $('#ocr_manual').on('click', function () {
+            var fileInput = $("#document_image")[0];
+            var files = fileInput.files;
 
-    let cropper;
+            if (files && files.length > 0) {
+                var file = files[0];
+                var done = function (url) {
+                    cropImage.src = url;
+                    $('#ManualScanImageModal').modal('show');
+                };
 
-    $('#ManualScanImageModal').on('shown.bs.modal', function () {
-        let width = document.getElementById('crop-image-container').offsetWidth - 20;
-        let height = width * 1.2; // Set the height to be 50% of the width
-
-        // Initialize Croppie only if it hasn't been initialized already
-        if (!$('#crop-image-container').data('croppie')) {
-            $('#crop-image-container').height(height + 'px');
-            cropper = $('#crop-image-container').croppie({
-                viewport: {
-                    width: width,
-                    height: height // Set the height to be 50% of the width
+                if (URL) {
+                    done(URL.createObjectURL(file));
+                } else if (FileReader) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        done(reader.result);
+                    };
+                    reader.readAsDataURL(file);
                 }
-            });
-        }
-
-        $('.modal-body1').height(document.getElementById('crop-image-container').offsetHeight + 5 + 'px');
-        cropper.croppie('bind', {
-            url: window.src,
-        }).then(function () {
-            cropper.croppie('setZoom', 0);
+            } else {
+                alert("Please select an image to crop.");
+            }
         });
     });
 
-    // Destroy the rendered image in the modal Croppie when the modal is hidden
-    $('#ManualScanImageModal').on('hidden.bs.modal', function () {
-        cropper.croppie('destroy');
+    $('#ManualScanImageModal').on('shown.bs.modal', function () {
+        cropper = new Cropper(cropImage, {
+            aspectRatio: 0,
+            viewMode: 1,
+        });
+    }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
     });
 
-    const buttonManualCroppie = $('#crop_customOcr');
-
     $(document).on('click', '#crop_customOcr', function (ev) {
-        // Getting the cropped image using Croppie and converting it to a Blob
-        cropper.croppie('result', {
-            type: 'blob',
-            format: 'jpeg',
-            size: 'original'
-        }).then(function (blob) {
-            buttonManualCroppie.text("Scanning...");
-            // Creating a FormData object 
+        canvas = cropper.getCroppedCanvas();
+        canvas.toBlob(function (blob) {
             let formData = new FormData();
             formData.append('document_image', blob, 'cropped_image.jpg');
-            
+
             $.ajax({
                 url: '/scanner',
                 type: 'POST',
@@ -355,7 +344,6 @@
                     else {
                         if (data.length > 0) {
                             populateResults(data);
-                            buttonManualCroppie.text("Extract Text");
                             //$('#ManualScanImageModal').modal('hide');
                             showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -371,8 +359,10 @@
                     modal.show();
                 }
             });
+
         });
     });
+
 </script>
 <script>
     function fetchrowValues() {

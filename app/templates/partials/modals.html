@@ -178,8 +178,8 @@
           </div>
         </div>
         <div class="modal-footer mx-3">
-          <button type="button" data-bs-dismiss="modal" class="button me-3 fs-medium fw-medium px-4"
-            onclick="populateUsers('all-any')">Cancel</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#edit_account_modal"
+            class="button me-3 fs-medium fw-medium px-4" onclick="populateUsers('all-any')">Cancel</button>
           <button id="delete_user_profile" class="btn-orange text-decoration-none fs-medium fw-medium px-4"
             data-bs-dismiss="modal">
             Continue
@@ -324,7 +324,8 @@
               </div>
             </form>
             <div class="mt-2 d-flex justify-content-end">
-              <button class="mx-2 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
+              <button class="mx-2 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
+                data-bs-target="#editCollege_modal">Cancel</button>
               <button class="btn-red mx-2 fs-medium fw-medium px-4" data-bs-toggle="modal"
                 data-bs-target="#moveCourses_confirmation" type="button" id="button_showConfirmation_moveCourses"> Move
               </button>
@@ -501,10 +502,11 @@
       <div class="modal-content mx-3">
         <div class="modal-header border-0 d-flex justify-content-between align-items-center p-0">
           <h5 class="fw-bold m-3">Scan the image</h5>
-          <button type="button" class="fs-small p-2 fa-solid fa-x" data-bs-dismiss="modal" style="margin-top: -1rem; margin-right: 0.5rem;"> </button>
+          <button type="button" class="fs-small p-2 fa-solid fa-x" data-bs-dismiss="modal"
+            style="margin-top: -1rem; margin-right: 0.5rem;"> </button>
         </div>
         <div class="modal-body mx-3">
-            <p class="ms-2">Automatic extract student names from the table or manually crop the table?</p>
+          <p class="ms-2">Automatic extract student names from the table or manually crop the table?</p>
         </div>
         <div class="modal-footer mx-3">
           <button type="button" id="ocr_manual" class="fs-medium fw-medium px-4 me-3" data-bs-toggle="modal"
@@ -524,7 +526,9 @@
         <div class="modal-body mx-3">
           <div class="">
             <h5 class="fw-bold my-3"> Crop Image </h5>
-            <div id='crop-image-container' class="p-2"></div>
+            <div id='crop-image-container' style="height: 500px;">
+              <img id="crop_imageSrc" style="max-width: 100%; max-height: 100%;">
+            </div>
           </div>
         </div>
         <div class="modal-footer mx-3">
