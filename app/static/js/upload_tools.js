@@ -1,22 +1,3 @@
-function clearEmptyRows() {
-    var table = document.getElementById('studentList');
-    var tbody = table.getElementsByTagName('tbody')[0];
-    var rows = tbody.getElementsByTagName('tr');
-
-    // Iterate over the rows in reverse order
-    for (var i = rows.length - 1; i >= 0; i--) {
-        var row = rows[i];
-        let surnameInput = row.querySelector('input[name="student_surname"]');
-        let firstnameInput = row.querySelector('input[name="student_firstname"]');
-
-        // Check if both surname and firstname are empty
-        if (surnameInput.value.trim() === "" || firstnameInput.value.trim() === "") {
-            // Delete the row
-            row.remove();
-        }
-    }
-}
-
 function populateList(index, surname, fname, midname, sfxname, tbody) {
     index = parseInt(index);
     var row = tbody.insertRow(-1) // Insert a new row at the end of the table
@@ -57,55 +38,45 @@ function addRows(count) {
     }
 }
 
-addRows(10);
-
-function populateResults(students) {
-    var table = document.getElementById('studentList');
-    var tbody = table.getElementsByTagName('tbody')[0];
-    clearEmptyRows();
-
-    if (students.length > 0) {
-        students.forEach(function (student, index) {
-            var isDuplicate = false;
-            tbody.querySelectorAll('tr').forEach(function (row) {
-                var surname = row.querySelector('[name="student_surname"]').value;
-                var firstname = row.querySelector('[name="student_firstname"]').value;
-                var middlename = row.querySelector('[name="student_middlename"]').value;
-                var suffixname = row.querySelector('[name="student_suffixname"]').value;
-
-                if (surname == student.surname &&
-                    firstname === student.firstname &&
-                    middlename === student.middlename &&
-                    suffixname === student.suffix) {
-                    isDuplicate = true;
-                    return;
-                }
-            });
-
-            if (!isDuplicate) {
-                populateList(index, student.surname, student.firstname, student.middlename, student.suffix, tbody);
-            }
-        });
+function checkForEmptyTable() {
+    var tbodyIsEmpty = document.querySelector('tbody').childElementCount === 0;
+    if (tbodyIsEmpty) {
+        addRows(10);
     }
 }
 
+function clearEmptyRows() {
+    var table = document.getElementById('studentList');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var rows = tbody.getElementsByTagName('tr');
 
-document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
-document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
+    for (var i = rows.length - 1; i >= 0; i--) {
+        var row = rows[i];
+        let surnameInput = row.querySelector('input[name="student_surname"]');
+        let firstnameInput = row.querySelector('input[name="student_firstname"]');
+
+        // Check if both surname and firstname are empty
+        if (surnameInput.value.trim() === "" || firstnameInput.value.trim() === "") {
+            row.remove();
+        }
+    }
+    checkForEmptyTable();
+}
+
 function noSelectedData(event, message, buttonFunction) {
     let messageErrorTools = document.getElementById('errorContainerTools');
     messageErrorTools.innerHTML = ''; // Clear any existing content
 
     messageErrorTools.innerHTML = `
         <div class="modal-body">
-            <div>
-                <h5 class="fw-bold mb-3"> No selected data to run ${event} function</h5>
-                <p>${message}</p>
+            <div class="mx-3">
+                <h5 class="fw-bold mb-3"> Oops! No rows selected </h5>
+                <p class="mb-3"> Please choose one or more rows to ${event}. ${message} </p>
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-            <button id="${buttonFunction}" class="btn-red fw-bold text-decoration-none button" data-bs-dismiss="modal">
+            <button id="${buttonFunction}" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
                 Confirm
             </button>
         </div>
@@ -114,75 +85,74 @@ function noSelectedData(event, message, buttonFunction) {
     $('#selection_uploadTools').modal('show'); // Show the modal
 }
 
+function removeRows(removeAll) {
+    if (removeAll) {
+        document.querySelectorAll('tbody tr').forEach(row => row.remove()); // Remove all rows
+        showToast('Success!', 'All rows removed successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+    } else {
+        const checkboxes = document.querySelectorAll('tbody .checkbox:checked');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.closest('tr').remove();
+        });
+        showToast('Success!', 'Removed selected rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+    }
+
+    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+}
+
+function clearTextRows(clearAll) {
+    if (clearAll) {
+        document.querySelectorAll('tbody input[type="text"]').forEach(input => {
+            input.value = ''; // Clear all input fields
+        });
+        showToast('Success!', 'All input fields cleared successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+    } else {
+        const checkboxes = document.querySelectorAll('tbody .checkbox:checked');
+
+        checkboxes.forEach(checkbox => {
+            const inputFields = checkbox.closest('tr').querySelectorAll('input[type="text"]');
+            inputFields.forEach(input => {
+                input.value = ''; // Clear individual row input fields
+            });
+        });
+        showToast('Success!', 'Cleared selected rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+    }
+
+    document.querySelectorAll('.checkbox').forEach(checkbox => {
+        checkbox.checked = false; // Clear all input fields
+    });
+
+    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+}
+
+
 function handleRemoveOrClear(event) {
     var checkboxes = document.querySelectorAll('tbody .checkbox:checked');
     var selectAll = document.querySelector('#select-all');
-    var checkboxes = document.querySelectorAll('.checkbox');
 
     if (checkboxes.length === 0) {
         if (event.target.id === 'removeButton') {
             $('#deleteSelctedList_confirmation').modal('hide');
-            noSelectedData('remove', 'Remove all rows instead?', 'removeAllRows');
+            noSelectedData('remove', '  Remove all rows instead?', 'removeAllRows');
         } else if (event.target.id === 'clearButton') {
             $('#clearSelctedList_confirmation').modal('hide');
-            noSelectedData('clear', 'Clear all rows instead?', 'clearAllRows');
+            noSelectedData('clear', '  Clear all rows instead?', 'clearAllRows');
         }
     } else {
-        checkboxes.forEach(function (checkbox) {
-            var row = checkbox.closest('tr');
-            var inputFields = row.querySelectorAll('input[type="text"]');
-
-            if (event.target.id === 'removeButton') {
-                row.remove();
-                showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-            } else if (event.target.id === 'clearButton') {
-                inputFields.forEach(function (input) {
-                    input.value = '';
-                });
-                showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                checkboxes.forEach(function (checkbox) {
-                    checkbox.checked = false;
-                });
-            }
-        });
+        if (event.target.id === 'removeButton') {
+            removeRows(false);
+        } else if (event.target.id === 'clearButton') {
+            clearTextRows(false);
+        }
     }
 
     selectAll.checked = false;
-    var tbodyIsEmpty = document.querySelector('tbody').childElementCount === 0;
-    if (tbodyIsEmpty) {
-        addRows(10);
-    }
+    checkForEmptyTable();
 }
 
-function handleRemoveOrClear_allData(event) {
-    var rows = document.querySelectorAll('tbody tr'); // Get all rows
-    var inputFields = document.querySelectorAll('tbody input[type="text"]'); // Get all input fields
-    var checkboxes = document.querySelectorAll('.checkbox');
-
-    if (event.target.id === 'removeAllRows') {
-        rows.forEach(function (row) {
-            row.remove(); // Remove all rows
-        });
-        addRows(10);
-        showToast('Success!', 'Removed rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-
-    } else if (event.target.id === 'clearAllRows') {
-        inputFields.forEach(function (input) {
-            input.value = ''; // Clear input fields
-        });
-        showToast('Success!', 'Cleared rows input fields successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-        checkboxes.forEach(function (checkbox) {
-            checkbox.checked = false;
-        });
-    }
-}
-
-
-
+document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
+document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
 
 // Event listener for the "Select All" checkbox
 document.querySelector('#select-all').addEventListener('change', function () {
@@ -218,4 +188,36 @@ document.querySelectorAll('tbody .checkbox').forEach(function (checkbox) {
         document.querySelector('#select-all').checked = allChecked;
     });
 });
+
+addRows(10);
+
+function populateResults(students) {
+    var table = document.getElementById('studentList');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    clearEmptyRows();
+
+    if (students.length > 0) {
+        students.forEach(function (student, index) {
+            var isDuplicate = false;
+            tbody.querySelectorAll('tr').forEach(function (row) {
+                var surname = row.querySelector('[name="student_surname"]').value;
+                var firstname = row.querySelector('[name="student_firstname"]').value;
+                var middlename = row.querySelector('[name="student_middlename"]').value;
+                var suffixname = row.querySelector('[name="student_suffixname"]').value;
+
+                if (surname == student.surname &&
+                    firstname === student.firstname &&
+                    middlename === student.middlename &&
+                    suffixname === student.suffix) {
+                    isDuplicate = true;
+                    return;
+                }
+            });
+
+            if (!isDuplicate) {
+                populateList(index, student.surname, student.firstname, student.middlename, student.suffix, tbody);
+            }
+        });
+    }
+}
 
