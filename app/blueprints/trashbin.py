@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
 import base64
-from . import config
-from .filesize_selector import filesize_format
-from .date_formatter import get_deletionTime
+from app import config
+from app.filesize_selector import filesize_format
+from app.date_formatter import get_deletionTime
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
 

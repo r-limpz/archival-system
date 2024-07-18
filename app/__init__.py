@@ -7,8 +7,17 @@ from flask_session_captcha import FlaskSessionCaptcha
 from werkzeug.exceptions import HTTPException
 from .forms import LoginForm
 from . import config
-from app.Blueprints.admin import admin_bp
-from app.Blueprints.staff import staff_bp
+from app.routes.admin import admin_bp
+from app.routes.staff import staff_bp
+from app.blueprints.account_manager import account_manager
+from app.blueprints.college_manager import college_manager
+from app.blueprints.dashboard import dashboard_data
+from app.blueprints.documents import fetch_documents
+from app.blueprints.fetchColleges import fetchColleges
+from app.blueprints.profile import profile_data
+from app.blueprints.records import fetch_records
+from app.blueprints.trashbin import trashbin_data
+from app.blueprints.upload_manager import uploader_manager
 from datetime import timedelta
 import os
 
@@ -85,38 +94,21 @@ def handle_error(e):
 #Register authentication logic
 from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
-#Register fetch datatable source logic
-from .records import fetch_records as records_blueprint
-app.register_blueprint(records_blueprint)
-#Register fetch datatable source logic
-from .documents import fetch_documents as documents_blueprint
-app.register_blueprint(documents_blueprint)
-#text recognition logics
+#Register ocr logic
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)
-#Register get colleges list
-from .fetchColleges import fetchColleges as fetchCollegesBlueprint
-app.register_blueprint(fetchCollegesBlueprint)
-#Register account profile
-from .profile import profile_data as proifileBlueprint
-app.register_blueprint(proifileBlueprint)
-#upload manager logics
-from .upload_manager import uploader_manager as uploader_blueprint
-app.register_blueprint(uploader_blueprint)
-#Register Dashboard
-from .dashboard import dashboard_data as dashboard_dateblueprint
-app.register_blueprint(dashboard_dateblueprint)
-#Register account_manager
-from .account_manager import account_manager as user_controlblueprint
-app.register_blueprint(user_controlblueprint)
-#Register college and courses manager 
-from .college_manager import college_manager as college_managerBlueprint
-app.register_blueprint(college_managerBlueprint)
-from .trashbin import trashbin_data as trashbinBlueprint
-app.register_blueprint(trashbinBlueprint)
 #Reister authenticated accounts
 app.register_blueprint(admin_bp)
 app.register_blueprint(staff_bp)
+app.register_blueprint(account_manager)
+app.register_blueprint(college_manager)
+app.register_blueprint(dashboard_data)
+app.register_blueprint(fetch_documents)
+app.register_blueprint(profile_data)
+app.register_blueprint(fetch_records)
+app.register_blueprint(trashbin_data)
+app.register_blueprint(uploader_manager)
+app.register_blueprint(fetchColleges)
 
 #Non-authentication needed pages
 @app.route('/ards/')

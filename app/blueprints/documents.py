@@ -2,8 +2,8 @@ from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
 import base64
-from . import config
-from .filesize_selector import filesize_format
+from app import config
+from app.filesize_selector import filesize_format
 
 fetch_documents = Blueprint('fetch_documents', __name__, url_prefix='/documents/manage')
 

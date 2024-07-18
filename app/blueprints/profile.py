@@ -4,9 +4,9 @@ from functools import wraps
 import calendar
 from datetime import datetime 
 import base64
-from .uploadProgress import get_countAll
-from .filesize_selector import filesize_format
-from . import config
+from app.uploadProgress import get_countAll
+from app.filesize_selector import filesize_format
+from app import config
 
 profile_data = Blueprint('account', __name__, url_prefix='/account/manage/user-profile')
 

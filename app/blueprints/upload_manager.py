@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from flask import current_app as app
 import base64
 import json
-from . import config 
+from app import config 
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')
 

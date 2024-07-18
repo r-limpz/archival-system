@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, Response, redirect, url_for
 from flask_login import login_required, current_user
 from functools import wraps
 import base64
-from . import config
+from app import config
 
 fetch_records = Blueprint('fetch_records', __name__, url_prefix='/documents/records/tags/manage/data')
 

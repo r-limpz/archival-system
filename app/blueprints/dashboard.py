@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from functools import wraps
 import calendar
 from datetime import datetime, timedelta
-from .uploadProgress import get_countDaily, get_countWeekly, get_countMonthly, get_countYearly
-from .filesize_selector import filesize_format
-from . import config
+from app.uploadProgress import get_countDaily, get_countWeekly, get_countMonthly, get_countYearly
+from app.filesize_selector import filesize_format
+from app import config
 
 dashboard_data = Blueprint('dashboard', __name__, url_prefix='/admin/dashboard/manage/data')
 

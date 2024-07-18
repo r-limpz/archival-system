@@ -1,13 +1,11 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for
 from flask_login import login_required, current_user
 from functools import wraps
-from datetime import datetime
-import secrets
-import string
 from flask import current_app as app
-from . import config, argon2
-from .date_formatter import onlineStatus, sched_accountDeletion
-from .randomizer import generate_key
+from app import config
+import argon2
+from app.date_formatter import onlineStatus, sched_accountDeletion
+from app.randomizer import generate_key
 
 account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/user-manager/manage/data')
 

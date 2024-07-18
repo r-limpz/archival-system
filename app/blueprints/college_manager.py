@@ -1,8 +1,8 @@
 from flask import Blueprint, request, redirect, jsonify, url_for
 from flask_login import login_required, current_user
 from functools import wraps
-from . import config 
-from .college_selector import fetch_course
+from app import config 
+from app.college_selector import fetch_course
 
 college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/colleges/manage/data')
 
