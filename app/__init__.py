@@ -58,6 +58,7 @@ class Anonymous(AnonymousUserMixin):
 
 login_manager.anonymous_user = Anonymous
 
+#refresh session
 @app.before_request
 def update_Session():
     if request.endpoint and request.endpoint != "auth.heartbeat":
@@ -65,6 +66,7 @@ def update_Session():
         app.permanent_session_lifetime = timedelta(minutes=60)
         checkConnection()
 
+#check mySQL server connection and reconnection when die
 def checkConnection():
     try:
         if not config.conn.open:
@@ -94,6 +96,7 @@ def handle_error(e):
 #Register authentication logic
 from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
+
 #Register ocr logic
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)
@@ -120,7 +123,6 @@ def home():
     form = LoginForm()
     return render_template('public/index.html', form=form)
 
-#Role-based, authentication require pages
 #Account page route
 @app.route('/account')
 @login_required

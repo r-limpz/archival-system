@@ -1,49 +1,14 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
-import datetime
 import hashlib
 from . import config, login_manager, argon2, captcha 
-from flask import current_app as app
 from .forms import LoginForm
 from .randomizer import generate_key, generate_token, check_token
 from .deviceInfo import deviceID_selector
 from .user_blocker import is_blocked, loginAttempt
+from .user_logs import loginHistory
 
 auth = Blueprint('auth', __name__)
-
-logged_devices = []
-blocklist = []
-MAX_ATTEMPTS = 10
-BLOCK_THRESHOLD = datetime.timedelta(hours=1) 
-
-#get the user from the array
-def find_device(user):
-    for device in logged_devices:
-        if device['user'] == user:
-            return device
-    return None
-
-def getUserInfo():
-    agent = request.headers.get('User-Agent')
-    deviceID_selector(agent)
-    return deviceID_selector(agent)
-
-#generate a user device information and append to the database login history
-def loginHistory(user_id, session_data):
-    with config.conn.cursor() as cursor:
-        user_deviceInfo = getUserInfo()
-        device = user_deviceInfo['device']
-        browser = user_deviceInfo['browser']
-        os = user_deviceInfo['os']
-        ip_address = user_deviceInfo['ip_address']
-
-        cursor.execute('SELECT * FROM login_history WHERE session_data = %s', (session_data,))
-        current_history = cursor.fetchone()
-     
-        if not current_history:
-            cursor.execute('INSERT INTO login_history(user_id, device, browser, os, ip_address, session_data) VALUES (%s, %s, %s, %s, %s, %s)',
-                           (str(user_id), device, browser, os, ip_address, session_data))
-            config.conn.commit()
 
 #setup query to update database when user session expired
 def session_expired(username):
@@ -135,7 +100,7 @@ def login():
     role = ''
     invalidError = 'User not Found or Invalid Password. Please Try Again!'
     captchaError = 'Please solve the captcha to verify you’re not a robot. Please Try Again!'
-    attemptError = 'Excessive login attempts detected. Your account is temporarily blocked for 1 hour. Please try again later.'
+    attemptError = 'Excessive login attempts detected. You’re temporarily blocked for 1 hour. Please try again later.'
     error = invalidError
     
     if form.validate_on_submit():
@@ -147,7 +112,7 @@ def login():
         user_role = {'1': 'admin', '2': 'staff'}.get(role, 'error')
         role = int(role)
         
-        user_info = getUserInfo()
+        user_info = deviceID_selector(request.headers.get('User-Agent'))
         ipaddress = user_info['ip_address']
         device = hashlib.sha256(ipaddress.encode()).hexdigest()
 
@@ -176,7 +141,7 @@ def login():
                             #generate token for session creation on cookies
                             token = generate_token(user['password'], user['pass_key'], session_id)
                             login_user(User(session_id, username, user_role, token), remember=False)
-                            loginHistory((user['user_id']), session_id)
+                            loginHistory((user['user_id']), session_id, deviceID_selector(request.headers.get('User-Agent')))
                             loginAttempt('reset', request.headers.get('User-Agent'))
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
 
@@ -216,12 +181,12 @@ def logout():
 #setup route for requesting heartbeat session status
 @auth.route('/get_heartbeat/<username>', endpoint='heartbeat')
 def heartbeat(username):
-    if current_user:
+    if current_user and current_user.username == username:
         if current_user.is_authenticated and current_user.is_active:
             return jsonify(session_Inactive = False)
         else:
             print('timeout')
-            if username:
+            if current_user.username:
                 session_expired(username)
             return jsonify(session_Inactive = True)
     else:
