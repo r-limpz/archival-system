@@ -35,9 +35,7 @@
 .manage_user_button {
     transition: opacity 350ms ease-in-out;
 }
-.toast{
-    width: 500px;
-}
+
 option {
     padding: 1rem;
 }
