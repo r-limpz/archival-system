@@ -25,14 +25,16 @@
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate" id="filterSearch" placeholder="Search...">
         </div>
-        <div class="d-flex justify-content-end gap-4 fs-medium p-0" id="filterContainer">
+        <div class="d-flex justify-content-end gap-3 fs-medium p-0" id="filterContainer">
             <div class="d-flex justify-content-between gap-2 p-0">
                 <div class="d-flex" style="width: 100px;">
                     <select id="filterCollege" class="form-select text-truncate fs-medium">
+                        <option value="">College</option>
                     </select>
                 </div>
                 <div class="d-flex" style="width: 100px;">
                     <select id="filterCourse" class="form-select text-truncate fs-medium">
+                        <option value="">Course</option>
                     </select>
                 </div>
                 <div class="d-flex" style="width: 110px;">
@@ -43,15 +45,18 @@
                         <option value="Off-Sem">Off-Sem</option>
                     </select>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end gap-2 fs-medium p-0">
-                <div class="d-flex gap-2">
-                    <span class="fw-medium py-2 flex-grow-1" style="width: 110px;">Academic Year:</span>
+                <div class="d-flex" style="width: 120px;">
                     <select id="filterYear" class="form-select fs-medium" style="width: 120px;">
-                        <option value="">YYYY-YYYY</option>
-                        <option value="1998-1999">1998-1999</option>
+                        <option value="">Year Level</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">Masteral</option>
                     </select>
                 </div>
+            </div>
+            <div class="d-flex justify-content-end fs-medium p-0">
                 <div class="d-flex" style="width: 120px;">
                     <span class="fw-medium p-2">Show</span>
                     <select id="filterShow" name="filterShow" class="form-select fs-medium">
