@@ -133,7 +133,7 @@ def login():
                         cursor.execute('SELECT * FROM session WHERE user_id = %s', (user['user_id']))
                         session_data = cursor.fetchone()
 
-                        if session_data and len(session_data['session_id']) == 256:
+                        if session_data and len(session_data['session_id']) == 128:
                             session_id = session_data['session_id']
                         else:
                             session_id = generate_key()
