@@ -4,7 +4,7 @@ import secrets
 import string
 from flask import current_app as app
 
-def generate_key(length=256):
+def generate_key(length=128):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(characters) for i in range(length))
 
@@ -19,3 +19,7 @@ def check_token(token, data, key, key2):
     expected_token = generate_token(data, key, key2)
     return token == expected_token
 
+def randomChar(length):
+    rand = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+              for i in range(length))
+    return rand

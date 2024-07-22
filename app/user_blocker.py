@@ -58,12 +58,11 @@ def is_blocked(user):
 # Limit the unsuccessful login attempts request of an IP address 
 def loginAttempt(action, agent):
     user_info = deviceID_selector(agent)
-    ipaddress = user_info['ip_address']
-    user = hashlib.sha256(ipaddress.encode()).hexdigest()
+    user = hashlib.sha256(user_info['ip_address'].encode()).hexdigest()
     existing_device = find_device(user)
     
     if is_blocked(user):
-        print(ipaddress, "is currently blocked from making login attempts.")
+        print(user_info['ip_address'], "is currently blocked from making login attempts.")
         return
     
     data = load_data()
