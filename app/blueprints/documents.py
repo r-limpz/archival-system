@@ -131,7 +131,7 @@ def documents_data():
             if filterCourse:
                 search_query += f" and (Course = '{filterCourse}')"
             if filterYear:
-                search_query += f" and (SchoolYear = '{filterYear}')"
+                search_query += f" and (year_level = '{filterYear}')"
             if filterSemester:
                 search_query += f" and (Semester = '{filterSemester}')"  
 
