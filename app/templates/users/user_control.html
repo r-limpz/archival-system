@@ -10,31 +10,29 @@
     <div class="page-header-title p-2 mb-2">
         <h5 class="fw-bold">User Manager</h5>
     </div>
-    <div class="d-flex justify-content-end">
-        <div class="mx-3" style="width: 30vw;min-width:400px;">
-            <input type="text" name="filterCards" class="rounded-3 mx-3 form-control border-1 fs-medium" id="filterCards"
+    <div class="d-flex justify-content-end gap-3">
+        <div class="me-5" style="width: 30vw;min-width:400px;">
+            <input type="text" name="filterCards" class="form-control w-full text-truncate rounded-3 mx-3 border-1" id="filterCards"
                 oninput="searchCards()" placeholder="Search for Account...">
         </div>
-        <div class="mx-4"></div>
-        <div class="d-flex justify-content-between">
-            <div style="max-width: 350px;">
-                <select class='form-select rounded-3 text-start fs-medium' id="changeDisplay-roles" style="width: 170px;">
+        
+        <div class="d-flex justify-content-between gap-3 p-0">
+            <div class="d-flex" style="max-width: 350px;">
+                <select class='form-select fs-medium rounded-3' id="changeDisplay-roles" style="width: 150px;">
                     <option value="any"> All Users</option>
                     <option value="staff"> Staff Accounts</option>
                     <option value="admin"> Admin Accounts</option>
                 </select>
             </div>
-            <div class="mx-2"></div>
-            <div style="max-width: 320px;">
-                <select class='form-select rounded-3 text-start fs-medium' id="changeDisplay-status" style="width: 140px;">
+            <div class="d-flex" style="max-width: 320px;">
+                <select class='form-select fs-medium rounded-3' id="changeDisplay-status" style="width: 130px;">
                     <option value="all"> All Statuses </option>
                     <option value="active"> Active</option>
                     <option value="deactivated"> Deactivated</option>
                 </select>
             </div>
         </div>
-        <div class="mx-3"></div>
-        <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
+        <button class="btn-red fs-medium fw-medium px-3" data-bs-toggle="modal" data-bs-target="#addUser_modal"> <span
                 class="fa-solid fa-user-plus me-2"> </span> User</button>
     </div>
 
