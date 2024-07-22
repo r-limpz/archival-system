@@ -211,36 +211,20 @@
                     orderable: true,
                     wrap: true,
                     class: 'text-start',
+                    width: '200px',
                     "render": function (data, type, row) {
                         const file_name = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + file_name + `</div>`;
+                        return `<span class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + file_name + `</span>`;
                     }
                 },
-                {
-                    data: 'File_size',
-                    title: 'File size',
-                    orderable: true,
-                    wrap: true,
-                    className: 'text-center',
-                    width: '100px',
-                    visible: visFilesize,
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return data;
-                        }
-                        else {
-                            return '';
-                        }
-                    }
-                },
-                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center' },
-                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '70px' },
+                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center', width: '70px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '90px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
                     data: 'Uploader',
-                    title: ' ',
+                    title: 'Uploader',
                     orderable: false,
                     wrap: false,
                     visible: true,
@@ -276,6 +260,16 @@
                                             </a>`;
 
                         return `<div class="d-flex fs-small align-items-center">` + editFile + ' ' + deleteFile + `</div>`;
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    targets: 6, // index of the 'Uploader' column
+                    visible: false,
+                    
+                    render: function (data, type, row) {
+                        return data ? true : false;
                     }
                 }
             ],
