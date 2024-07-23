@@ -1,6 +1,7 @@
 from flask import current_app as app
 from flask import jsonify
 import pytesseract
+import os
 from PIL import Image
 from app.analyzer.name_formatter import detectStudentNames
 
@@ -17,7 +18,15 @@ def ocr_scanner(filepath):
         raw_names = text.split('\n')
         students = detectStudentNames(raw_names)  # Assuming detectStudentNames is defined elsewhere
         
-        return students
+        if students:
+            return students
         
     except Exception as e:
         return jsonify({'error': str(e)})
+
+def deleteFile(filepath):
+    if os.path.exists(filepath):
+        os.remove(filepath)
+        return True
+    
+    return False
