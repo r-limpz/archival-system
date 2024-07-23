@@ -1,11 +1,8 @@
 from flask import current_app as app
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
-import pytesseract
-from PIL import Image
-import re
-from . import name_formatter
 from app.analyzer.detectTable import CropTable
+from app.analyzer.text_recognition import ocr_scanner
 
 ocr_App = Blueprint('ocr', __name__)
 
@@ -32,14 +29,11 @@ def scanner():
             return "No file selected or unsupported file type"
     
     try:
-        CropTable(file)
-        
-        img = Image.open(file)
-        text = pytesseract.image_to_string(img)
-        raw_names = text.split('\n')
-        students = name_formatter.detectStudentNames(raw_names)
-
-        return jsonify([student.__dict__ for student in students])
+        crop_image = CropTable(file)
+        if crop_image:
+            students = ocr_scanner(crop_image)
+            
+            return jsonify([student.__dict__ for student in students])
         
     except Exception as e:
         return jsonify(e)

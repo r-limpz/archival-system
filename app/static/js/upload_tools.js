@@ -56,11 +56,10 @@ function clearEmptyRows() {
         let firstnameInput = row.querySelector('input[name="student_firstname"]');
 
         // Check if both surname and firstname are empty
-        if (surnameInput.value.trim() === "" || firstnameInput.value.trim() === "") {
+        if (surnameInput.value.trim() === "" && firstnameInput.value.trim() === "") {
             row.remove();
         }
     }
-    checkForEmptyTable();
 }
 
 function noSelectedData(event, message, buttonFunction) {
@@ -76,7 +75,7 @@ function noSelectedData(event, message, buttonFunction) {
         </div>
         <div class="modal-footer">
             <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-            <button id="${buttonFunction}" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            <button onclick="${buttonFunction}" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
                 Confirm
             </button>
         </div>
@@ -97,7 +96,7 @@ function removeRows(removeAll) {
         });
         showToast('Success!', 'Removed selected rows successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
     }
-
+    checkForEmptyTable()
     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
 }
 
@@ -126,7 +125,6 @@ function clearTextRows(clearAll) {
     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
 }
 
-
 function handleRemoveOrClear(event) {
     var checkboxes = document.querySelectorAll('tbody .checkbox:checked');
     var selectAll = document.querySelector('#select-all');
@@ -134,10 +132,10 @@ function handleRemoveOrClear(event) {
     if (checkboxes.length === 0) {
         if (event.target.id === 'removeButton') {
             $('#deleteSelctedList_confirmation').modal('hide');
-            noSelectedData('remove', '  Remove all rows instead?', 'removeAllRows');
+            noSelectedData('remove', '  Remove all rows instead?', 'removeRows(true)');
         } else if (event.target.id === 'clearButton') {
             $('#clearSelctedList_confirmation').modal('hide');
-            noSelectedData('clear', '  Clear all rows instead?', 'clearAllRows');
+            noSelectedData('clear', '  Clear all rows instead?', 'clearTextRows(true)');
         }
     } else {
         if (event.target.id === 'removeButton') {
@@ -150,9 +148,6 @@ function handleRemoveOrClear(event) {
     selectAll.checked = false;
     checkForEmptyTable();
 }
-
-document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
-document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
 
 // Event listener for the "Select All" checkbox
 document.querySelector('#select-all').addEventListener('change', function () {
@@ -221,3 +216,7 @@ function populateResults(students) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
+    document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
+});
