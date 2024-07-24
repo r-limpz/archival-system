@@ -245,7 +245,7 @@
 
         if (file) {
             $.ajax({
-                url: '/scanner',
+                url: '/scanner/auto/true',
                 type: 'POST',
                 data: formData,
                 processData: false,  // Tell jQuery not to process the data
@@ -330,7 +330,7 @@
             formData.append('document_image', blob, 'cropped_image.jpg');
 
             $.ajax({
-                url: '/scanner',
+                url: '/scanner/auto/false',
                 type: 'POST',
                 data: formData,
                 processData: false,  // Tell jQuery not to process the data
