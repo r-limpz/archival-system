@@ -1,10 +1,5 @@
 from paddleocr import PaddleOCR
-import numpy as np
-import pandas as pd
-import os
 import re
-from app.analyzer.name_formatter import detectStudentNames
-from app.analyzer.textFilter import filterdata
 
 def analyzerText(filepath):
     try:
@@ -25,13 +20,13 @@ def header_removal(output):
             txts = [line[1][0] for line in output]
             scores = [line[1][1] for line in output]
 
-            print('Scanning Result:', len(txts))
+            print('Scanning Result: ', len(txts))
 
             header_items = [
                 'report of rating', 'name in alphabetical order', 'report', 'rating',
                 'mid-term', 'midterm', 'mid term', 'final-term', 'finalterm', 'final term',
                 'finalgrade', 'final-grade', 'final grade', 'remarks', 'remark',
-                'surename first', 'surename', '(surename)'
+                'surename first', 'surename', '(surename)', 'surname', 'surname first', '(surname)'
             ]
 
             # Convert header items to lower case for case insensitive comparison
@@ -51,7 +46,7 @@ def header_removal(output):
                 del txts[idx]
                 del scores[idx]
 
-            print('Removed Entries:', len(indices_to_delete))
+            print('Removed Entries: ', len(indices_to_delete))
             return {"boxes": boxes, "txts": txts, "scores": scores}
         
     except Exception as e:
@@ -65,22 +60,4 @@ def variableSetup(output):
 
     except Exception as e:
         print(f"variableSetup Error: {e}")
-        return None
-
-def extractText(file):
-    image_path = "./app/analyzer/temp.jpg"
-    file.save(image_path)
-
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_directory = os.path.join(script_dir, "temp.jpg")
-
-    try:
-        output = analyzerText(file_directory)
-        data = variableSetup(output)
-        raw_names = filterdata(data['txts'],'1d')
-        print('Filtering raw data',len(raw_names))
-        return detectStudentNames(raw_names)
-    
-    except Exception as e:
-        print(f"extractText error: {e}")
         return None

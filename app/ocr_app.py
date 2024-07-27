@@ -3,7 +3,6 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required
 from app.analyzer.detectTable import CropTable
 from app.analyzer.tableRecognition import tableDataAnalyzer
-from app.analyzer.text_recognition import extractText
 
 ocr_App = Blueprint('ocr', __name__)
 
@@ -39,7 +38,9 @@ def scanner(auto):
                 
         else:
             print("manual-scan")
-            students = extractText(file)
+            image_path = "./app/analyzer/temp.jpg"
+            file.save(image_path)
+            students = tableDataAnalyzer("temp.jpg")
             
         
         if students:

@@ -90,7 +90,7 @@ def fetchStudentList(out_array):
             for index in sorted(empty_columns, reverse=True): 
                 del row[index] #delete determine column index for each rows
 
-        raw_names = filterdata(out_array, '2d')
+        raw_names = filterdata(out_array)
 
         if raw_names:
             students = detectStudentNames(raw_names)
