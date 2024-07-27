@@ -1,10 +1,10 @@
 import cv2
 import os
 import tensorflow as tf
-from paddleocr import PaddleOCR, draw_ocr
 import numpy as np
 from app.analyzer.name_formatter import detectStudentNames
 from app.analyzer.text_recognition import analyzerText, variableSetup
+from app.analyzer.textFilter import filterdata
 import pandas as pd
 
 def file_manager(image_path):
@@ -62,15 +62,6 @@ def columnDetector(vert_boxes, scores, iou_threshold):
     except Exception as e:
         print('columnDetector Error: ',e)
 
-def setupBoxOrder(vert_lines, vert_boxes):
-
-    unordered_boxes = []
-    for i in vert_lines:
-        print(vert_boxes[i])
-        unordered_boxes.append(vert_boxes[i][0])
-
-    return np.argsort(unordered_boxes)
-
 def intersection(box_1, box_2):
     return[box_2[0], box_1[1], box_2[2], box_1[3]]
 
@@ -99,7 +90,7 @@ def fetchStudentList(out_array):
             for index in sorted(empty_columns, reverse=True): 
                 del row[index] #delete determine column index for each rows
 
-        raw_names = [row[0] for row in out_array[1:] if row[0]]
+        raw_names = filterdata(out_array, '2d')
 
         if raw_names:
             students = detectStudentNames(raw_names)
@@ -151,8 +142,6 @@ def tableDataAnalyzer(image_path):
                                     if(iou(resultant, the_box) > 0.1):
                                         if b not in dupl_box:
                                             out_array[i][j] = txts[b]
-
-                        print(out_array)
 
                         return fetchStudentList(out_array)
         return None

@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 
 def removeUnwantedCharacters(raw_inputArray):
     filtered_studentNames = [
@@ -71,54 +72,84 @@ def isvalidEntry(entries):
 
     return None
 
-def filterdata(out_array):
+def redundancyRemoval(row):
+    df = pd.DataFrame({'col': row})
+    # using drop_duplicates() method
+    df.drop_duplicates(inplace=True)
+    # converting back to list
+    print(df['col'].tolist())
+    return df['col'].tolist()
+
+def filterdata(out_array, typeData):
     try:
         # Define header items, grades, and remarks
         header_items = [
             'report of rating', 'name in alphabetical order', 'report', 'rating',
             'mid-term', 'midterm', 'mid term', 'final-term', 'finalterm', 'final term',
             'finalgrade', 'final-grade', 'final grade', 'remarks', 'remark',
-            'surename first', 'surename'
+            'surename first', 'surename', '(surename)'
         ]
         grades = ['1.0', '1.25', '1.5', '1.75', '2.0', '2.25', '2.5', '2.75', '3.0', 'inc']
         remarks = ['pass', 'passed', 'fail', 'inc', 'failed',
                    'no grades', 'dropped', 'dropped.', 'no final exam', 'no final exam.', 'exam', 'no exam', 'final',
                    'no requirement', 'no requirements']
         
-        # Initialize temporary list for filtered data
-        tempList = []
-        entries = []
+        if typeData =="1d":
+            # Initialize temporary list for filtered data
+            tempList = []
+            entries = []
+            
+            # Process each item in the out_array
+            if len(out_array) > 0:
+                for name in out_array:
+                    if name:
+                        # Normalize and convert name to lowercase for comparison
+                        item = re.sub(r'\s+', ' ', name).strip().lower()
 
-        # Process each item in the out_array
-        if len(out_array) > 0:
-            for name in out_array:
-                if name:
-                    # Normalize and convert name to lowercase for comparison
-                    item = re.sub(r'\s+', ' ', name).strip().lower()
+                        if item not in [header for header in header_items]:
+                            if item in grades or item in remarks:
+                                tempList.append("")
+                            else:
+                                tempList.append(name)
 
-                    if item not in [header for header in header_items]:
-                        if item in grades or item in remarks:
-                            tempList.append("")
-                        else:
-                            tempList.append(name)
+                # Concatenate adjacent items from tempList into entries
+                for i in range(len(tempList)):
+                    current = tempList[i]
 
-            # Concatenate adjacent items from tempList into entries
-            for i in range(len(tempList)):
-                current = tempList[i]
-
-                if current:
-                    # Concatenate with the next element if within bounds and not empty
-                    if i < len(tempList) - 1 and tempList[i + 1]:
-                        name = current + " " + tempList[i + 1]
-                        if name not in entries:
-                            entries.append(name)
-                        
-                    # Add the current item itself if it's not empty and not added before
-                    elif current not in entries:
-                        entries.append(current)
+                    if current:
+                        # Concatenate with the next element if within bounds and not empty
+                        if i < len(tempList) - 1 and tempList[i + 1]:
+                            name = current + " " + tempList[i + 1]
+                            if name not in entries:
+                                entries.append(name)
+                            
+                        # Add the current item itself if it's not empty and not added before
+                        elif current not in entries:
+                            entries.append(current)
+                
+                print('Processing raw data',len(entries))
+                return isvalidEntry(entries)
         
-        print('Processing raw data',len(entries))
-        return isvalidEntry(entries)
+        if typeData =="2d":
+            entries = []
+
+            for row in out_array:
+                filtered_row = []
+                newData = redundancyRemoval(row)
+                for i in range(len(newData)):
+                    item = re.sub(r'\s+', ' ', newData[i]).strip().lower()
+                    # Check if both columns are not in grades or remarks
+                    if item not in grades and item not in remarks:
+                        # If there are two different columns, join them as the name
+                        filtered_row.append(newData[i])
+
+                joined_row = ', '.join(filtered_row)
+                entries.append(joined_row)
+                
+                print(joined_row)
+
+            print('Processing raw data',len(entries))
+            return isvalidEntry(entries)
 
     except Exception as e:
         print(f"An error occurred: {e}")
