@@ -45,7 +45,6 @@ def extractText(file):
         data = variableSetup(output)
         raw_names = filterdata(data['txts'])
         print('Filtering raw data',len(raw_names))
-        print(raw_names)
         return detectStudentNames(raw_names)
     
     except Exception as e:
