@@ -25,7 +25,7 @@ def header_removal(output):
             txts = [line[1][0] for line in output]
             scores = [line[1][1] for line in output]
 
-            print('raw :', len(txts))
+            print('Scanning Result:', len(txts))
 
             header_items = [
                 'report of rating', 'name in alphabetical order', 'report', 'rating',
@@ -51,7 +51,7 @@ def header_removal(output):
                 del txts[idx]
                 del scores[idx]
 
-            print('new :', len(txts))
+            print('Removed Entries:', len(indices_to_delete))
             return {"boxes": boxes, "txts": txts, "scores": scores}
         
     except Exception as e:

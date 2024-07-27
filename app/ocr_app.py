@@ -43,6 +43,7 @@ def scanner(auto):
             
         
         if students:
+            print('Names detected:',len(students))
             return jsonify([student.__dict__ for student in students])
         else:
             return None

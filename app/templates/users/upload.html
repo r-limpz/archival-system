@@ -235,6 +235,9 @@
     });
 </script>
 <script>
+    var loadingAnimationHTML = ``;
+</script>
+<script>
     let ocr_resultsList = [];
 
     function autoScanOCR() {
@@ -324,6 +327,10 @@
     });
 
     $(document).on('click', '#crop_customOcr', function (ev) {
+        let button = $(this);
+        button.prop('disabled', true); // Disable the button to prevent multiple clicks
+        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span> Scanning...</span>');
+
         canvas = cropper.getCroppedCanvas();
         canvas.toBlob(function (blob) {
             let formData = new FormData();
@@ -333,18 +340,16 @@
                 url: '/scanner/auto/false',
                 type: 'POST',
                 data: formData,
-                processData: false,  // Tell jQuery not to process the data
-                contentType: false,  // Tell jQuery not to set contentType
+                processData: false,
+                contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                    }
-                    else {
+                    } else {
                         if (data.length > 0) {
                             populateResults(data);
-                            //$('#ManualScanImageModal').modal('hide');
                             showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         } else {
@@ -357,9 +362,13 @@
                     console.error(error);
                     let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
                     modal.show();
+                },
+                complete: function () {
+                    // Reset button state and text after request completes
+                    button.html('Extract Text'); // Restore original button text
+                    button.prop('disabled', false); // Re-enable the button
                 }
             });
-
         });
     });
 

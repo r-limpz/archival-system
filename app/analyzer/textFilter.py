@@ -12,18 +12,23 @@ def removeUnwantedCharacters(raw_inputArray):
         if name.startswith("."):
             name = name[1:]
 
-        # Insert a comma before uppercase letters if no comma is found
-        if ',' not in name:
-            name = re.sub(r'(?<!^)(?<!\s)(?=[A-Z])', ',', name)
-        
         # Replace periods with commas if both the character before and after the period have length >= 3
         if '.' in name:
             name_parts = name.split('.')
-            if len(name_parts) > 1 and len(name_parts[0]) >= 3 and len(name_parts[1]) >= 3:
-                name = name.replace('.', ',')
+            if len(name_parts) > 1:
+                # Check if the period should be replaced by a comma
+                if len(name_parts[0]) >= 3 and len(name_parts[1]) >= 3:
+                    name = name.replace('.', ',')
+                else:
+                    name = ' '.join(name_parts)  # Join with space if conditions are not met
+
+        # Insert a comma before uppercase letters if no comma is found
+        if ',' not in name:
+            name = re.sub(r'(?<!^)(?<!\s)(?=[A-Z])', ',', name)
 
         # Final cleanup: remove unwanted characters, replace multiple spaces with single space, and title case
         name = re.sub(r'\s+', ' ', re.sub(r',', ' , ', re.sub(r'[^a-zA-ZÑñ.,]', ' ', name))).strip().title()
+
         updated_studentNames.append(name)
         
     return updated_studentNames
@@ -77,7 +82,6 @@ def redundancyRemoval(row):
     # using drop_duplicates() method
     df.drop_duplicates(inplace=True)
     # converting back to list
-    print(df['col'].tolist())
     return df['col'].tolist()
 
 def filterdata(out_array, typeData):
@@ -126,8 +130,9 @@ def filterdata(out_array, typeData):
                         # Add the current item itself if it's not empty and not added before
                         elif current not in entries:
                             entries.append(current)
-                
-                print('Processing raw data',len(entries))
+                            
+                print('No# of Entries:',len(out_array))
+                print('Processing Entries:',len(entries))
                 return isvalidEntry(entries)
         
         if typeData =="2d":
@@ -143,12 +148,11 @@ def filterdata(out_array, typeData):
                         # If there are two different columns, join them as the name
                         filtered_row.append(newData[i])
 
-                joined_row = ', '.join(filtered_row)
+                joined_row = ' '.join(filtered_row)
                 entries.append(joined_row)
-                
-                print(joined_row)
 
-            print('Processing raw data',len(entries))
+            print('No# of Entries:',len(out_array))
+            print('Processing Entries:',len(entries))
             return isvalidEntry(entries)
 
     except Exception as e:
