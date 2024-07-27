@@ -1,11 +1,9 @@
 from flask import current_app as app
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
-import pytesseract
-from PIL import Image
 from app.analyzer.detectTable import CropTable
 from app.analyzer.tableRecognition import tableDataAnalyzer
-from app.analyzer.name_formatter import detectStudentNames
+from app.analyzer.text_recognition import extractText
 
 ocr_App = Blueprint('ocr', __name__)
 
@@ -33,19 +31,17 @@ def scanner(auto):
     
     try:
         if auto == "true":
-                print("auto-scan")
-                crop_image = CropTable(file)
+            print("auto-scan")
+            crop_image = CropTable(file)
 
-                if crop_image:
-                    students = tableDataAnalyzer()
+            if crop_image:
+                students = tableDataAnalyzer(crop_image)
                 
         else:
             print("manual-scan")
-            img = Image.open(file)
-            text = pytesseract.image_to_string(img)
-            raw_names = text.split('\n')
-            students = detectStudentNames(raw_names)
+            students = extractText(file)
             
+        
         if students:
             return jsonify([student.__dict__ for student in students])
         else:

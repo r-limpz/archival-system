@@ -25,11 +25,11 @@ def CropTable(image):
         # Cropping
         cropped_image = img[y1:y2, x1:x2]
         cropped_image = Image.fromarray(cropped_image)
-        file_path = "./app/analyzer/yolo_crop.jpg"
+        file_path = "./app/analyzer/temp.jpg"
         
         try:
             cropped_image.save(file_path)
-            return file_path
+            return "temp.jpg"
         
         except Exception as e:
             print("Error saving cropped image:", e)
