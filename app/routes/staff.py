@@ -1,18 +1,9 @@
 from flask import Blueprint,render_template, redirect, url_for
 from functools import wraps
 from flask_login import login_required, current_user
+from app.secure.authorization import staff_required
 
 staff_bp = Blueprint('staff', __name__, url_prefix='/ards/staff')
-
-def staff_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'staff' and not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'admin':
-            return redirect(url_for('admin.dashboard'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 @staff_bp.route('/records')
 @login_required
