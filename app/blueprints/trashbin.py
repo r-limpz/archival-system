@@ -1,23 +1,12 @@
-from flask import Blueprint, request, jsonify, Response, redirect, url_for
-from flask_login import login_required, current_user
-from functools import wraps
+from flask import Blueprint, request, jsonify, Response
+from flask_login import login_required
 import base64
 from app import config
-from app.filesize_selector import filesize_format
-from app.date_formatter import get_deletionTime
+from app.tools.filesize_selector import filesize_format
+from app.tools.date_formatter import get_deletionTime
+from app.secure.authorization import admin_required
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
-
-#decorator for authorization role based
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'admin' or not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'staff':
-            return redirect(url_for('staff.records'))
-        return f(*args, **kwargs)
-    return decorated_function
     
 def restoreDocumentFile(document_id):
     try:

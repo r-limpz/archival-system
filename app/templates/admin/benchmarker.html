@@ -1,0 +1,276 @@
+{% extends 'layout/users.html' %}
+{% block title %} Benchmark | ARDS{% endblock %}
+{% block style %}
+<script src="{{ url_for('static', filename='node_modules/chart.js/dist/chart.umd.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='node_modules/cropperjs/dist/cropper.min.css')}}">
+<script src="{{ url_for('static', filename='node_modules/cropperjs/dist/cropper.min.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/loadingAnimation.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="page-header-title p-2 mb-2">
+        <h5 class="fw-bold">Benchmark</h5>
+        <p class="fs-medium fst-italic"> A tool to determine the accuracy</p>
+    </div>
+    <div class="d-flex justify-content-between gap-4" style="height: calc(90vh - 3rem ); min-height: 650px;">
+        <div class="flex-grow-1 p-2">
+            <div class="rounded-3 h-100">
+                <div class="h-100 w-100 d-flex justify-content-center align-items-center dashed-border" id="dropzone">
+                    <form action="/scanner" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <input type="file" name="document_image" id="document_image" class="d-none" accept="image/*">
+                    </form>
+                    <div id="previewContainer" class="d-none border">
+                        <img class="m-auto" id="preview" alt="Preview">
+                        <div class="d-flex justify-content-end gap-3 fs-medium"
+                            style="position: absolute; right: 1rem; bottom: 0.5rem">
+                            <button id="cancel_image" class="border-1 fw-medium px-4">Cancel</button>
+                            <button id="continueButton" class="border-0 fw-medium btn-green px-4"> Save </button>
+                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none" data-bs-toggle="modal"
+                                data-bs-target="#ocr_confirmation">
+                                <span class="fa-solid fa-expand me-3"></span> Scan Text
+                            </button>
+                        </div>
+                    </div>
+                    <div class="drag-text text-center" id="dragText">
+                        <div><span class="fa-regular fa-image fw-bold p-2 mb-3" style="font-size: 100px;"></span></div>
+                        <h4 class="fw-bold mx-4">Drag & Drop your Image here </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="modal fade" id="ocr_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        role="dialog" aria-labelledby="ocr_confirmation" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content mx-3">
+                <div class="modal-header border-0 d-flex justify-content-between align-items-center p-0">
+                    <h5 class="fw-bold m-3">Scan the image</h5>
+                    <button type="button" class="fs-small p-2 fa-solid fa-x" data-bs-dismiss="modal"
+                        style="margin-top: -1rem; margin-right: 0.5rem;"> </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <p class="ms-2">Automatic extract student names from the table or manually crop the table?</p>
+                </div>
+                <div class="modal-footer mx-3">
+                    <button type="button" id="ocr_manual" class="fs-medium fw-medium px-4 me-3" data-bs-toggle="modal"
+                        data-bs-target="#ManualScanImageModal">Manual</button>
+                    <button type="button" id="ocr_auto" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                        Auto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="ManualScanImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        role="dialog" aria-labelledby="ManualScanImageModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body mx-3">
+                    <div class="">
+                        <h5 class="fw-bold my-3"> Crop Image </h5>
+                        <div id='crop-image-container' style="height: 500px;">
+                            <img id="crop_imageSrc" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer mx-3">
+                    <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+                    <button id="crop_customOcr" class="btn-green fs-medium fw-medium px-4">
+                        Extrat text
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="error_ocr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog"
+        aria-labelledby="error_ocr" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content mx-3 border-orange border-3">
+                <div class="modal-body ">
+                    <div class="mx-3">
+                        <h5 class="fw-bold my-3">No data student names been detected</h5>
+                        <p class="ms-2">Proceed to manual scan instead?</p>
+                    </div>
+                </div>
+                <div class="modal-footer mx-3">
+                    <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+                    <button type="button" id="ocr_auto" class="btn-orange fs-medium fw-medium px-4" data-bs-toggle="modal"
+                        data-bs-target="#ManualScanImageModal">
+                        Manual Scan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="scanningAnimation" data-bs-keyboard="false" tabindex="-1" role="dialog"
+        aria-labelledby="scanningAnimation" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content mx-3 bg-transparent border-0">
+                <div class="modal-body border-0 bg-transparent">
+                    <div class="scannerLoading">
+                        <div class="scanningAnimation">
+                            <div class="dot-animation bg-danger"></div>
+                            <div class="dot-animation bg-warning"></div>
+                            <div class="dot-animation bg-def-green"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock%}
+
+{% block scripts %}
+<script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
+<script src="{{url_for('static',filename='js/drag_drop.js')}}"></script>
+<script>
+    let ocr_resultsList = [];
+
+    function autoScanOCR() {
+        var formData = new FormData();
+        var file = $('#document_image')[0].files[0];
+        formData.append('document_image', file);
+
+        if (file) {
+            let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
+            scanningModal.show();
+
+            $.ajax({
+                url: '/scanner/auto/true',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    if (data === 'No file uploaded') {
+                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    } else {
+                        if (data.length > 0) {
+                            populateResults(data);
+                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        } else {
+                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            modal.show();
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                    modal.show();
+                },
+                complete: function () {
+                    scanningModal.hide();
+                }
+            });
+        }
+    }
+
+    $('#ocr_auto').on('click', function (event) {
+        event.stopPropagation();
+        autoScanOCR();
+    });
+</script>
+<script>
+    var cropImage = document.getElementById('crop_imageSrc');
+    var cropper, reader, file;
+
+    $(document).ready(function () {
+
+        $('#ocr_manual').on('click', function () {
+            var fileInput = $("#document_image")[0];
+            var files = fileInput.files;
+
+            if (files && files.length > 0) {
+                var file = files[0];
+                var done = function (url) {
+                    cropImage.src = url;
+                    $('#ManualScanImageModal').modal('show');
+                };
+
+                if (URL) {
+                    done(URL.createObjectURL(file));
+                } else if (FileReader) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        done(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                alert("Please select an image to crop.");
+            }
+        });
+    });
+
+    $('#ManualScanImageModal').on('shown.bs.modal', function () {
+        cropper = new Cropper(cropImage, {
+            aspectRatio: 0,
+            viewMode: 1,
+        });
+    }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+    });
+
+    $(document).on('click', '#crop_customOcr', function (ev) {
+        let button = $(this);
+        button.prop('disabled', true); // Disable the button to prevent multiple clicks
+        button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span> Scanning...</span>');
+
+        canvas = cropper.getCroppedCanvas();
+        canvas.toBlob(function (blob) {
+            let formData = new FormData();
+            formData.append('document_image', blob, 'cropped_image.jpg');
+
+            $.ajax({
+                url: '/scanner/auto/false',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                success: function (data) {
+                    if (data === 'No file uploaded') {
+                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    } else {
+                        if (data.length > 0) {
+                            populateResults(data);
+                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        } else {
+                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            modal.show();
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error(error);
+                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                    modal.show();
+                },
+                complete: function () {
+                    // Reset button state and text after request completes
+                    button.html('Extract Text'); // Restore original button text
+                    button.prop('disabled', false); // Re-enable the button
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}

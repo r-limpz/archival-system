@@ -1,4 +1,4 @@
-from . import config
+from app import config
 import hashlib
 
 #account history login

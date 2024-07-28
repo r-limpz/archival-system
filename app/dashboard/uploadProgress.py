@@ -1,6 +1,6 @@
-from . import config
 import calendar
 from datetime import timedelta
+from app import config
 
 def get_countAll(account):
     try:

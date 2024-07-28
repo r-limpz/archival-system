@@ -170,6 +170,23 @@
   </div>
 </div>
 
+<div class="modal fade" id="scanningAnimation" data-bs-keyboard="false" tabindex="-1" role="dialog"
+  aria-labelledby="scanningAnimation" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content mx-3 bg-transparent border-0">
+      <div class="modal-body border-0 bg-transparent">
+      <div class="scannerLoading">
+        <div class="scanningAnimation">
+          <div class="dot-animation bg-danger"></div>
+          <div class="dot-animation bg-warning"></div>
+          <div class="dot-animation bg-def-green"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endif %}
 {% if request.path == url_for('staff.records') or request.path == url_for('admin.records')%}
 

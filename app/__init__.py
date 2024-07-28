@@ -5,8 +5,8 @@ from flask_login import LoginManager, login_required, current_user, AnonymousUse
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from werkzeug.exceptions import HTTPException
-from .forms import LoginForm
-from . import config
+from app.secure.login_form import LoginForm
+from app import config
 from app.routes.admin import admin_bp
 from app.routes.staff import staff_bp
 from app.blueprints.account_manager import account_manager
@@ -94,9 +94,8 @@ def handle_error(e):
     return render_template('errors/error.html', error_number=code_message, error_message=description), code
 
 #Register authentication logic
-from .auth import auth as auth_blueprint
+from app.auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
-
 #Register ocr logic
 from .ocr_app import ocr_App as ocr_blueprint
 app.register_blueprint(ocr_blueprint)

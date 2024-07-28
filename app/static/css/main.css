@@ -439,6 +439,9 @@ input {
     background-color: var(--bg-dark);
 }
 
+.bg-def-green{
+    background-color: var(--fc-green);
+}
 /* buttons */
 button {
     padding: var(--button-p-default);

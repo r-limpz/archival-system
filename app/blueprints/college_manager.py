@@ -1,21 +1,10 @@
-from flask import Blueprint, request, redirect, jsonify, url_for
-from flask_login import login_required, current_user
-from functools import wraps
+from flask import Blueprint, request, jsonify
+from flask_login import login_required
 from app import config 
 from app.college_selector import fetch_course
+from app.secure.authorization import admin_required
 
 college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/colleges/manage/data')
-
-#decorator for authorization role based
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'admin' or not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'staff':
-            return redirect(url_for('staff.records'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 #setup the college object class for the college information object
 class Colleges:

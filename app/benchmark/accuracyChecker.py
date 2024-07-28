@@ -101,6 +101,6 @@ def benhmarker(corrected_data, ocr_data):
         else:
             average_CER = 0.0  # Handle case where no CER values were appended
         
-        return {"average_WER": average_WER, "average_WER":average_CER}
+        return {"average_WER": average_WER, "average_CER":average_CER}
                 
     return None 

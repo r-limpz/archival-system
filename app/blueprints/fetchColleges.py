@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
 from app.college_selector import fetch_course
+from app.secure.authorization import authenticate
 
 fetchColleges = Blueprint('fetchCollege_data', __name__)
 
@@ -13,6 +14,7 @@ class Colleges:
 
 @fetchColleges.route('/fetch_college/courseList/data', methods=['GET'])
 @login_required
+@authenticate
 def display_colcourse():
     if current_user.is_authenticated and (current_user.role == 'admin' or current_user.role == 'staff') and current_user.is_active:
         collegeCourses_list = fetch_course('all')

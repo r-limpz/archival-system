@@ -1,24 +1,13 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for
-from flask_login import login_required, current_user
-from functools import wraps
+from flask_login import login_required
 from flask import current_app as app
 from app import config
 import argon2
-from app.date_formatter import onlineStatus, sched_accountDeletion
-from app.randomizer import generate_key
+from app.tools.date_formatter import onlineStatus, sched_accountDeletion
+from app.secure.randomizer import generate_key
+from app.secure.authorization import admin_required
 
 account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/user-manager/manage/data')
-
-# decorator for authorization role based
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'admin' and not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'staff':
-            return redirect(url_for('staff.records'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 # role format function
 def get_role(role):

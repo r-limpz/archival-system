@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{url_for('static', filename='node_modules/cropperjs/dist/cropper.min.css')}}">
 <script src="{{ url_for('static', filename='node_modules/cropperjs/dist/cropper.min.js') }}"></script>
 <link rel="stylesheet" href="{{url_for('static', filename='css/upload.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/loadingAnimation.css')}}">
 {% endblock %}
 {% block content %}
 
@@ -235,31 +236,29 @@
     });
 </script>
 <script>
-    var loadingAnimationHTML = ``;
-</script>
-<script>
     let ocr_resultsList = [];
 
     function autoScanOCR() {
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
-
         formData.append('document_image', file);
 
         if (file) {
+            let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
+            scanningModal.show();
+
             $.ajax({
                 url: '/scanner/auto/true',
                 type: 'POST',
                 data: formData,
-                processData: false,  // Tell jQuery not to process the data
-                contentType: false,  // Tell jQuery not to set contentType
+                processData: false,
+                contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                    }
-                    else {
+                    } else {
                         if (data.length > 0) {
                             populateResults(data);
                             showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
@@ -274,6 +273,9 @@
                     console.error(error);
                     let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
                     modal.show();
+                },
+                complete: function () {
+                    scanningModal.hide();
                 }
             });
         }

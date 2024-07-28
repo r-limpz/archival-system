@@ -1,12 +1,12 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 import hashlib
-from . import config, login_manager, argon2, captcha 
-from .forms import LoginForm
-from .randomizer import generate_key, generate_token, check_token
-from .deviceInfo import deviceID_selector
-from .user_blocker import is_blocked, loginAttempt
-from .user_logs import loginHistory
+from app import config, login_manager, argon2, captcha 
+from app.secure.login_form import LoginForm
+from app.secure.randomizer import generate_key, generate_token, check_token
+from app.secure.deviceInfo import deviceID_selector
+from app.secure.user_blocker import is_blocked, loginAttempt
+from app.secure.user_logs import loginHistory
 
 auth = Blueprint('auth', __name__)
 

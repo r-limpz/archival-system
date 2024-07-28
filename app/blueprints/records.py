@@ -1,19 +1,10 @@
-from flask import Blueprint, request, jsonify, Response, redirect, url_for
-from flask_login import login_required, current_user
-from functools import wraps
+from flask import Blueprint, request, jsonify, Response
+from flask_login import login_required
 import base64
 from app import config
+from app.secure.authorization import authenticate
 
 fetch_records = Blueprint('fetch_records', __name__, url_prefix='/documents/records/tags/manage/data')
-
-#decorator for authorization role based
-def authenticate(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and not current_user.is_active and current_user.role not in ['admin', 'staff']:
-                return redirect(url_for('home'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 # fetch the student credentials fo edit
 def fetchEntryData(tag_id):

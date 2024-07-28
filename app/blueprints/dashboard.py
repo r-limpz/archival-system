@@ -1,23 +1,12 @@
-from flask import Blueprint, request, jsonify, redirect, url_for
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from functools import wraps
-import calendar
 from datetime import datetime, timedelta
-from app.uploadProgress import get_countDaily, get_countWeekly, get_countMonthly, get_countYearly
-from app.filesize_selector import filesize_format
+from app.dashboard.uploadProgress import get_countDaily, get_countWeekly, get_countMonthly, get_countYearly
+from app.tools.filesize_selector import filesize_format
+from app.secure.authorization import admin_required
 from app import config
 
 dashboard_data = Blueprint('dashboard', __name__, url_prefix='/admin/dashboard/manage/data')
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'admin' or not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'staff':
-            return redirect(url_for('staff.records'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 # calculate the increased percentage per month
 def calculate_percentage_increase(initial, new):

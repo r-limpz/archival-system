@@ -1,9 +1,9 @@
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from flask import current_app as app
-import base64
 import json
 from app import config 
+from app.secure.authorization import authenticate
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')
 
@@ -143,6 +143,7 @@ def newRecordData(document_header, imageFile, students_data):
 
 @uploader_manager.route('/newRecord/document_upload', methods=['POST', 'GET'])
 @login_required
+@authenticate
 def uploader():
     if 'document_image' not in request.files:
         return "No file uploaded"

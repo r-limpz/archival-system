@@ -1,22 +1,13 @@
-from flask import Blueprint, request, jsonify, Response, redirect, url_for
-from flask_login import login_required, current_user
-from functools import wraps
-import calendar
+from flask import Blueprint, request, jsonify, Response
+from flask_login import login_required
 from datetime import datetime 
 import base64
-from app.uploadProgress import get_countAll
-from app.filesize_selector import filesize_format
+from app.dashboard.uploadProgress import get_countAll
+from app.tools.filesize_selector import filesize_format
+from app.secure.authorization import authenticate
 from app import config
 
 profile_data = Blueprint('account', __name__, url_prefix='/account/manage/user-profile')
-
-def authenticate(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and not current_user.is_active and current_user.role not in ['admin', 'staff']:
-                return redirect(url_for('home'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 def getAccountData(user_username, customYear):
     try:
