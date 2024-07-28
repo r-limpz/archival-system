@@ -18,6 +18,7 @@ from app.blueprints.profile import profile_data
 from app.blueprints.records import fetch_records
 from app.blueprints.trashbin import trashbin_data
 from app.blueprints.upload_manager import uploader_manager
+from app.blueprints.benchmark_manager import benchmark_manager
 from datetime import timedelta
 import os
 
@@ -111,7 +112,7 @@ app.register_blueprint(fetch_records)
 app.register_blueprint(trashbin_data)
 app.register_blueprint(uploader_manager)
 app.register_blueprint(fetchColleges)
-
+app.register_blueprint(benchmark_manager)
 #Non-authentication needed pages
 @app.route('/ards/')
 def index():

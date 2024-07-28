@@ -1,28 +1,28 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for
 from flask_login import login_required
 from app.secure.authorization import admin_required
-from app.benchmark.benchmark import getAccuracy
-from app.benchmark.accuracyChecker import checkMissingData
+from app.benchmark.accuracyChecker import benchmarkerTest
+from app.benchmark.benchmark import updateCSV
+import json
 
-benchhmark_manager = Blueprint('benchhmark_manager', __name__,url_prefix='/admin/benchmark-manager/manage')
+benchmark_manager = Blueprint('benchmark_manager', __name__,url_prefix='/admin/benchmark-manager/manage')
 
-@benchhmark_manager.route('/test_ocr/accuracy', methods=['POST'])
+@benchmark_manager.route('/test_ocr/accuracy', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def testErrorRate():
-    if request.method == "POST":
+    try:
         data = request.get_json()
+        # Extract corrected_data and ocr_data from the JSON
         corrected_data = data.get('corrected_data')
         ocr_data = data.get('ocr_data')
+        result = benchmarkerTest(corrected_data, ocr_data)
 
-        data = checkMissingData(corrected_data, ocr_data)
-        filename = "test.csv"
-        if data:
-            if getAccuracy(data['average_WER'], data['average_CER'], filename):
-                return render_template ('admin/results.html', average_WER = data['average_WER'], average_CER = data['average_CER'])
+        if result:
+            if updateCSV(result['average_WER'], result['average_WER'], "test.csv"):
+                print(0)
 
-@benchhmark_manager.route('/fetch_data/accuracy', methods=['POST'])
-@login_required
-@admin_required
-def fetchCSV():
-    return None
+            return jsonify(result)
+        return None
+    except Exception as e:
+        print(f"Failed to reconnect: {e}")
