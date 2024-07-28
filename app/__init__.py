@@ -172,3 +172,9 @@ def account_manager():
 @login_required
 def col_course_manager():
     return redirect(url_for('admin.col_course_manager'))
+
+#Collage and Course Manager page route
+@app.route('/benchmark')
+@login_required
+def benchmarker():
+    return redirect(url_for('admin.benchmarker'))

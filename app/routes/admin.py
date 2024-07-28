@@ -1,18 +1,9 @@
 from flask import Blueprint,render_template, redirect, url_for
 from functools import wraps
 from flask_login import login_required, current_user
+from app.secure.authorization import admin_required
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/ards/admin')
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated and current_user.role != 'admin' and not current_user.is_active:
-            return redirect(url_for('home'))
-        elif current_user.is_authenticated and current_user.is_active and current_user.role == 'staff':
-            return redirect(url_for('staff.records'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 @admin_bp.route('/dashboard')
 @login_required
@@ -55,3 +46,9 @@ def account_manager():
 @admin_required
 def trashbin():
     return render_template('users/trashbin.html')
+
+@admin_bp.route('/benchmark')
+@login_required
+@admin_required
+def benchmarker():
+    return render_template('admin/benchmarker.html')
