@@ -2,19 +2,13 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from flask import current_app as app
 import json
-from app import config 
+from app import config
 from app.secure.authorization import authenticate
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-def convert_pic(filename):
-    filename = ""
-    with (filename,'rb').read() as file:
-        photo = file.read
-    return photo 
 
 def getEditor():
     with config.conn.cursor() as cursor:
