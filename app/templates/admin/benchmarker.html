@@ -13,8 +13,8 @@
     <div class="page-header-title p-2 mb-2">
         <h5 class="fw-bold">Benchmark</h5>
     </div>
-    
-    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 10rem ); min-height: 500px;">
+
+    <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 10rem ); min-height: 650px;">
         <div class="flex-grow-1 p-2">
             <div class="rounded-3 h-100">
                 <div class="h-100 w-100 d-flex justify-content-center align-items-center dashed-border" id="dropzone">
@@ -78,8 +78,7 @@
                         </button>
                     </span>
 
-                    <button class="fs-medium border-0 fw-medium btn-red px-4" id="uploadRecord" data-bs-toggle="modal"
-                        data-bs-target="#newRecords_confirmation"> Upload </button>
+                    <button class="fs-medium border-0 fw-medium btn-orange px-4" id="accuracyTester"> TEST </button>
                 </div>
             </div>
         </div>
@@ -87,7 +86,7 @@
 </section>
 {% endblock%}
 {% block scripts %}
-<script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
+<script src="{{url_for('static',filename='js/benchmark.js')}}"></script>
 <script src="{{url_for('static',filename='js/drag_drop.js')}}"></script>
 <script>
     function updateTimerDisplay(milliseconds, type) {
@@ -280,52 +279,5 @@
         });
         return studentList;
     }
-
-    $('#comfirm_newRecords').on('click', function (event) {
-        event.preventDefault();
-        var formData = new FormData();
-        // Append student data
-        var studentsData = fetchrowValues();
-        formData.append('studentsData', JSON.stringify(studentsData));
-        formData.append('document_image', file);
-
-        if (file) {
-            $.ajax({
-                url: '/archival/newRecord/document_upload',
-                type: 'POST',
-                data: formData,
-                processData: false,  // Tell jQuery not to process the data
-                contentType: false,  // Tell jQuery not to set contentType
-                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
-                success: function (data) {
-                    switch (data.query_result) {
-                        case 'success'://the user successfully appended in the database
-                            showToast('Success!', 'Document uploaded in the database.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed'://error in processing occured
-                            showToast('Upload Error occurred!', 'Failed to upload document data.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'No file uploaded'://user already exist in the database
-                            showToast('No file was uploaded', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'Unsupported file type':
-                            showToast('Unsupported file type', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                    }
-                },
-                error: function (error) {
-                    console.error(error);
-                    showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                }
-            });
-        }
-
-    });
-
 </script>
 {% endblock%}

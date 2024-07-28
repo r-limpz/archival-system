@@ -27,8 +27,10 @@
                 <div class="scrollable_page-section">
                     {% block content %}
                     {% endblock %}
-                    {% include '/partials/footer.html' %}
 
+                    {% if not request.path == url_for('admin.benchmarker')%}
+                    {% include '/partials/footer.html' %}
+                    {% endif %}
                 </div>
             </div>
         </div>

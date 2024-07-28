@@ -439,9 +439,10 @@ input {
     background-color: var(--bg-dark);
 }
 
-.bg-def-green{
+.bg-def-green {
     background-color: var(--fc-green);
 }
+
 /* buttons */
 button {
     padding: var(--button-p-default);
@@ -521,6 +522,17 @@ button:disabled {
     font-weight: bold;
 }
 
+.btn-transparent {
+    color: var(--fc-light);
+    background: transparent;
+}
+
+.btn-transparent:not(.not-hover):hover {
+    color: var(--fc-light);
+    background: transparent;
+    font-weight: bold;
+}
+
 .form-control {
     padding: 0.25rem 0.5rem !important;
 }
@@ -584,6 +596,7 @@ input[type="number"]::-webkit-outer-spin-button {
     border: 2px dashed var(--border-default);
     border-radius: 0.5rem;
 }
+
 .ch-domain-text,
 .ch-plugin-calendar-label-text {
     font-size: 12px !important;
