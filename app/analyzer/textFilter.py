@@ -51,13 +51,6 @@ def redundancyRemoval(row):
 
 def filterdata(out_array):
     try:
-        # Define header items, grades, and remarks
-        header_items = [
-            'report of rating', 'name in alphabetical order', 'report', 'rating',
-            'mid-term', 'midterm', 'mid term', 'final-term', 'finalterm', 'final term',
-            'finalgrade', 'final-grade', 'final grade', 'remarks', 'remark',
-            'surename first', 'surename', '(surename)', 'surname', 'surname first', '(surname)'
-        ]
         grades = ['1.0', '1.25', '1.5', '1.75', '2.0', '2.25', '2.5', '2.75', '3.0', 'inc']
         remarks = ['pass', 'passed', 'fail', 'inc', 'failed',
                    'no grades', 'dropped', 'dropped.', 'no final exam', 'no final exam.', 'exam', 'no exam', 'final',
