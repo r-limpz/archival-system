@@ -74,6 +74,15 @@
                     <span class="hidden-sidebar"> Trash</span>
                 </a>
             </li>
+
+            <li class="sidebar-list-item">
+                <a href="{{url_for('benchmarker')}}"
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.benchmarker') and current_user.role == 'admin' %} active {% endif %}">
+                    <span class="sidebar-icon fa-solid fa-cube"></span>
+                    <span class="hidden-sidebar"> Tester</span>
+                </a>
+            </li>
+
             {% endif %}
 
         </ul>
