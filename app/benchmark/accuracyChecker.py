@@ -16,15 +16,15 @@ def benchmarkerTest(corrected_data, ocr_data):
                     output = jiwer.process_words(corrected_item['student_name'], ocr_item['student_name'])
                     outputChar = jiwer.process_characters(corrected_item['student_name'], ocr_item['student_name'])
 
-                    wer_percentile.append(output.wer)
-                    cer_percentile.append(outputChar.cer)
-                    mer_percentile.append(output.mer)
+                    wer_percentile.append(output.wer * 100)
+                    cer_percentile.append(outputChar.cer * 100)
+                    mer_percentile.append(output.mer * 100)
 
                     error_rate.append({
                         'id': corrected_item['id'],
-                        'wer': output.wer,
-                        'cer': outputChar.cer,
-                        'mer': output.mer
+                        'wer': output.wer * 100,
+                        'cer': outputChar.cer * 100,
+                        'mer': output.mer * 100,
                     })
                     break
             
