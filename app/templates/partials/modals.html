@@ -170,18 +170,25 @@
   </div>
 </div>
 
-<div class="modal fade" id="scanningAnimation" data-bs-keyboard="false" tabindex="-1" role="dialog"
-  aria-labelledby="scanningAnimation" aria-hidden="true">
+<div class="modal fade" id="scanningAnimation" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1"
+  role="dialog" aria-labelledby="scanningAnimation" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content mx-3 bg-transparent border-0">
-      <div class="modal-body border-0 bg-transparent">
-      <div class="scannerLoading">
-        <div class="scanningAnimation">
-          <div class="dot-animation bg-danger"></div>
-          <div class="dot-animation bg-warning"></div>
-          <div class="dot-animation bg-def-green"></div>
+      <div class="modal-body border-0 bg-transparent" style="height: 30vh;">
+        <div class="scannerLoading">
+          <div class="scanningAnimation">
+            <div class="dot-animation bg-danger"></div>
+            <div class="dot-animation bg-warning"></div>
+            <div class="dot-animation bg-def-green"></div>
+          </div>
         </div>
-      </div>
+        <div class="my-5"></div>
+        <div class="text-center" id="loadingText">
+          <h5 class="text-light fw-bold my-2"> Scanning...</h5>
+          <button id="abortAutoScan" class="btn-transparent fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -495,7 +502,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="UpdateCredentials_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" role="dialog" aria-labelledby="UpdateCredentials_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
