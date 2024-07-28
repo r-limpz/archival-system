@@ -236,7 +236,15 @@
     });
 </script>
 <script>
+    function updateTimerDisplay(milliseconds, type) {
+        let seconds = milliseconds / 1000;
+        console.log(`${type} Request took ${seconds} seconds.`);
+        // Display or update the timer on your page as needed
+    }
+
     let ocr_resultsList = [];
+    let xhr = null;
+    let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
 
     function autoScanOCR() {
         var formData = new FormData();
@@ -244,10 +252,12 @@
         formData.append('document_image', file);
 
         if (file) {
-            let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
             scanningModal.show();
 
-            $.ajax({
+            // Start the timer
+            let startTime = new Date().getTime();
+
+            xhr = $.ajax({
                 url: '/scanner/auto/true',
                 type: 'POST',
                 data: formData,
@@ -255,6 +265,10 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
+                    // Calculate elapsed time
+                    let elapsedTime = new Date().getTime() - startTime;
+                    updateTimerDisplay(elapsedTime,"Auto-Scan");
+
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -270,9 +284,11 @@
                     }
                 },
                 error: function (error) {
-                    console.error(error);
-                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
-                    modal.show();
+                    if (error.statusText !== 'abort') {
+                        console.error(error);
+                        let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                        modal.show();
+                    }
                 },
                 complete: function () {
                     scanningModal.hide();
@@ -284,6 +300,14 @@
     $('#ocr_auto').on('click', function (event) {
         event.stopPropagation();
         autoScanOCR();
+    });
+
+    // Event listener for abort button
+    $('#abortAutoScan').on('click', function () {
+        if (xhr) {
+            xhr.abort(); // Abort the ongoing AJAX request
+        }
+        scanningModal.hide();
     });
 </script>
 <script>
@@ -337,6 +361,8 @@
         canvas.toBlob(function (blob) {
             let formData = new FormData();
             formData.append('document_image', blob, 'cropped_image.jpg');
+            // Start the timer
+            let startTime = new Date().getTime();
 
             $.ajax({
                 url: '/scanner/auto/false',
@@ -346,6 +372,9 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
+                    // Calculate elapsed time
+                    let elapsedTime = new Date().getTime() - startTime;
+                    updateTimerDisplay(elapsedTime, "Manual-Scan");
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
