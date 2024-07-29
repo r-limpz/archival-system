@@ -7,6 +7,7 @@ from flask_session_captcha import FlaskSessionCaptcha
 from werkzeug.exceptions import HTTPException
 from app.secure.login_form import LoginForm
 from app.database import config
+from app.secure.user_logs import updateDB
 from app.routes.admin import admin_bp
 from app.routes.staff import staff_bp
 from app.blueprints.account_manager import account_manager
@@ -59,6 +60,8 @@ class Anonymous(AnonymousUserMixin):
         self.role = 'Anonymous'
 
 login_manager.anonymous_user = Anonymous
+#delete scheduled deletion users
+updateDB()
 
 #Register authentication logic
 from app.secure.auth import auth as auth_blueprint
