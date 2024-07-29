@@ -3,10 +3,10 @@ from app.analyzer.textFilter import removeUnwantedCharacters
 
 class StudentNames:
     def __init__(self, surname, firstname, middlename, suffix):
-        self.surname = surname
-        self.firstname = firstname
-        self.middlename = middlename
-        self.suffix = suffix
+        self.surname = surname if surname else ''
+        self.firstname = firstname if firstname else ''
+        self.middlename = middlename if middlename else ''
+        self.suffix = suffix if suffix else ''
 
 def isSuffixAndMiddleName(unstructured_ListOfSplitName):
     #Determines and extracts suffix and middle name information from a list of split names.

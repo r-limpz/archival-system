@@ -8,10 +8,10 @@ ocr_App = Blueprint('ocr', __name__)
 
 class StudentNames:
     def __init__(self, surname, firstname, middlename, suffix):
-        self.surname = surname
-        self.firstname = firstname
-        self.middlename = middlename
-        self.suffix = suffix
+        self.surname = surname if surname else ''
+        self.firstname = firstname if firstname else ''
+        self.middlename = middlename if middlename else ''
+        self.suffix = suffix if suffix else ''
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
