@@ -141,7 +141,7 @@ def removeCollege(college_id):
     if college_id:
         with config.conn.cursor() as cursor:
 
-            cursor.execute(''' DELETE c FROM courses c LEFT JOIN documents d ON c.college_id = d.college WHERE c.college_id = %s AND d.course IS NULL; ''', (college_id,))
+            cursor.execute(''' DELETE c FROM college c LEFT JOIN documents d ON c.college_id = d.college WHERE c.college_id = %s AND d.college IS NULL; ''', (college_id,))
             config.conn.commit()
 
             cursor.execute('SELECT * FROM college WHERE college_id = %s', (college_id))
@@ -253,10 +253,13 @@ def change_courseCollege():
             return jsonify({'query_result' : 'failed'})
 
 #setup route to remove a collge data   
-@college_manager.route('/remove_data/delete_college/data')
+@college_manager.route('/remove_data/delete_college', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def remove_college():
+    if request.method == "POST":
+        college_id = request.form.get('collegeID')
+
     if college_id:
         college_id = int(college_id)
         query_result = removeCollege(college_id)
@@ -265,3 +268,20 @@ def remove_college():
             return jsonify({'query_result' : query_result})
         else:
             return jsonify({'query_result' : 'failed'})
+
+#setup route to remove a collge data   
+@college_manager.route('/courses/remove_data/delete-course', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def remove_course():
+    if request.method == "POST":
+        course_id = request.form.get('courseID')
+
+        if course_id:
+            course_id = int(course_id)
+            query_result = removeCourse(course_id)
+
+            if query_result:
+                return jsonify({'query_result' : query_result})
+            
+    return jsonify({'query_result' : 'failed'})

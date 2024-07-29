@@ -646,6 +646,10 @@
                       style="width: 100px;" required>
                     <input type="text" class="form-control update_collegeDescriptionField flex-fill"
                       name="update_collegeDescription" required>
+                    <span class="p-2" style="max-width:50px;">
+                      <a class="m-0 deleteCollege-button" id="" data-bs-toggle="modal"
+                        data-bs-target="#deleteCollegeModal" > <span class="fa-solid fa-trash"></span></a>
+                    </span>
                   </div>
                 </div>
                 <div id="populate_coursesList"></div>
@@ -787,7 +791,49 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="deleteCourseModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="deleteCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-orange border-3">
+        <div class="modal-body">
+          <div class="mx-3">
+            <h5 class="fw-bold mb-4">Are you sure to delete this course?</h5>
+            <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this course data
+              in the database.</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
+            data-bs-target="#editCollege_modal">Cancel</button>
+          <button id="confirm_deleteCourseEntry" class="btn-orange text-decoration-none fs-medium fw-medium px-4"
+            data-bs-dismiss="modal">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="deleteCollegeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      role="dialog" aria-labelledby="deleteCollegeModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-orange border-3">
+          <div class="modal-body">
+            <div class="mx-3">
+              <h5 class="fw-bold mb-4">Are you sure to delete this College?</h5>
+              <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this college data
+                in the database.</p>
+            </div>
+          </div>
+          <div class="modal-footer mx-3">
+            <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
+              data-bs-target="#editCollege_modal">Cancel</button>
+            <button id="confirm_deleteCollegeEntry" class="btn-orange text-decoration-none fs-medium fw-medium px-4"
+              data-bs-dismiss="modal">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
   {% if request.path == url_for('admin.benchmarker')%}
-  
+
   {% endif %}

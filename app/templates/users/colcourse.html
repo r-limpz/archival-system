@@ -355,6 +355,10 @@
         if (college) {
             let containerPopulate = document.getElementById('populate_coursesList');
             let collegeField = document.getElementsByClassName('update_collegeField')[0];
+
+            let collegeDelete = document.getElementsByClassName('deleteCollege-button')[0];
+            collegeDelete.id = college.college_id;
+
             collegeField.value = college.college_name;
             collegeField.placeholder = college.college_name;
             collegeField.id = college.college_id;
@@ -378,8 +382,8 @@
                                                 <span class="p-2" style="max-width:50px;">
                                                     <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
                                                 </span>
-                                                <span class="p-2" style="max-width:50px;>
-                                                    <a class="m-0" onclick="deleteCourse"> <span class="fa-solid fa-trash"></span></a>
+                                                <span class="p-2" style="max-width:50px;">
+                                                    <a class="m-0" onclick="deleteCourse(${course.course_id})"> <span class="fa-solid fa-trash"></span></a>
                                                 </span>
                                             </div>
                                         </div> `;
@@ -436,22 +440,22 @@
                 data: formData,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    switch (data.query_result) {
-                        case 'success'://the user successfully appended in the database
-                            populateColleges();
-                            showToast('Success!', 'Course moved successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed'://error in processing occured
-                            populateColleges();
-                            showToast('Error occurred!', 'Failed to update course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'cannot modify'://user already exist in the database
-                            populateColleges();
-                            showToast('Connot modify course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
+                    if (data) {
+                        populateColleges();
+                        switch (data.query_result) {
+                            case 'success'://the user successfully appended in the database
+                                showToast('Success!', 'Course moved successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'failed'://error in processing occured
+                                showToast('Error occurred!', 'Failed to update course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'cannot modify'://user already exist in the database
+                                showToast('Connot modify course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                        }
                     }
                 },
                 //handle the ajax error 
@@ -500,23 +504,121 @@
             contentType: 'application/json',
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
-                switch (data.query_result) {
-                    case 'success'://the user successfully appended in the database
-                        populateColleges();
-                        showToast('Success!', 'College updated successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    case 'failed'://error in processing occured
-                        populateColleges();
-                        showToast('Update Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    default://user already exist in the database
-                        populateColleges();
-                        showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
+                if (data) {
+                    populateColleges();
+                    switch (data.query_result) {
+                        case 'success'://the user successfully appended in the database
+                            showToast('Success!', 'College updated successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed'://error in processing occured
+                            showToast('Update Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        default://user already exist in the database
+                            showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
                 }
+            }
+        });
+    });
+
+    function removeCourseInList(courseID) {
+        var listContainer = document.getElementById('populate_coursesList');
+        var courseToRemove = listContainer.querySelector(`div[id="${courseID}"]`);
+
+        if (courseToRemove) {
+            courseToRemove.remove();
+        }
+    }
+
+    function deleteCourse(courseID) {
+        courseData = parseInt(courseID);
+        if (courseData) {
+            $('#editCollege_modal').modal('hide');
+            $('#deleteCourseModal').modal('show');
+
+            $('#confirm_deleteCourseEntry').on('click', function (event) {
+                event.preventDefault();
+
+                let formData = {
+                    'courseID': courseData,
+                };
+                $.ajax({
+                    url: '/admin/colleges/manage/data/courses/remove_data/delete-course',
+                    type: 'POST',
+                    data: formData,
+                    headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                    success: function (data) {
+                        if (data) {
+                            populateColleges();
+                            switch (data.query_result) {
+                                case 'success'://the user successfully appended in the database
+                                    removeCourseInList(courseID)
+                                    showToast('Success!', 'Course deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                    break;
+                                case 'failed'://error in processing occured
+                                    showToast('Error occurred!', 'Failed to delete course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                    break;
+                                case 'cannot delete data'://user already exist in the database
+                                    showToast('Connot delete course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                    break;
+                            }
+                        }
+                    },
+                    //handle the ajax error 
+                    error: function (error) {
+                        console.error('Error:', error);
+                        showToast('Error', 'Query error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    }
+                });
+            });
+        }
+    }
+
+    $('#confirm_deleteCollegeEntry').on('click', function (event) {
+        event.preventDefault();
+        let collegeDelete = document.getElementsByClassName('deleteCollege-button')[0];
+        collegeData = parseInt(collegeDelete.id);
+
+        let formData = {
+            'collegeID': collegeData,
+        };
+        $.ajax({
+            url: '/admin/colleges/manage/data/remove_data/delete_college',
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+            success: function (data) {
+                if (data) {
+                    populateColleges();
+                    switch (data.query_result) {
+                        case 'success'://the user successfully appended in the database
+                            showToast('Success!', 'College deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'failed'://error in processing occured
+                            showToast('Error occurred!', 'Failed to delete college. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'cannot delete data'://user already exist in the database
+                            showToast('Connot delete college', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                    }
+                }
+            },
+            //handle the ajax error 
+            error: function (error) {
+                console.error('Error:', error);
+                showToast('Error', 'Query error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
     });
