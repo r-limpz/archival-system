@@ -2,5 +2,5 @@
 venv/
 __pycache__/
 app/static/node_modules/
-app/Blueprints/__pycache__/
-
+app/blueprints/__pycache__/
+app/analyzer/temp.jpg
