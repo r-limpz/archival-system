@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
-import hashlib
+from app.secure.user_logs import updateDB
 from app import login_manager, argon2, captcha 
 from app.database import config
 from app.secure.login_form import LoginForm
@@ -12,10 +12,11 @@ auth = Blueprint('auth', __name__)
 #setup query to update database when user session expired
 def session_expired(username):
     if username:
+        updateDB()
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE username = %s AND online = 1', (username))
             userData = cursor.fetchone()
-
+            
             if userData:
                 cursor.execute('SELECT * FROM session WHERE username = %s AND online = 1', (username))
                 sessionData = cursor.fetchone()

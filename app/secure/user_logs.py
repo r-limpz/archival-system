@@ -12,4 +12,13 @@ def loginHistory(user_id, session_data):
                            (user_id, session_data))
             config.conn.commit()
 
-
+def updateDB():
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute('DELETE FROM user WHERE user_id IN (SELECT user_id FROM removed_sched_deact WHERE DATEDIFF(NOW(), removed_date) > 30)')
+            config.conn.commit()
+            print('Updating DB')
+            
+    except Exception as e:
+        print(f"Error during database operation: {e}")
+        config.conn.rollback()

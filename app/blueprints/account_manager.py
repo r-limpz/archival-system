@@ -5,6 +5,7 @@ import argon2
 from app.tools.date_formatter import onlineStatus, sched_accountDeletion
 from app.secure.randomizer import generate_key
 from app.secure.authorization import admin_required
+from app.secure.user_logs import updateDB
 
 account_manager = Blueprint('account_manager', __name__,url_prefix='/admin/user-manager/manage/data')
 
@@ -263,6 +264,7 @@ def users_list(active_status):
         return jsonify(None)
     else:
         try:
+            updateDB()
             users_list = fetchallAccount(active_status)
             if users_list:
                 return jsonify(users_list)
@@ -420,7 +422,7 @@ def account_delete():
         if request.method == "POST":
             data = request.get_json()
             profile_id = data.get('user_data')
-
+            updateDB()
             query = removeAccount(profile_id)
 
             if query:
