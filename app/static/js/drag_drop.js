@@ -74,36 +74,3 @@ continueButton.addEventListener('click', function (event) {
     event.stopPropagation();
     saveImage();
 });
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    const preview = document.getElementById('preview');
-
-    let scale = 1;
-    const scaleStep = 0.1;
-    const maxScale = 5;
-    const minScale = 0.5;
-
-    document.getElementById('previewContainer').addEventListener('wheel', (event) => {
-        event.preventDefault(); // Prevent default scrolling behavior
-        if (image_saved) {
-            if (event.deltaY < 0) {
-                // Scrolling up, zoom in
-                if (scale < maxScale) {
-                    scale += scaleStep;
-                    updateScale();
-                }
-            } else {
-                // Scrolling down, zoom out
-                if (scale > minScale) {
-                    scale -= scaleStep;
-                    updateScale();
-                }
-            }
-        }
-    });
-
-    function updateScale() {
-        preview.style.transform = `scale(${scale})`;
-    }
-});
