@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 import hashlib
-from app import config, login_manager, argon2, captcha 
+from app import login_manager, argon2, captcha 
+from app.database import config
 from app.secure.login_form import LoginForm
 from app.secure.randomizer import generate_key, generate_token, check_token
 from app.secure.deviceInfo import deviceID_selector

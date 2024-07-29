@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_login import login_required
 import base64
-from app import config
+from app.database import config
 from app.secure.authorization import authenticate
 
 fetch_records = Blueprint('fetch_records', __name__, url_prefix='/documents/records/tags/manage/data')

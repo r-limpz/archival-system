@@ -1,10 +1,9 @@
-from app import config
+from app.database import config
 import hashlib
 
 #account history login
 def loginHistory(user_id, session_data, user_info):
     with config.conn.cursor() as cursor:
-        session_data = hashlib.sha256(session_data.encode()).hexdigest()[:16]
         cursor.execute('SELECT * FROM login_history WHERE session_data = %s AND user_id = %s', (session_data, user_id))
         current_history = cursor.fetchone()
 

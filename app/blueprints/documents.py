@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_login import login_required, current_user
 import base64
-from app import config
+from app.database import config
 from app.tools.filesize_selector import filesize_format
 from app.secure.authorization import authenticate
 

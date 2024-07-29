@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
+from app.database import config
 from app.dashboard.uploadProgress import get_countDaily, get_countWeekly, get_countMonthly, get_countYearly
 from app.tools.filesize_selector import filesize_format
 from app.secure.authorization import admin_required
-from app import config
 
 dashboard_data = Blueprint('dashboard', __name__, url_prefix='/admin/dashboard/manage/data')
 

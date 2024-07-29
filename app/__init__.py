@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
@@ -6,7 +6,7 @@ from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from werkzeug.exceptions import HTTPException
 from app.secure.login_form import LoginForm
-from app import config
+from app.database import config
 from app.routes.admin import admin_bp
 from app.routes.staff import staff_bp
 from app.blueprints.account_manager import account_manager
@@ -18,6 +18,7 @@ from app.blueprints.profile import profile_data
 from app.blueprints.records import fetch_records
 from app.blueprints.trashbin import trashbin_data
 from app.blueprints.upload_manager import uploader_manager
+from app.blueprints.ocr_app import ocr_App
 from app.blueprints.benchmark_manager import benchmark_manager
 from datetime import timedelta
 import os
@@ -59,47 +60,11 @@ class Anonymous(AnonymousUserMixin):
 
 login_manager.anonymous_user = Anonymous
 
-#refresh session
-@app.before_request
-def update_Session():
-    if request.endpoint and request.endpoint != "auth.heartbeat":
-        session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=60)
-        checkConnection()
-
-#check mySQL server connection and reconnection when die
-def checkConnection():
-    try:
-        if not config.conn.open:
-            print("Connection is closed. Reconnect or establish a new connection.")
-            config.conn.ping(reconnect=True)
-            
-    except Exception as e:
-        print(f"Failed to reconnect: {e}")
-
-#error handling of pages
-@app.errorhandler(Exception)
-def handle_error(e):
-    code = 500
-    error_message = '500 Internal Server Error'
-    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
-    print(e)
-    if isinstance(e, HTTPException):
-        code = e.code
-        code_message = f"{code} {e.name}"
-        description = e.description
-    else:
-        code_message = "500 Internal Server Error"
-        description = str(e)
-        
-    return render_template('errors/error.html', error_number=code_message, error_message=description), code
-
 #Register authentication logic
-from app.auth import auth as auth_blueprint
+from app.secure.auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 #Register ocr logic
-from .ocr_app import ocr_App as ocr_blueprint
-app.register_blueprint(ocr_blueprint)
+app.register_blueprint(ocr_App)
 #Reister authenticated accounts
 app.register_blueprint(admin_bp)
 app.register_blueprint(staff_bp)
@@ -113,6 +78,7 @@ app.register_blueprint(trashbin_data)
 app.register_blueprint(uploader_manager)
 app.register_blueprint(fetchColleges)
 app.register_blueprint(benchmark_manager)
+
 #Non-authentication needed pages
 @app.route('/ards/')
 def index():
@@ -179,3 +145,38 @@ def col_course_manager():
 @login_required
 def benchmarker():
     return redirect(url_for('admin.benchmarker'))
+
+#refresh session
+@app.before_request
+def update_Session():
+    if request.endpoint and request.endpoint != "auth.heartbeat":
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(minutes=60)
+        checkConnection()
+
+#check mySQL server connection and reconnection when die
+def checkConnection():
+    try:
+        if not config.conn.open:
+            print("Connection is closed. Reconnect or establish a new connection.")
+            config.conn.ping(reconnect=True)
+            
+    except Exception as e:
+        print(f"Failed to reconnect: {e}")
+
+#error handling of pages
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = 500
+    error_message = '500 Internal Server Error'
+    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
+    print(e)
+    if isinstance(e, HTTPException):
+        code = e.code
+        code_message = f"{code} {e.name}"
+        description = e.description
+    else:
+        code_message = "500 Internal Server Error"
+        description = str(e)
+        
+    return render_template('errors/error.html', error_number=code_message, error_message=description), code

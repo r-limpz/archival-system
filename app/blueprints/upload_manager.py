@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from flask import current_app as app
 import json
-from app import config
+from app.database import config
 from app.secure.authorization import authenticate
 
 uploader_manager = Blueprint('upload_manager', __name__,url_prefix='/archival')

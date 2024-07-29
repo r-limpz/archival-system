@@ -1,7 +1,6 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for
 from flask_login import login_required
-from flask import current_app as app
-from app import config
+from app.database import config
 import argon2
 from app.tools.date_formatter import onlineStatus, sched_accountDeletion
 from app.secure.randomizer import generate_key

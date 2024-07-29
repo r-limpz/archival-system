@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
-from app import config 
+from app.database import config
 from app.college_selector import fetch_course
 from app.secure.authorization import admin_required
 

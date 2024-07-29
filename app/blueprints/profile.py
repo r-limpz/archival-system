@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify, Response
 from flask_login import login_required
 from datetime import datetime 
 import base64
+from app.database import config
 from app.dashboard.uploadProgress import get_countAll
 from app.tools.filesize_selector import filesize_format
 from app.secure.authorization import authenticate
-from app import config
 
 profile_data = Blueprint('account', __name__, url_prefix='/account/manage/user-profile')
 
