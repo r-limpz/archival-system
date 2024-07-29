@@ -1,7 +1,7 @@
 function populateList(index, surname, fname, midname, sfxname, student_wer, student_cer, tbody) {
     index = parseInt(index);
     var row = tbody.insertRow(-1) // Insert a new row at the end of the table
-
+    
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
@@ -12,12 +12,12 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
     var cell8 = row.insertCell(7);
 
     cell1.innerHTML = `<div class="text-center p-2" style="width: 12px;height:12px;"><input type="checkbox" class="checkbox form-check-input m-auto" id="${index}"></div>`;
-    cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${surname}" placeholder = "${surname}"> `; // Last Name
-    cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${fname}" placeholder = "${fname}"> `; // First Name
-    cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="1" value="${midname}" placeholder = "${midname}"> `; // MI
-    cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${sfxname}" placeholder = "${sfxname}"> `; // Suffix
-    cell6.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_wer" name="student_wer" value="${student_wer}" placeholder = "${student_wer}" disabled> `; // MI
-    cell7.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_cer" name="student_cer" value="${student_cer}" placeholder = "${student_cer}" disabled> `; // MI
+    cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${surname}" placeholder = "${surname}" onkeyup = "checkAccuracyData()"> `; // Last Name
+    cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${fname}" placeholder = "${fname}" onkeyup = "checkAccuracyData()"> `; // First Name
+    cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="1" value="${midname}" placeholder = "${midname}" onkeyup = "checkAccuracyData()"> `; // MI
+    cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${sfxname}" placeholder = "${sfxname}" onkeyup = "checkAccuracyData()"> `; // Suffix
+    cell6.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_wer" name="student_wer" value="${student_wer}" placeholder = "${student_wer}" disabled> `; // wer
+    cell7.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_cer" name="student_cer" value="${student_cer}" placeholder = "${student_cer}" disabled> `; // cer
 
     cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
