@@ -13,8 +13,11 @@ def benchmarkerTest(corrected_data, ocr_data):
             for ocr_item in ocr_data:
                 if int(corrected_item['id']) == int(ocr_item['id']):
                     found_in_ocr = True
-                    output = jiwer.process_words(corrected_item['student_name'], ocr_item['student_name'])
-                    outputChar = jiwer.process_characters(corrected_item['student_name'], ocr_item['student_name'])
+                    temp_corrected = corrected_item['student_name'].strip()
+                    temp_ocr = ocr_item['student_name'].strip()
+
+                    output = jiwer.process_words(temp_corrected, temp_ocr)
+                    outputChar = jiwer.process_characters(temp_corrected, temp_ocr)
 
                     wer_percentile.append(output.wer * 100)
                     cer_percentile.append(outputChar.cer * 100)

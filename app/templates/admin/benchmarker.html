@@ -262,16 +262,18 @@
 </script>
 <script>
     function getOCR_Result(students) {
+
         var studentList = [];
-        if (students && Array.isArray(students)) {
+        if (students.length > 0) {
             students.forEach(function (student, index) {
                 var student_name = student.surname.trim() + ', ' + student.firstname.trim();
 
-                if (student.middlename !== '') {
-                    student_name += ' ' + student.middlename + '.';
+                if (student.middlename && student.middlename.trim() !== '') {
+                    student_name += ' ' + student.middlename.trim() + '.';
                 }
-                if (student.suffixname !== '') {
-                    student_name += ' ' + student.suffixname + '.';
+
+                if (student.suffixname && student.suffixname.trim() !== '') {
+                    student_name += ' ' + student.suffixname.trim() + '.';
                 }
 
                 var entry = {
@@ -299,10 +301,10 @@
 
             var student_name = student_surname + ', ' + student_firstname;
 
-            if (student_middlename) {
+            if (student_middlename !== '') {
                 student_name += ' ' + student_middlename + '.';
             }
-            if (student_suffixname) {
+            if (student_suffixname !== '') {
                 student_name += ' ' + student_suffixname + '.';
             }
 
@@ -329,7 +331,7 @@
             'ocr_data': ocr_data
         };
         let formDataJSON = JSON.stringify(formData);
-
+        console.log(formDataJSON)
         if (formDataJSON) {
             $.ajax({
                 url: '/admin/benchmark-manager/manage/test_ocr/accuracy',

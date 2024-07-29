@@ -39,7 +39,7 @@ function addRows(count) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
     for (var i = 0; i < count; i++) {
-        populateList(i, "", "", "", "", "000.00%", "000.00%", tbody);
+        populateList(i, "", "", "", "", "00.00%", "00.00%", tbody);
     }
 }
 
@@ -91,9 +91,9 @@ function populateResults(students) {
                     return;
                 }
             });
-
+            
             if (!isDuplicate) {
-                populateList(index, student.surname.trim(), student.firstname.trim(), student.middlename.trim(), student.suffix.trim(), "0.00%", "0.00%", tbody);
+                populateList(index, student.surname.trim(), student.firstname.trim(), student.middlename.trim(), student.suffix.trim(), "00.00%", "00.00%", tbody);
             }
         });
     }
