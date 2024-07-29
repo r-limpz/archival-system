@@ -28,7 +28,7 @@
                     {% block content %}
                     {% endblock %}
 
-                    {% if not request.path == url_for('admin.benchmarker')%}
+                    {% if request.path != url_for('admin.benchmarker') and request.path != url_for('staff.upload') %}
                     {% include '/partials/footer.html' %}
                     {% endif %}
                 </div>

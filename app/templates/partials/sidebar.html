@@ -1,5 +1,5 @@
 <aside id="side-navigation" class="sidebar" data-sidebar>
-    <div class="header-sidebar mb-2 border-bottom border-1">
+    <div class="header-sidebarborder-bottom border-bottom border-1 {% if current_user.role == 'staff' %} mb-3 {% else %} mb-2 {% endif %}">
         <ul class="sidebar-list">
             <li class="sidebar-list-item">
                 <div class="header-info align-items-center">
