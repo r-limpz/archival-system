@@ -266,21 +266,24 @@
         var studentList = [];
         if (students.length > 0) {
             students.forEach(function (student, index) {
-                var student_name = student.surname.trim() + ', ' + student.firstname.trim();
 
-                if (student.middlename && student.middlename.trim() !== '') {
-                    student_name += ' ' + student.middlename.trim() + '.';
+                if (student.surname && student.firstname) {
+                    var student_name = student.surname.trim() + ', ' + student.firstname.trim();
+
+                    if (student.middlename && student.middlename.trim() !== '') {
+                        student_name += ' ' + student.middlename.trim() + '.';
+                    }
+
+                    if (student.suffixname && student.suffixname.trim() !== '') {
+                        student_name += ' ' + student.suffixname.trim() + '.';
+                    }
+
+                    var entry = {
+                        id: index, // Adjusted to start from 0
+                        student_name: student_name.trim(), // trim to remove extra spaces
+                    };
+                    studentList.push(entry);
                 }
-
-                if (student.suffixname && student.suffixname.trim() !== '') {
-                    student_name += ' ' + student.suffixname.trim() + '.';
-                }
-
-                var entry = {
-                    id: index, // Adjusted to start from 0
-                    student_name: student_name.trim(), // trim to remove extra spaces
-                };
-                studentList.push(entry);
             });
         }
         return studentList;
