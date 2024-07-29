@@ -5,7 +5,7 @@ from ultralyticsplus import YOLO
 horiz_boxes =[]
 vert_boxes = []
 
-def CropTable(image):
+def CropTable(image, filename_crop):
     model = YOLO('foduucom/table-detection-and-extraction')
 
     # set model parameters
@@ -25,15 +25,15 @@ def CropTable(image):
         # Cropping
         cropped_image = img[y1:y2, x1:x2]
         cropped_image = Image.fromarray(cropped_image)
-        file_path = "./app/analyzer/temp.jpg"
+        file_path = "./app/analyzer/" + filename_crop
         
         try:
             cropped_image.save(file_path)
-            return "temp.jpg"
+            return True
         
         except Exception as e:
             print("Error saving cropped image:", e)
             
     
     print("No table detected in the image.")
-    return None
+    return False
