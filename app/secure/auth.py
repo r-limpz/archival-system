@@ -5,15 +5,9 @@ from app import login_manager, argon2, captcha
 from app.database import config
 from app.secure.login_form import LoginForm
 from app.secure.randomizer import generate_key, generate_token, check_token
-from app.secure.deviceInfo import deviceID_selector
-from app.secure.user_blocker import is_blocked, loginAttempt
 from app.secure.user_logs import loginHistory
 
 auth = Blueprint('auth', __name__)
-
-def deviceInfo():
-    deviceData = deviceID_selector(request.headers.get('User-Agent'))
-    return deviceData
 
 #setup query to update database when user session expired
 def session_expired(username):
@@ -117,12 +111,7 @@ def login():
         user_role = {'1': 'admin', '2': 'staff'}.get(role, 'error')
         role = int(role)
         
-        ipaddress = deviceInfo()['ip_address']
-        device = hashlib.sha256(ipaddress.encode()).hexdigest()
-
-        if is_blocked(device):
-                error = attemptError
-        else:
+        if username and password:
             with config.conn.cursor() as cursor:
                 #Search for the user in the database
                 cursor.execute('SELECT * FROM user WHERE username = %s AND role = %s', (username, role))
@@ -147,9 +136,7 @@ def login():
                             #register user to flask-login
                             login_user(User(session_id, username, user_role, token), remember=False)
                             #register login history
-                            loginHistory(user['user_id'], session_id, deviceInfo())
-                            #reset login attempt count
-                            loginAttempt('reset', request.headers.get('User-Agent'))
+                            loginHistory(user['user_id'], session_id)
                             #return to page according to user roles
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
                             if redirect_url:#redirect if user is authenicated and authorized
@@ -161,8 +148,7 @@ def login():
                     else:
                         error = invalidError
                 else:
-                    error = captchaError
-    loginAttempt('count', request.headers.get('User-Agent'))           
+                    error = captchaError       
     return render_template('public/index.html', error_message=error, role = role, form=form)
 
 #setup route for logout user 
