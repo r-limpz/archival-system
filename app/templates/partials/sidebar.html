@@ -1,5 +1,5 @@
 <aside id="side-navigation" class="sidebar" data-sidebar>
-    <div class="header-sidebar mb-3 border-bottom border-1">
+    <div class="header-sidebar mb-2 border-bottom border-1">
         <ul class="sidebar-list">
             <li class="sidebar-list-item">
                 <div class="header-info align-items-center">
@@ -11,8 +11,14 @@
         </ul>
     </div>
     <div class="middle-sidebar">
-        <ul class="sidebar-list">
-            {% if current_user.role == 'admin' %}
+        {% if current_user.role == 'admin' %}
+        <ul class="sidebar-list mb-3">
+            <li class="sidebar-list-item">
+                <div class="sidebar-group-title align-items-center">
+                    <span class="sidebar-icon"></span>
+                    <span class="hidden-sidebar fw-bold" style="margin-left: -15px;"> Statistics</span>
+                </div>
+            </li>
 
             <li class="sidebar-list-item">
                 <a href="{{url_for('dashboard')}}"
@@ -22,6 +28,21 @@
                 </a>
             </li>
 
+            <li class="sidebar-list-item">
+                <a href="{{url_for('benchmarker')}}"
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.benchmarker') and current_user.role == 'admin' %} active {% endif %}">
+                    <span class="sidebar-icon fa-solid fa-cube"></span>
+                    <span class="hidden-sidebar"> Tester</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="sidebar-list mb-3">
+            <li class="sidebar-list-item">
+                <div class="sidebar-group-title align-items-center">
+                    <span class="sidebar-icon"></span>
+                    <span class="hidden-sidebar fw-bold" style="margin-left: -15px;"> Manager tools </span>
+                </div>
+            </li>
             <li class="sidebar-list-item">
                 <a href="{{url_for('account_manager')}}"
                     class="sidebar-link align-items-center {% if request.path == url_for('admin.account_manager') %} active {% endif %}">
@@ -37,10 +58,16 @@
                     <span class="hidden-sidebar"> College and Course </span>
                 </a>
             </li>
+        </ul>
+        {% endif %}
 
-            <span class=" border-top border-1 my-3"> </span>
-
-            {% endif %}
+        <ul class="sidebar-list mb-3">
+            <li class="sidebar-list-item">
+                <div class="sidebar-group-title align-items-center">
+                    <span class="sidebar-icon"></span>
+                    <span class="hidden-sidebar fw-bold" style="margin-left: -15px;"> Database </span>
+                </div>
+            </li>
             <li class="sidebar-list-item">
                 <a href="{{url_for('records')}}"
                     class="sidebar-link align-items-center {% if request.path == url_for('staff.records') or request.path == url_for('admin.records') %} active {% endif %}">
@@ -74,17 +101,7 @@
                     <span class="hidden-sidebar"> Trash</span>
                 </a>
             </li>
-
-            <li class="sidebar-list-item">
-                <a href="{{url_for('benchmarker')}}"
-                    class="sidebar-link align-items-center {% if request.path == url_for('admin.benchmarker') and current_user.role == 'admin' %} active {% endif %}">
-                    <span class="sidebar-icon fa-solid fa-cube"></span>
-                    <span class="hidden-sidebar"> Tester</span>
-                </a>
-            </li>
-
             {% endif %}
-
         </ul>
     </div>
     <div class="bottom-sidebar border-top border-1">
