@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
 from app.database import config
-from app.college_selector import fetch_course
+from app.college.college_selector import fetch_course
 from app.secure.authorization import admin_required
 
 college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/colleges/manage/data')

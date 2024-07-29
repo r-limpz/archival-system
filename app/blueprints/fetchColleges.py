@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
-from app.college_selector import fetch_course
+from app.college.college_selector import fetch_course
 from app.secure.authorization import authenticate
 
 fetchColleges = Blueprint('fetchCollege_data', __name__)

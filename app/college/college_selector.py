@@ -1,4 +1,4 @@
-from . import config 
+from app.database import config 
 
 class Colleges:
     def __init__(self, college_id, college_name, college_description, courses):
