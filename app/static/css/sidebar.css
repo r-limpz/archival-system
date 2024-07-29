@@ -48,8 +48,6 @@ body {
     padding: 4px;
 }
 
-
-
 .sidebar .header-sidebar,
 .sidebar .middle-sidebar,
 .sidebar .bottom-sidebar {
@@ -100,6 +98,16 @@ body {
     height: 32px;
     padding: 0.25rem;
     margin: 0.25rem;
+    color: var(--def-color-text);
+    text-decoration: none;
+    align-items: start;
+}
+
+.sidebar-group-title {
+    display: flex;
+    width: auto;
+    padding: 0.25rem;
+    margin: 0rem 0.25rem;
     color: var(--def-color-text);
     text-decoration: none;
     align-items: start;
@@ -177,7 +185,8 @@ body {
 #pages_container {
     overflow-y: auto;
 }
+
 .scrollable_page-section {
-overflow-y: auto;
-height: calc(100vh - (3.5rem));
+    overflow-y: auto;
+    height: calc(100vh - (3.5rem));
 }
