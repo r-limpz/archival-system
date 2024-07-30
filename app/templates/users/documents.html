@@ -43,7 +43,9 @@
                         <option value="2">2nd Year</option>
                         <option value="3">3rd Year</option>
                         <option value="4">4th Year</option>
-                        <option value="5">Masteral</option>
+                        <option value="5">5th Year</option>
+                        <option value="6">6th Year</option>
+                        <option value="7">Masteral</option>
                     </select>
                 </div>
             </div>
@@ -150,11 +152,9 @@
 </script>
 <script>
     var documentsDataTable;
-    var visFilesize = false;
     var visLog = false;
 
     if('{{ current_user.role }}' === 'admin'){
-        visFilesize = true;
         visLog = true
     }
 
@@ -204,37 +204,35 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'id', orderable: true, title: '#' },
+                { data: 'id', orderable: true, title: '#' , width:'30px'},
                 {
                     'data': 'Filename',
                     title: 'File',
                     orderable: true,
                     wrap: true,
                     class: 'text-start',
-                    width: '200px',
+                    width: '500px',
                     "render": function (data, type, row) {
                         const file_name = '<span>' + data + '</span>'
                         return `<span class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + file_name + `</span>`;
                     }
                 },
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center', width: '70px' },
-                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '90px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '130px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
-                { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
+                { data: 'Semester', title: 'Sem', orderable: false, wrap: false, className: 'text-center', width: '75px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
                     data: 'Uploader',
                     title: 'Uploader',
                     orderable: false,
                     wrap: false,
-                    visible: true,
+                    visible: visLog,
+                    width: '90px',
                     "render": function (data, type, row) {
-                        if (data) {
-                            const Uploader = '<span>' + data + '</span>'
-                            return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
-                        } else {
-                            return '';
-                        }
+                        const Uploader = '<span>' + data + '</span>'
+                        const htmlUploader = `<div class="fw-medium d-flex w-full" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
+                            return data ? htmlUploader : null;
                     }
                 },
                 {
@@ -260,16 +258,6 @@
                                             </a>`;
 
                         return `<div class="d-flex fs-small align-items-center">` + editFile + ' ' + deleteFile + `</div>`;
-                    }
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 6, // index of the 'Uploader' column
-                    visible: false,
-                    
-                    render: function (data, type, row) {
-                        return data ? true : false;
                     }
                 }
             ],
@@ -427,7 +415,9 @@
                                 <option value="2" ${year_level === 2 ? 'selected' : ''}> 2nd </option>
                                 <option value="3" ${year_level === 3 ? 'selected' : ''}> 3rd </option>
                                 <option value="4" ${year_level === 4 ? 'selected' : ''}> 4th </option>
-                                <option value="5" ${year_level === 5 ? 'selected' : ''}> Masteral </option>
+                                <option value="4" ${year_level === 5 ? 'selected' : ''}> 5th </option>
+                                <option value="4" ${year_level === 6 ? 'selected' : ''}> 6th </option>
+                                <option value="5" ${year_level === 7 ? 'selected' : ''}> Masteral </option>
                             </select>
                         </div>
                         <div id="form-item" style="width:90px;">

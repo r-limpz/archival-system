@@ -125,6 +125,7 @@ function enforceMaxLength(inputElement, maxLength) {
 const customStartingYearInput = document.getElementById('starting_year');
 const customEndingYearInput = document.getElementById('ending_year');
 
+if (customStartingYearInput && customEndingYearInput){
 // Event listener for starting year input
 customStartingYearInput.addEventListener('input', function () {
     enforceMaxLength(customStartingYearInput, 4);
@@ -135,7 +136,7 @@ customStartingYearInput.addEventListener('input', function () {
 customEndingYearInput.addEventListener('input', function () {
     enforceMaxLength(customEndingYearInput, 4);
     updateYearEnd(customStartingYearInput, customEndingYearInput);
-});
+});}
 
 $("#document_college, #document_course, #document_yearLevel, #document_subject_type, #document_semester").change(function () {
     updateObject('#document_college', '#document_course', '#document_yearLevel', '#course_section', '#document_subject_name', '#document_subject_type', '#document_semester', '#starting_year', '#ending_year');
