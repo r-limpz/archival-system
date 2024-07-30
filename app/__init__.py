@@ -60,8 +60,6 @@ class Anonymous(AnonymousUserMixin):
         self.role = 'Anonymous'
 
 login_manager.anonymous_user = Anonymous
-#delete scheduled deletion users
-updateDB()
 
 #Register authentication logic
 from app.secure.auth import auth as auth_blueprint
