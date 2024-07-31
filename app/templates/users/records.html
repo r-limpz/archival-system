@@ -316,14 +316,13 @@
 
     //edit
     function editRecord(documentID) {
-        fetch('/documents/records/tags//manage/data/students/request/credentials/' + documentID)
+        fetch('/documents/records/tags/manage/data/students/request/credentials/' + documentID)
             .then(response => response.json())
             .then(recordsData => {
                 let surname = recordsData.surname;
                 let firstname = recordsData.firstname;
                 let middlename = recordsData.middlename;
                 let suffix = recordsData.suffix;
-
                 // Create the HTML string with the fetched data
                 let html = `
                 <div id="form-item" class="py-2">
