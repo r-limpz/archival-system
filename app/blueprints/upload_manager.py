@@ -112,25 +112,26 @@ def newRecordData(document_header, imageFile, students_data):
     document_id = newDocumentUploader(document_header, imageFile)
     try:
         with config.conn.cursor() as cursor:
-            if students_data and document_id:
-                tagging = []
-                for student in students_data:
-                    entry_surname = student['student_surname']
-                    entry_firstname = student['student_firstname']
-                    entry_middlename = student['student_middlename']
-                    entry_suffix = student['student_suffixname']
-                    student_id = newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix)
+            if document_id:
+                if students_data:
+                    tagging = []
+                    for student in students_data:
+                        entry_surname = student['student_surname']
+                        entry_firstname = student['student_firstname']
+                        entry_middlename = student['student_middlename']
+                        entry_suffix = student['student_suffixname']
+                        student_id = newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix)
 
-                    if student_id:
-                        linked = generateLink(document_id, student_id)
-                        tagging.append(linked)
-                
-                if len(tagging) > 0:
-                    return'success'
-                else:
-                    return 'failed'
+                        if student_id:
+                            linked = generateLink(document_id, student_id)
+                            tagging.append(linked)
+                    
+                    if len(tagging) > 0:
+                        return'success'
+                    else:
+                        return 'failed'
             else:
-                return 'failed'  
+                return 'duplicate file'  
 
     except Exception as e:
             print(f"new record error occurred: {e}")
@@ -140,44 +141,45 @@ def newRecordData(document_header, imageFile, students_data):
 @authenticate
 def uploader():
     if 'document_image' not in request.files:
-        return "No file uploaded"
+        query_result = "no file"
 
     file = request.files['document_image']
 
     if file.filename == '' or not allowed_file(file.filename):
-        return "Unsupported file type"
+        query_result = "unsupported file_type"
 
-    # Extract other document information
-    document_filename = request.form.get('document_filename')
-    document_college = request.form.get('document_college')
-    document_course = request.form.get('document_course')
-    document_yearLevel = request.form.get('document_yearLevel')
-    course_section = request.form.get('course_section')
-    document_subject_name = request.form.get('document_subject_name')
-    document_subject_type = request.form.get('document_subject_type')
-    document_semester = request.form.get('document_semester')
-    document_academicYear = request.form.get('document_academicYear')
-   
-    document_header = {
-        'filename': document_filename,
-        'college': int(document_college),
-        'course': int(document_course),
-        'yearLevel': int(document_yearLevel),
-        'section': course_section,
-        'subject_name': document_subject_name,
-        'subject_type': int(document_subject_type),
-        'semester': int(document_semester),
-        'academicYear': document_academicYear,
-    }
+    if 'document_image' and allowed_file(file.filename):
+        # Extract other document information
+        document_filename = request.form.get('document_filename')
+        document_college = request.form.get('document_college')
+        document_course = request.form.get('document_course')
+        document_yearLevel = request.form.get('document_yearLevel')
+        course_section = request.form.get('course_section')
+        document_subject_name = request.form.get('document_subject_name')
+        document_subject_type = request.form.get('document_subject_type')
+        document_semester = request.form.get('document_semester')
+        document_academicYear = request.form.get('document_academicYear')
+    
+        document_header = {
+            'filename': document_filename,
+            'college': int(document_college),
+            'course': int(document_course),
+            'yearLevel': int(document_yearLevel),
+            'section': course_section,
+            'subject_name': document_subject_name,
+            'subject_type': int(document_subject_type),
+            'semester': int(document_semester),
+            'academicYear': document_academicYear,
+        }
 
-    students_data_str = request.form.get('studentsData')
+        students_data_str = request.form.get('studentsData')
 
-    try:
-        students_data = json.loads(students_data_str)
-    except json.JSONDecodeError:
-        students_data = []
+        try:
+            students_data = json.loads(students_data_str)
+        except json.JSONDecodeError:
+            students_data = []
 
-    query_result = newRecordData(document_header, file, students_data)
+        query_result = newRecordData(document_header, file, students_data)
 
     return jsonify({'query_result': query_result})
 

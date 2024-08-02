@@ -238,12 +238,6 @@
     });
 </script>
 <script>
-    function updateTimerDisplay(milliseconds, type) {
-        let seconds = milliseconds / 1000;
-        console.log(`${type} Request took ${seconds} seconds.`);
-        // Display or update the timer on your page as needed
-    }
-
     let ocr_resultsList = [];
     let xhr = null;
     let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
@@ -256,9 +250,6 @@
         if (file) {
             scanningModal.show();
 
-            // Start the timer
-            let startTime = new Date().getTime();
-
             xhr = $.ajax({
                 url: '/scanner/auto/true',
                 type: 'POST',
@@ -267,17 +258,13 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    // Calculate elapsed time
-                    let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime,"Auto-Scan");
-
-                    if (data === 'No file uploaded') {
+                    if (data === 'no file') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
                             populateResults(data);
-                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         } else {
                             let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
@@ -363,8 +350,6 @@
         canvas.toBlob(function (blob) {
             let formData = new FormData();
             formData.append('document_image', blob, 'cropped_image.jpg');
-            // Start the timer
-            let startTime = new Date().getTime();
 
             $.ajax({
                 url: '/scanner/auto/false',
@@ -374,16 +359,13 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    // Calculate elapsed time
-                    let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime, "Manual-Scan");
-                    if (data === 'No file uploaded') {
+                    if (data === 'no file') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
                             populateResults(data);
-                            showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         } else {
                             let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
@@ -473,20 +455,24 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     switch (data.query_result) {
-                        case 'success'://the user successfully appended in the database
-                            showToast('Success!', 'Document uploaded in the database.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                           case 'success':
+                            showToast('Success!', 'Document uploaded successfully.', 'text-success', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
-                        case 'failed'://error in processing occured
-                            showToast('Upload Error occurred!', 'Failed to upload document data.', 'fc-orange fa-solid fa-triangle-exclamation', 'border-warning');
+                        case 'duplicate file':
+                            showToast('File Already Exists', 'Please try uploading a different file.', 'text-warning', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
-                        case 'No file uploaded'://user already exist in the database
-                            showToast('No file was uploaded', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        case 'failed':
+                            showToast('Upload Failed', 'Failed to upload document data.', 'text-danger', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
-                        case 'Unsupported file type':
-                            showToast('Unsupported file type', 'Please Try again.', 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
+                        case 'no file':
+                            showToast('No File Uploaded', 'Please upload a file and try again.', 'text-danger', 'border-danger');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'unsupported file_type':
+                            showToast('Unsupported File Type', 'Please upload a different file type.', 'text-danger', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }
