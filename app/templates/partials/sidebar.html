@@ -1,5 +1,6 @@
 <aside id="side-navigation" class="sidebar" data-sidebar>
-    <div class="header-sidebarborder-bottom border-bottom border-1 {% if current_user.role == 'staff' %} mb-3 {% else %} mb-2 {% endif %}">
+    <div
+        class="header-sidebarborder-bottom border-bottom border-1 {% if current_user.role == 'staff' %} mb-3 {% else %} mb-2 {% endif %}">
         <ul class="sidebar-list">
             <li class="sidebar-list-item">
                 <div class="header-info align-items-center">
@@ -136,6 +137,12 @@
         sidebar.addEventListener("click", function (event) {
             if (!isInsideSidebarListItem(event.target)) {
                 toggleSidebar();
+            } else {
+                const listItem = event.target.closest('.sidebar-list-item');
+                if (listItem && listItem.querySelector('.sidebar-group-title')) {
+                    // Toggle sidebar only if the clicked sidebar-list-item has a .sidebar-group-title child
+                    toggleSidebar();
+                }
             }
         });
 
@@ -148,5 +155,6 @@
             return element.classList.contains('sidebar-list-item') || element.closest('.sidebar-list-item') !== null;
         }
     });
+
 
 </script>
