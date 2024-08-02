@@ -19,7 +19,7 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
     cell6.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_wer" name="student_wer" value="${student_wer}" placeholder = "${student_wer}" disabled> `; // wer
     cell7.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_cer" name="student_cer" value="${student_cer}" placeholder = "${student_cer}" disabled> `; // cer
 
-    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}" onclick="checkAccuracyData()"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
     (function (row) {
         cell8.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
@@ -39,7 +39,7 @@ function addRows(count) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
     for (var i = 0; i < count; i++) {
-        populateList(i, "", "", "", "", "00.00%", "00.00%", tbody);
+        populateList(i, "", "", "", "", "100.00%", "100.00%", tbody);
     }
 }
 
@@ -93,7 +93,7 @@ function populateResults(students) {
             });
             
             if (!isDuplicate) {
-                populateList(index, student.surname.trim(), student.firstname.trim(), student.middlename.trim(), student.suffix.trim(), "00.00%", "00.00%", tbody);
+                populateList(index, student.surname.trim(), student.firstname.trim(), student.middlename.trim(), student.suffix.trim(), "0.00%", "0.00%", tbody);
             }
         });
     }
@@ -113,4 +113,10 @@ function populateErrorRate(errorRates) {
             });
         });
     }
+}
+
+
+document.getElementById('populateInputs').onclick = function () {
+    addRows(1);
+    checkAccuracyData();
 }

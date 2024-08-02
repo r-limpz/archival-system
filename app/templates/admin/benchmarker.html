@@ -42,7 +42,7 @@
         </div>
         <div style="max-width:60vw; min-width: 700px; width: auto;">
             <div class="p-2">
-                <div class="mt-4 table-fixed-head" id="student_listContainer">
+                <div class="table-fixed-head" id="student_listContainer">
                     <table class="table w-100 table-sm table-borderless" id="studentList">
                         <thead class="border-bottom">
                             <tr>
@@ -56,7 +56,7 @@
                                 <th style="width:100px"> WER% </th>
                                 <th style="width:100px"> CER% </th>
                                 <th class="px-2 text-center" style="width:24px">
-                                    <button class="px-2 py-0 border-0" id="populateInputs" onclick="addRows(1)">
+                                    <button class="px-2 py-0 border-0" id="populateInputs">
                                         <span class="fa-solid fa-plus">
                                     </button>
                                 </th>
@@ -78,11 +78,11 @@
                         </div>
                         <div class="fw-medium d-flex" style="min-width: 80px;">
                             <span style="width: 70px;">Avg. WER: </span>
-                            <div class="fw-bold px-2" id="AverageWER_Result" style="width: 70px;">000.00%</div>
+                            <div class="fw-bold px-2" id="AverageWER_Result" style="width: 70px;">0.00%</div>
                         </div>
                         <div class="fw-medium d-flex" style="min-width: 80px;">
                             <span style="width: 70px;">Avg. CER: </span>
-                            <div class="fw-bold px-2" id="AverageCER_Result" style="width: 70px;">000.00%</div>
+                            <div class="fw-bold px-2" id="AverageCER_Result" style="width: 70px;">0.00%</div>
                         </div>
                     </span>
                     <button class="fs-medium border-0 fw-medium btn-orange px-4" id="insertBenchmarkData"
@@ -308,13 +308,23 @@
         rows.forEach(function (row) {
             var checkbox = row.querySelector('.checkbox');
             var id = checkbox ? parseInt(checkbox.id) : 0;
-
+            var student_name = '';
             var student_surname = row.querySelector('#student_surname').value.trim();
             var student_firstname = row.querySelector('#student_firstname').value.trim();
             var student_middlename = row.querySelector('#student_middlename').value.trim();
             var student_suffixname = row.querySelector('#student_suffixname').value.trim();
 
-            var student_name = student_surname + ', ' + student_firstname;
+            if (student_surname !== '' && student_firstname !== '') {
+                student_name = student_surname + ', ' + student_firstname;
+            }
+            else {
+                if (student_surname !== '') {
+                    student_name = student_surname;
+                }
+                if (student_firstname !== '') {
+                    student_name = student_firstname;
+                }
+            }
 
             if (student_middlename !== '') {
                 student_name += ' ' + student_middlename + '.';
@@ -340,8 +350,8 @@
         let corrected_data = fetchrowValues();
         let ocr_data = getOCR_Result(ocr_resultsList);
         let saveButton = document.getElementById('insertBenchmarkData');
-        if (ocr_data.length > 0 && corrected_data.length > 0) {
 
+        if (ocr_data.length > 0 && corrected_data.length > 0) {
             let formData = {
                 'corrected_data': corrected_data,
                 'ocr_data': ocr_data
