@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <table id='documentsTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
+    <table id='documentsTable' class='display dataTable table-borderless table-hover fc-default ' cellspacing="0"
         width="100%">
     </table>
 
@@ -75,7 +75,7 @@
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script>
     //populate data table
-    var collegesArray = [];
+    let collegesArray = [];
 
     function getCollege() {
         fetch('/fetch_college/courseList/data')
@@ -127,7 +127,7 @@
     }
 
     getCollege();
-
+    
     function populateCourses(selectedCollegeName) {
         const courseSelect = document.getElementById('filterCourse');
         const option = document.createElement('option');
@@ -214,12 +214,13 @@
                     width: '500px',
                     "render": function (data, type, row) {
                         const file_name = '<span>' + data + '</span>'
-                        return `<span class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + file_name + `</span>`;
+                        return file_name;
                     }
                 },
-                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center', width: '70px' },
-                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '200px' },
-                { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
+                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '100px' },
+                { data: 'College', title: 'College', orderable: true, wrap: false, className: '', width: '70px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: '', width: '200px' },
+                { data: 'Subject', title: 'Subject', orderable: false, wrap: true, width: '200px', },
                 { data: 'Semester', title: 'Sem', orderable: false, wrap: false, className: 'text-center', width: '75px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
@@ -231,7 +232,7 @@
                     width: '90px',
                     "render": function (data, type, row) {
                         const Uploader = '<span>' + data + '</span>'
-                        const htmlUploader = `<div class="fw-medium d-flex w-full" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
+                        const htmlUploader = `<div class="fw-medium d-flex w-full gap-2" style="max-width:100px;"><span class="fa-solid fa-user fs-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
                             return data ? htmlUploader : null;
                     }
                 },
@@ -297,8 +298,6 @@
         });
     }
 
-    dataTableFunction();
-
     $('#filterShow').change(function () {
         var value = $(this).val();  // Get the selected value
         // Change the select value of #recordsTable_length
@@ -310,6 +309,7 @@
         }
     });
 
+    setTimeout(dataTableFunction(), 1000);
 </script>
 <script>
     //preview
@@ -569,6 +569,10 @@
                             break;
                         case 'success'://the user successfully appended in the database
                             showToast('Success!', 'Document updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            break;
+                        case 'filename exist'://user already exist in the database
+                            showToast('Filename Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed'://error in processing occured

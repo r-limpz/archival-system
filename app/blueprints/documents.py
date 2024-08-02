@@ -42,6 +42,20 @@ def fetchDocumentData(document_id):
     except Exception as e:
         print('Fetch Document Info Error :', e)
 
+
+def checkDuplicateFile(filename, document_id):
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM documents WHERE filename = %s AND docs_id != %s AND delete_status = 0', (filename, document_id))
+            result = cursor.fetchone()
+
+            if result:
+                return True
+        
+        return False
+    except Exception as e:
+        print('Check Duplicate Filename Error:', e)
+
 def editDocumentsData(document_id, document_header):
     try:
         with config.conn.cursor() as cursor:
@@ -58,14 +72,17 @@ def editDocumentsData(document_id, document_header):
                 new_semester = document.get('semester')
                 new_academic_year = document.get('academicYear')
 
-                cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s WHERE docs_id = %s', 
-                               (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
-                config.conn.commit()  # Commit the changes!
+                if not checkDuplicateFile(new_filename, document_id):
+                    cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s WHERE docs_id = %s', 
+                                (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
+                    config.conn.commit()  # Commit the changes!
 
-                if cursor.rowcount > 0:
-                    return 'success'
-                            
-                return 'failed'
+                    if cursor.rowcount > 0:
+                        return 'success'
+                
+                    return 'failed'
+                
+                return 'filename exist'
 
             return 'No Selected Document'
     except Exception as e:
