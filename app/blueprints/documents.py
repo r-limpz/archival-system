@@ -43,16 +43,16 @@ def fetchDocumentData(document_id):
         print('Fetch Document Info Error :', e)
 
 
-def checkDuplicateFile(filename, document_id):
+def checkDuplicateFile(filename):
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM documents WHERE filename = %s AND docs_id != %s AND delete_status = 0', (filename, document_id))
+            cursor.execute('SELECT * FROM documents WHERE filename = %s AND delete_status = 0', (filename))
             result = cursor.fetchone()
 
             if result:
-                return True
+                return int(result['docs_id'])
         
-        return False
+        return None
     except Exception as e:
         print('Check Duplicate Filename Error:', e)
 
@@ -72,19 +72,24 @@ def editDocumentsData(document_id, document_header):
                 new_semester = document.get('semester')
                 new_academic_year = document.get('academicYear')
 
-                if not checkDuplicateFile(new_filename, document_id):
+                searchID = checkDuplicateFile(new_filename)
+                
+                if searchID:
+                    if not searchID == document_id:
+                        return 'filename exist'
+                    else:
+                        return 'no changes'
+                else:
                     cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s WHERE docs_id = %s', 
-                                (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
-                    config.conn.commit()  # Commit the changes!
+                                        (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
+                    config.conn.commit() 
 
                     if cursor.rowcount > 0:
                         return 'success'
-                
+                        
                     return 'failed'
-                
-                return 'filename exist'
-
-            return 'No Selected Document'
+                    
+            return 'not found'
     except Exception as e:
         print('Edit Documents Error:', e)
 
