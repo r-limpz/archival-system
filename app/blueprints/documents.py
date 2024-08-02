@@ -81,7 +81,7 @@ def deleteDocumentsData(document_id):
                 config.conn.commit()
 
                 if cursor.rowcount > 0:
-                    cursor.execute('INSERT INTO trashdocs (document_id, editor, trashed_date, deleted_date) VALUES (%s, %s, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY))', (document_id, editor))
+                    cursor.execute('INSERT INTO trashdocs (document_id, editor, trashed_date) VALUES (%s, %s, NOW())', (document_id, editor))
                     config.conn.commit()
 
                     return 'success'

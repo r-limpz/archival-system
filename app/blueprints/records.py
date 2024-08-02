@@ -1,11 +1,22 @@
 from flask import Blueprint, request, jsonify, Response
-from flask_login import login_required
+from flask_login import login_required, current_user
 import base64
 from app.database import config
 from app.secure.authorization import authenticate
 
 fetch_records = Blueprint('fetch_records', __name__, url_prefix='/documents/records/tags/manage/data')
 
+def getEditor():
+    with config.conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM user WHERE username = %s', (current_user.username))
+        account_uploader = cursor.fetchone()
+
+        if account_uploader:
+            editor = account_uploader['user_id']
+            return editor
+        else:
+            return None
+        
 # fetch the student credentials fo edit
 def fetchEntryData(tag_id):
     try:
@@ -61,17 +72,20 @@ def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_
 def removeRecordData(tagging_id):
     try:
         with config.conn.cursor() as cursor:
-            tagging_id = int(tagging_id)
+            if tagging_id:
+                tagging_id = int(tagging_id)
+                editor = getEditor()
 
-            cursor.execute('DELETE FROM tagging WHERE tag_id = %s', (tagging_id))
-            rows_deleted = cursor.rowcount  # Get the number of affected rows
+                cursor.execute('UPDATE tagging SET delete_status = 1 WHERE tag_id = %s', (tagging_id,)) 
+                config.conn.commit()
 
-            config.conn.commit()
-
-            if rows_deleted > 0:
-                return 'success'
-            
-            return 'failed'
+                if cursor.rowcount > 0:
+                    cursor.execute('INSERT INTO trashrecords (records_id, editor, trashed_date) VALUES (%s, %s, NOW())', (tagging_id, editor))
+                    config.conn.commit()
+                    
+                    return 'success'
+                
+                return 'failed'
             
     except Exception as e:
         print('Remove Recordds Error :', e)
