@@ -43,30 +43,33 @@ def scanner(auto):
     image_path = "./app/analyzer/" + filenameCrop
 
     if 'document_image' not in request.files:
-            return "No file uploaded"
+            return "no file"
     
     file = request.files['document_image']
     
     if file.filename == '' or not allowed_file(file.filename):
-            return "No file selected or unsupported file type"
+            return "unsupported file_type"
     
-    try:
-        if auto == "true":
-            print("auto-scan")
-            if CropTable(file, filenameCrop):
+    if file and allowed_file(file.filename):
+
+        try:
+            if auto == "true":
+                print("auto-scan")
+                if CropTable(file, filenameCrop):
+                    students = tableDataAnalyzer(filenameCrop)
+                    
+            else:
+                print("manual-scan")
+                file.save(image_path)
                 students = tableDataAnalyzer(filenameCrop)
                 
-        else:
-            print("manual-scan")
-            file.save(image_path)
-            students = tableDataAnalyzer(filenameCrop)
+            deleteFile(image_path)
             
-        deleteFile(image_path)
-        if students:
-            print('Names detected:',len(students))
-            return jsonify([student.__dict__ for student in students])
-        else:
-            return None
-        
-    except Exception as e:
-        return jsonify(e)
+            if students:
+                print('Names detected:',len(students))
+                return jsonify([student.__dict__ for student in students])
+            else:
+                return None
+            
+        except Exception as e:
+            return jsonify(e)
