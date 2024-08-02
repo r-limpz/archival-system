@@ -37,7 +37,7 @@ def newDocumentUploader(document_header, imageFile):
     if college != "" and course != "":
         try:
             with config.conn.cursor() as cursor:
-                cursor.execute('SELECT * FROM documents WHERE filename = %s', (filename))
+                cursor.execute('SELECT * FROM documents WHERE filename = %s AND delete_status = 0', (filename))
                 document_exist = cursor.fetchone()
 
                 if not document_exist:
@@ -97,7 +97,7 @@ def generateLink(document_id, student_id):
     else:
         editor = getEditor()
         with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM tagging WHERE document = %s AND student = %s', (document_id, student_id))
+            cursor.execute('SELECT * FROM tagging WHERE document = %s AND student = %s AND delete_status = 0', (document_id, student_id))
             linked_item = cursor.fetchone()
 
             if not linked_item:
