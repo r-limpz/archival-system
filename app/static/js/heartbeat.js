@@ -34,7 +34,7 @@ function sendHeartbeat() {
         });
 }
 
-setTimeout(sendHeartbeat, 1000); //check session after 1sec
+setTimeout(sendHeartbeat, 5000); //check session after 1sec
 setInterval(() => sendHeartbeat(), 1200000); // check session every 20 mins
 
 document.getElementById('logout_currentUser').addEventListener('click', function () {
