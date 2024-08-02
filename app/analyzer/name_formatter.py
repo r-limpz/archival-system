@@ -37,63 +37,67 @@ def isSuffixAndMiddleName(unstructured_ListOfSplitName):
 def detectNameFormat(unstructured_nameformat):
     #define the dictionary format of student name
     structured_nameformat = {'surname': '', 'firstname': '', 'middlename': '', 'suffix': ''}
-    array_name = unstructured_nameformat.split()
-    nameData = isSuffixAndMiddleName(array_name)
+    array_name = unstructured_nameformat.split() # Split the unstructured name into an array of components
+    nameData = isSuffixAndMiddleName(array_name) # Extract middle name and suffix information using a helper function
+    
     try:
-        # Find and remove the middlename in the array name list
-        if not nameData.get('middlename') == '':
+        # Process middle name if present
+        if nameData.get('middlename'):
             temp_middlename = re.sub(r'\W+', '', nameData.get('middlename')).upper()
             structured_nameformat['middlename'] = temp_middlename
             middleNameIndex = nameData.get('middlename_index')
-            if not middleNameIndex == -1:
+            if middleNameIndex != -1:
                 array_name = array_name[:middleNameIndex] + array_name[middleNameIndex+1:]
 
-        # Find and remove the sufffix in the array name list
-        if not nameData.get('middlename') == '':
+        # Process suffix if present
+        if nameData.get('suffix'):
             temp_suffix = re.sub(r'\W+', '', nameData.get('suffix')).upper()
             structured_nameformat['suffix'] = temp_suffix
             suffixIndex = nameData.get('suffix_index')
-            if not suffixIndex == -1:
+            if suffixIndex != -1:
                 array_name = array_name[:suffixIndex] + array_name[suffixIndex+1:]
 
-        #create an empty variables
+        # Initialize variables for firstname and surname
         temp_firstname = ''
         temp_surname = ''
 
-        #find the comma to determine the remaining name parts
+        # Find comma index to distinguish between surname and firstname
         comma_index = array_name.index(',') if ',' in array_name else None
-        #if comma exist the format is [surname][comma][firstname]
+        
         if comma_index is not None:
+            # Format: [surname], [firstname]
             temp_surname = ' '.join(array_name[:comma_index])
             temp_firstname = ' '.join(array_name[comma_index+1:])
-
-        #if comma not exist the format is [surname][period or null][firstname]
         else:
-            #find the period in thee array name
+            # Find period index to distinguish between surname and firstname
             period_index = array_name.index('.') if '.' in array_name else None
             if period_index is not None:
-                if (len(array_name[:period_index].strip()) > 2 and len(array_name[period_index + 1:].strip()) > 2):
+                # Check if both parts around the period are reasonable lengths
+                if len(array_name[:period_index]) > 2 and len(array_name[period_index + 1:]) > 2:
                     temp_surname = ' '.join(array_name[:period_index])
                     temp_firstname = ' '.join(array_name[period_index + 1:])
-            #if name has "dela" that exist use it as 1st word in a surname
+            # Check for "Dela" as a marker for surname and firstname
             if "Dela" in array_name:
                 dela_index = array_name.index("Dela")
                 temp_surname = ' '.join(array_name[:dela_index])
                 temp_firstname = ' '.join(array_name[dela_index + 1:])
-            #last condition is to get the surname as 1st element in the list
+            # If no specific markers, assume first element is surname
             else:
                 temp_surname = array_name[0].title()
                 temp_firstname = ' '.join(array_name[1:])
-
+        
+        # Clean up surname and firstname
         temp_surname = re.sub(r'[^A-Za-z]', ' ', temp_surname)  # Replace non-alphabetic characters with spaces
         temp_surname = re.sub(r'\s+', ' ', temp_surname).strip()  # Replace multiple spaces with single space and strip leading/trailing spaces
         temp_firstname = re.sub(r'[^A-Za-z\.]', ' ', temp_firstname)  # Replace non-alphabetic and non-dot characters with spaces
         temp_firstname = re.sub(r'\s+', ' ', temp_firstname).strip()  # Replace multiple spaces with single space and strip leading/trailing spaces
 
+        # Assign cleaned values to structured_nameformat
         structured_nameformat['surname'] = temp_surname.title()
         structured_nameformat['firstname'] = temp_firstname.title()
 
-        if not structured_nameformat['surname'] == '' and not structured_nameformat['firstname'] == '':
+        # Check if both surname and firstname are non-empty
+        if structured_nameformat['surname'] and structured_nameformat['firstname']:
             return structured_nameformat
         
     except Exception as e:

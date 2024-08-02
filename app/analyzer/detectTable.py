@@ -1,39 +1,36 @@
 import numpy as np
 from PIL import Image
-from ultralyticsplus import YOLO
-
-horiz_boxes =[]
-vert_boxes = []
+from ultralyticsplus import YOLO 
 
 def CropTable(image, filename_crop):
-    model = YOLO('foduucom/table-detection-and-extraction')
+    file_path = "./app/analyzer/" + filename_crop # creating the directory
+    model = YOLO('foduucom/table-detection-and-extraction')  # Initializing YOLO model with specific weights
 
-    # set model parameters
-    model.overrides['conf'] = 0.25  # NMS confidence threshold
-    model.overrides['iou'] = 0.8  # NMS IoU threshold
-    model.overrides['agnostic_nms'] = False  # NMS class-agnostic
-    model.overrides['max_det'] = 1000  # maximum number of detections per image
+    # Setting model parameters for object detection
+    model.overrides['conf'] = 0.25  # Confidence threshold for non-maximum suppression (NMS)
+    model.overrides['iou'] = 0.8  # Intersection over Union (IoU) threshold for NMS
+    model.overrides['agnostic_nms'] = False  # Setting NMS to class-aware (not class-agnostic)
+    model.overrides['max_det'] = 1000  # Maximum number of detections per image
 
     img = Image.open(image)
-    results = model.predict(img)
+    results = model.predict(img)  # Execute object detection on the image using the YOLO model
 
-    # Check if any boxes were detected
     if len(results[0].boxes.data.numpy()) > 0:
+        # Extracting coordinates of the first detected bounding box
         x1, y1, x2, y2, _, _ = tuple(int(item) for item in results[0].boxes.data.numpy()[0])
-        img = np.array(Image.open(image))
+        img = np.array(Image.open(image))  # Converting the image to a numpy array for processing
 
-        # Cropping
-        cropped_image = img[y1:y2, x1:x2]
-        cropped_image = Image.fromarray(cropped_image)
-        file_path = "./app/analyzer/" + filename_crop
-        
+        # Cropping the image based on the detected bounding box datas
+        cropped_image = img[y1:y2, x1:x2]  # Cropping the image using numpy slicing
+        cropped_image = Image.fromarray(cropped_image)  # Converting the cropped numpy array back to PIL Image
+
         try:
-            cropped_image.save(file_path)
-            return True
+            cropped_image.save(file_path)  # save the cropped image
+            return True  # True indicate successful cropping
         
         except Exception as e:
             print("Error saving cropped image:", e)
             
-    
-    print("No table detected in the image.")
+    print("No table detected in the image.") 
     return False
+
