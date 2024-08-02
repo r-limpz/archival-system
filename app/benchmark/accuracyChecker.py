@@ -46,9 +46,6 @@ def getErrorBaseline_Corrected(corrected_data, ocr_data):
 
                 # If corrected data does not exist in OCR data
                 else:
-                    wer_val = defaultValue
-                    cer_val = defaultValue
-
                     # Find the closest match in remaining OCR data based on error rates
                     if len(ocr_dict) > 0:
                         min_wer = defaultValue
@@ -66,24 +63,29 @@ def getErrorBaseline_Corrected(corrected_data, ocr_data):
                                 min_cer = output['cer']
                                 min_wer = output['wer']
                                 break
-                            # Otherwise, find the minimum error rates
-                            elif output['cer'] < min_cer:
-                                min_id = ocr_id
-                                min_cer = output['cer']
-                                min_wer = output['wer']
+                            else:
+                                # Otherwise, find the minimum error rates
+                                if output['cer'] < min_cer:
+                                    min_id = ocr_id
+                                    min_cer = output['cer']
+                                    min_wer = output['wer']
 
                         # Set error rates to the closest match found
                         if min_cer:
-                            wer_val = min_wer
-                            cer_val = min_cer
+                            error_rate.append({
+                                'id': corrected_id,
+                                'wer': min_wer,
+                                'cer': min_cer,
+                            })
                             del ocr_dict[min_id]
 
-                    # Append the error rates for the current corrected item
-                    error_rate.append({
-                        'id': corrected_id,
-                        'wer': wer_val,
-                        'cer': cer_val,
-                    })
+                    else:
+                        # Append the error rates for the current corrected item
+                        error_rate.append({
+                            'id': corrected_id,
+                            'wer': defaultValue,
+                            'cer': defaultValue,
+                        })
 
             # If corrected 'student_name' field is empty
             else:

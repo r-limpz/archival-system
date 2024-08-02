@@ -78,11 +78,11 @@
                         </div>
                         <div class="fw-medium d-flex" style="min-width: 80px;">
                             <span style="width: 70px;">Avg. WER: </span>
-                            <div class="fw-bold px-2" id="AverageWER_Result" style="width: 70px;">0.00%</div>
+                            <div class="fw-bold px-2" id="AverageWER_Result" style="width: 70px;">100.00%</div>
                         </div>
                         <div class="fw-medium d-flex" style="min-width: 80px;">
                             <span style="width: 70px;">Avg. CER: </span>
-                            <div class="fw-bold px-2" id="AverageCER_Result" style="width: 70px;">0.00%</div>
+                            <div class="fw-bold px-2" id="AverageCER_Result" style="width: 70px;">100.00%</div>
                         </div>
                     </span>
                     <button class="fs-medium border-0 fw-medium btn-orange px-4" id="insertBenchmarkData"
@@ -104,6 +104,9 @@
         let scantype = document.getElementById('scanType');
         scantime.innerHTML = seconds.toFixed(2) + 's';
         scantype.innerHTML = type;
+
+        document.getElementById('AverageWER_Result').innerText = '0.00%';
+        document.getElementById('AverageCER_Result').innerText = '0.00%';
     }
 
     let ocr_resultsList;
@@ -305,9 +308,10 @@
         var studentList = [];
         var rows = document.querySelectorAll('tbody tr');
 
+        let MaxIndex = 0;
+
         rows.forEach(function (row) {
-            var checkbox = row.querySelector('.checkbox');
-            var id = checkbox ? parseInt(checkbox.id) : 0;
+            var id = parseInt(row.querySelector('.checkbox').id);
             var student_name = '';
             var student_surname = row.querySelector('#student_surname').value.trim();
             var student_firstname = row.querySelector('#student_firstname').value.trim();

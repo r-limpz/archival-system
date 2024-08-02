@@ -1,7 +1,7 @@
 function populateList(index, surname, fname, midname, sfxname, student_wer, student_cer, tbody) {
     index = parseInt(index);
     var row = tbody.insertRow(-1) // Insert a new row at the end of the table
-    
+
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
@@ -19,7 +19,7 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
     cell6.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_wer" name="student_wer" value="${student_wer}" placeholder = "${student_wer}" disabled> `; // wer
     cell7.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_cer" name="student_cer" value="${student_cer}" placeholder = "${student_cer}" disabled> `; // cer
 
-    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}" onclick="checkAccuracyData()"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
     (function (row) {
         cell8.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
@@ -31,15 +31,29 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
                     row.remove();
                 }, 100);
             }, 250);
+
+            checkAccuracyData();
         });
     })(row);
 }
-
 function addRows(count) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
+    var startingIndex = 0;
+
+    // Check if tbody has existing rows
+    if (tbody.rows.length !== 0) {
+        // Get the last row in the tbody
+        var lastRow = tbody.rows[tbody.rows.length - 1];
+        // Find the id of the last checkbox
+        var checkbox = lastRow.querySelector('input[type="checkbox"]');
+        var lastCheckboxId = parseInt(checkbox.id);
+
+        startingIndex = lastCheckboxId + 1;
+    }
+
     for (var i = 0; i < count; i++) {
-        populateList(i, "", "", "", "", "100.00%", "100.00%", tbody);
+        populateList(startingIndex + i, "", "", "", "", "100.00%", "100.00%", tbody);
     }
 }
 
@@ -91,7 +105,7 @@ function populateResults(students) {
                     return;
                 }
             });
-            
+
             if (!isDuplicate) {
                 populateList(index, student.surname.trim(), student.firstname.trim(), student.middlename.trim(), student.suffix.trim(), "0.00%", "0.00%", tbody);
             }
