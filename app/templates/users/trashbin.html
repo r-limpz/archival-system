@@ -17,10 +17,6 @@
             <input type="text" class="form-control w-full text-truncate" id="filterSearch" placeholder="Search...">
         </div>
     </div>
-    <div class="my-3 p-2 rounded-3 bg-light d-flex justify-content-between align-items-center fs-medium ">
-        <span class="px-3 ">Documents in trash will be deleted permanently after 30 days.</span>
-        <button class="btn-gray fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#clearTrash_confirmation">Empty Trash</button>
-    </div>
     <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default' cellspacing="0"
         width="100%">
     </table>
@@ -50,7 +46,7 @@
             'serverSide': true,
             'serverMethod': 'post',
             'ajax': {
-                'url': '/admin/trash/manage/data/fetch-data/deleted-files/delete-schedule-30days/trash-list',
+                'url': '/admin/trash/manage/data/fetch-data/deleted-files/trash-list',
                 'headers': { 'X-CSRFToken': '{{ csrf_token() }}' },
                 'data': function (data) {
                     data.filterSearch = $('#filterSearch').val();
@@ -85,6 +81,7 @@
                         return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
                     }
                 },
+                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '90px' },
                 { data: 'File_size', title: 'File size ', orderable: false, wrap: false, className: 'text-center', width: '100px' },
                 {
                     data: 'editor',
@@ -95,11 +92,10 @@
                     width: '200px',
                     "render": function (data, type, row) {
                         const editor = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-red bg-light-gray" style="padding:0.25rem"></span>` + editor + `</div>`;
+                        return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem"></span>` + editor + `</div>`;
                     }
                 },
                 { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '120px' },
-                { data: 'Deletion_Sched', title: 'Delete', orderable: true, wrap: false, className: 'text-center', width: '120px' },
                 {
                     'data': 'id',
                     title: ' ',

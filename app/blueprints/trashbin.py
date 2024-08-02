@@ -45,7 +45,7 @@ def deleteDocumentFile(document_id):
             print('Recover data Error: ',e)
 
 #fetch trash data for datatable
-@trashbin_data.route("/fetch-data/deleted-files/delete-schedule-30days/trash-list",methods=["POST","GET"])
+@trashbin_data.route("/fetch-data/deleted-files/trash-list",methods=["POST","GET"])
 @login_required
 @admin_required
 def recycleBin():
@@ -97,7 +97,7 @@ def recycleBin():
                             'id': row['id'],
                             'Filename': row['Filename'],
                             'Trash_date': row['Trash_date'].strftime('%B %d, %Y'),
-                            'Deletion_Sched': get_deletionTime(row['Deletion_Sched']),
+                            'studentCount': row['studentCount'],
                             'editor': row['editor'],
                             'image_id': row['image_id'],
                             'File_size': filesize_format(row['Filesize']),

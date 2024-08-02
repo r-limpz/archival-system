@@ -161,6 +161,7 @@ def documents_data():
                                 'Unit': row['Unit'],
                                 'Semester': row['Semester'],
                                 'SchoolYear': row['SchoolYear'],
+                                'studentCount': row['studentCount'],
                                 'image_id': row['image_id'],
                                 'Uploader': '',
                             })
@@ -176,6 +177,7 @@ def documents_data():
                                 'Unit': row['Unit'],
                                 'Semester': row['Semester'],
                                 'SchoolYear': row['SchoolYear'],
+                                'studentCount': row['studentCount'],
                                 'image_id': row['image_id'],
                                 'File_size':filesize_format(row['Filesize']) ,
                                 'Uploader': row['Uploader'],
