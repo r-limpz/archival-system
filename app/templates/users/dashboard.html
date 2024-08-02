@@ -203,7 +203,6 @@
         document.getElementById('trashed_counts').innerHTML = data.trash_count.toString().toUpperCase();
         document.getElementById('trashed_size').innerHTML = data.trash_size.toString().toUpperCase();
         var icon;
-        console.log(data.trash_count);
         
         if (data.documents_status) {
             if (data.documents_status > 0) {
@@ -266,36 +265,37 @@
     }
 
     document.addEventListener('DOMContentLoaded', (event) => {
-        var currentDate = new Date().toISOString().slice(0, 10);
+        let selected_date = new Date().toISOString().slice(0, 10);
+
         document.querySelector('#filter_daily').addEventListener('click', function () {
             adjustButtonOpacity('filter_daily');
-            requestUpdate('daily', currentDate);
+            requestUpdate('daily', selected_date);
         });
         document.querySelector('#filter_weekly').addEventListener('click', function () {
             adjustButtonOpacity('filter_weekly');
-            requestUpdate('weekly', currentDate);
+            requestUpdate('weekly', selected_date);
         });
         document.querySelector('#filter_monthly').addEventListener('click', function () {
             adjustButtonOpacity('filter_monthly');
-            requestUpdate('monthly', currentDate);
+            requestUpdate('monthly', selected_date);
         });
         document.querySelector('#filter_yearly').addEventListener('click', function () {
             adjustButtonOpacity('filter_yearly');
-            requestUpdate('yearly', currentDate);
+            requestUpdate('yearly', selected_date);
         });
     });
 
     function reload() {
-        var currentDateFormatted = new Date().toISOString().slice(0, 10);
-
         var currentDate = new Date();
+
         var thisMonth = currentDate.toLocaleString("default", { month: "long" });
+        var day = currentDate.getDate();
         var year = currentDate.getFullYear();
 
-        document.getElementById('dateCurrent').innerHTML = thisMonth + ' ' + year;
+        document.getElementById('dateCurrent').innerHTML = thisMonth + ' ' + day + ', ' + year;
 
         adjustButtonOpacity('filter_daily');
-        requestUpdate('daily', currentDateFormatted, '');
+        requestUpdate('daily', currentDate.toISOString().slice(0, 10));
     }
 
     reload();
