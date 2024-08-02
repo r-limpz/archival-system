@@ -37,9 +37,6 @@
     </div>
 
     <div class="my-5 mx-auto" id="users_data" style="max-width: 1020px;"></div>
-    <div class="toast-container position-fixed start-50 translate-middle-x" id="toastContainer" style="top:1rem">
-        <!-- Toasts will be added here -->
-    </div>
 
 </section>
 {% endblock %}
@@ -278,11 +275,11 @@
                     populateUsers('all-any');
 
                     if (data.change_state === 'success') {
-                        showToast('Success!', 'User status changed.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'Account ' + status +' successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                     else if (data.change_state === 'failed') {
-                        showToast('Change Status Error occurred!', 'Failed to ' + newValue + ' user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Change Status Error occurred!', 'Failed to ' + status + ' user account.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                 },
@@ -462,7 +459,7 @@
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'failed'://error in processing occured
-                                showToast('Upload Error occurred!', 'Failed to add user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                                showToast('Request Error!', 'Failed to register user account. Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'user not found'://user already exist in the database
@@ -563,7 +560,7 @@
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed'://error in processing occured
-                            showToast('failed', 'Failed to delete user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            showToast('Request Error', 'Failed to delete user. Please Try Again', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'cannot delete user'://user already exist in the database

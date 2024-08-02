@@ -259,7 +259,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'no file') {
-                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        showToast('No file uploaded!', 'Please upload a file first. Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
@@ -360,7 +360,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'no file') {
-                        showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        showToast('No file uploaded!', 'Please upload a file first. Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
