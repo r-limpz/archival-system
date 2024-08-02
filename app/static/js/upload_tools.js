@@ -33,8 +33,21 @@ function populateList(index, surname, fname, midname, sfxname, tbody) {
 function addRows(count) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0]; // Get the tbody element
+    var startingIndex = 0;
+
+    // Check if tbody has existing rows
+    if (tbody.rows.length !== 0) {
+        // Get the last row in the tbody
+        var lastRow = tbody.rows[tbody.rows.length - 1];
+        // Find the id of the last checkbox
+        var checkbox = lastRow.querySelector('input[type="checkbox"]');
+        var lastCheckboxId = parseInt(checkbox.id);
+
+        startingIndex = lastCheckboxId + 1;
+    }
+
     for (var i = 0; i < count; i++) {
-        populateList(i, "", "", "", "", tbody);
+        populateList(startingIndex + i, "", "", "", "", tbody);
     }
 }
 
