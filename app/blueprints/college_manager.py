@@ -119,7 +119,7 @@ def unlink_courseitemCollege(course, newCollege):
 
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute(''' UPDATE courses c LEFT JOIN documents d ON c.course_id = d.course SET c.registered_college = %s WHERE c.course_id = %s AND d.course IS NULL ''', (newCollege, course))
+            cursor.execute('UPDATE courses SET registered_college = %s WHERE course_id = %s', (newCollege, course))
             config.conn.commit()
 
             cursor.execute('SELECT * FROM courses WHERE course_id = %s AND registered_college = %s', (course, newCollege))
@@ -128,7 +128,7 @@ def unlink_courseitemCollege(course, newCollege):
             if isMoved:
                 query_result = 'success'
             else:
-                query_result = 'cannot modify'
+                query_result = 'failed'
 
             return query_result
         

@@ -451,10 +451,6 @@
                                 showToast('Error occurred!', 'Failed to update course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
-                            case 'cannot modify'://user already exist in the database
-                                showToast('Connot modify course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
                         }
                     }
                 },
@@ -565,7 +561,7 @@
                                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                     break;
                                 case 'cannot delete data'://user already exist in the database
-                                    showToast('Connot delete course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                                    showToast('Connot delete Course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                     break;
                             }
@@ -608,7 +604,7 @@
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'cannot delete data'://user already exist in the database
-                            showToast('Connot delete college', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            showToast('Connot delete College', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }
