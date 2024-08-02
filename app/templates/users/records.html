@@ -204,8 +204,8 @@
             'columns': [
                 { data: 'id', orderable: true, title: '#',width: '30px'  },
                 { data: 'FullName', title: 'FullName', orderable: true, wrap: true, className: 'fw-medium', width: '300px' },
-                { data: 'College', title: 'College', orderable: true, wrap: false, className: 'text-center', width: '70px' },
-                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '200px' },
+                { data: 'College', title: 'College', orderable: true, wrap: false, className: '', width: '70px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: '', width: '200px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, },
                 { data: 'Unit', title: 'Unit', orderable: false, wrap: false, className: 'text-center', width: '32px' },
                 { data: 'Semester', title: 'Semester', orderable: false, wrap: false, className: 'text-center', width: '75px' },
@@ -273,8 +273,6 @@
         });
     }
 
-    dataTableFunction();
-
     $('#filterShow').change(function () {
         var value = $(this).val();  // Get the selected value
         // Change the select value of #recordsTable_length
@@ -285,6 +283,8 @@
             $('.dataTables_wrapper .dataTables_paginate').removeClass('d-none');  // Show the pagination
         }
     });
+
+    setTimeout(dataTableFunction(), 1000);
 </script>
 <script>
     //preview
