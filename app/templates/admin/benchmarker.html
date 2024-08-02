@@ -66,22 +66,27 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-end pt-3 gap-3 w-full align-items-center">
-                    <span class="d-flex justify-content-end gap-3 fs-medium">
-                        <div class="px-2 fw-medium d-flex gap-2">
-                            <span >Scan Time: </span>
-                            <div class="fw-bold" id="scannTimeOCR" style="width: 120px;">0s</div>
+                <div class="d-flex justify-content-end pe-3 py-3 gap-3 w-full align-items-center">
+                    <span class="d-flex justify-content-between fs-medium flex-grow-1">
+                        <div class="fw-medium d-flex" style="min-width: 80px;">
+                            <span style="width: 75px;">Scan Time: </span>
+                            <div class="fw-bold px-2" id="scanTimeOCR" style="width: 50px;">0s</div>
                         </div>
-                        <div class="px-2 fw-medium d-flex gap-2">
-                            <span>Avg. WER: </span>
-                            <div class="fw-bold" id="AverageWER_Result" style="width: 70px;">000.00%</div>
+                        <div class="fw-medium d-flex" style="min-width: 80px;">
+                            <span style="width: 75px;">Scan Type: </span>
+                            <div class="fw-bold px-2" id="scanType" style="width: 60px;">None</div>
                         </div>
-                        <div class="px-2 fw-medium d-flex gap-2">
-                            <span>Avg. CER: </span>
-                            <div class="fw-bold" id="AverageCER_Result" style="width: 70px;">000.00%</div>
+                        <div class="fw-medium d-flex" style="min-width: 80px;">
+                            <span style="width: 70px;">Avg. WER: </span>
+                            <div class="fw-bold px-2" id="AverageWER_Result" style="width: 70px;">000.00%</div>
+                        </div>
+                        <div class="fw-medium d-flex" style="min-width: 80px;">
+                            <span style="width: 70px;">Avg. CER: </span>
+                            <div class="fw-bold px-2" id="AverageCER_Result" style="width: 70px;">000.00%</div>
                         </div>
                     </span>
-                    <button class="fs-medium border-0 fw-medium btn-orange px-4" id="saveToCSV"> SAVE </button>
+                    <button class="fs-medium border-0 fw-medium btn-orange px-4" id="insertBenchmarkData"
+                        data-bs-toggle="modal" data-bs-target="#saveBenchmarkModal" disabled> SAVE </button>
                 </div>
             </div>
         </div>
@@ -95,8 +100,10 @@
 
     function updateTimerDisplay(milliseconds, type) {
         let seconds = milliseconds / 1000;
-        let scantime = document.getElementById('scannTimeOCR');
-        scantime.innerHTML = seconds.toFixed(2)+'s';
+        let scantime = document.getElementById('scanTimeOCR');
+        let scantype = document.getElementById('scanType');
+        scantime.innerHTML = seconds.toFixed(2) + 's';
+        scantype.innerHTML = type;
     }
 
     let ocr_resultsList;
@@ -108,7 +115,7 @@
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
         formData.append('document_image', file);
-        
+
         if (file) {
             scanningModal.show();
 
@@ -125,7 +132,7 @@
                 success: function (data) {
                     // Calculate elapsed time
                     let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime, "auto");
+                    updateTimerDisplay(elapsedTime, "Auto");
 
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
@@ -233,7 +240,7 @@
                 success: function (data) {
                     // Calculate elapsed time
                     let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime, "manual");
+                    updateTimerDisplay(elapsedTime, "Manual");
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -241,6 +248,7 @@
                         if (data.length > 0) {
                             ocr_resultsList = data;
                             populateResults(data);
+                            document.getElementById('insertBenchmarkData').disabled = false;
                             showToast('Success!', 'OCR result.', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         } else {
@@ -331,7 +339,7 @@
     function checkAccuracyData() {
         let corrected_data = fetchrowValues();
         let ocr_data = getOCR_Result(ocr_resultsList);
-
+        let saveButton = document.getElementById('insertBenchmarkData');
         if (ocr_data.length > 0 && corrected_data.length > 0) {
 
             let formData = {
@@ -355,6 +363,9 @@
                             document.getElementById('AverageWER_Result').innerText = data.average_WER.toFixed(2) + '%';
                             document.getElementById('AverageCER_Result').innerText = data.average_CER.toFixed(2) + '%';
                             benchData = data;
+                            if (saveButton.disabled == true) {
+                                saveButton.disabled = false;
+                            }
                         }
                     },
                     error: function (error) {
@@ -365,15 +376,17 @@
         }
     }
 
-    $(document).on('click', '#saveToCSV', function () {
+    $(document).on('click', '#confirm_saveBenchmark', function () {
         if (benchData) {
-            var scannerTime = document.getElementById('scannTimeOCR').innerText;
+            var items = benchData.error_rate.length;
+            var scannerTime = document.getElementById('scanTimeOCR').innerText;
+            var scantype = document.getElementById('scanType').innerText;
             var averageWER = benchData.average_WER;
             var averageCER = benchData.average_CER;
-            var items = benchData.error_rate.length;
 
             let formData = {
                 'items': items,
+                'scantype': scantype,
                 'scannerTime': scannerTime,
                 'averageWER': averageWER,
                 'averageCER': averageCER
@@ -390,15 +403,28 @@
                     headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                     dataType: 'json', // Specify dataType as JSON
                     success: function (data) {
-                        if (data === "success") {
-                            showToast('Success!', 'Added test data to benchmark.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        } else {
-                            console.log('Failed to save data to CSV');
+                        switch (data) {
+                            case 'success':
+                                showToast('Success!', 'Test data successfully added to benchmark.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'entry exist':
+                                showToast('Test Data Exists', 'The test data already exists in the benchmark.', 'fc-warning fa-solid fa-circle-exclamation', 'border-warning');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'missing parameters':
+                                showToast('Missing Parameters', 'Benchmarking variables are undefined. Please provide valid data.', 'fc-danger fa-solid fa-circle-exclamation', 'border-danger');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
+                            case 'failed':
+                                showToast('Failed!', 'Failed to add test data to benchmark.', 'fc-danger fa-solid fa-circle-cross', 'border-danger');
+                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                                break;
                         }
                     },
                     error: function (error) {
-                        console.error('Error:', error);
+                        showToast('Error!', error, 'fc-danger fa-solid fa-circle-cross', 'border-danger');
+                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     },
                 });
 

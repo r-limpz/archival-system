@@ -31,14 +31,16 @@ def saveBench():
     try:
         data = request.get_json()
         # Extract corrected_data and ocr_data from the JSON
-        noItems = data.get('items')
+        no_items = data.get('items')
+        scantype = data.get('scantype')
         scanSpeed = data.get('scannerTime')
-        averageWER = data.get('averageWER')
-        averageCER = data.get('averageCER')
+        WER_data = data.get('averageWER')
+        CER_data = data.get('averageCER')
         benchID = randomChar(16)
+        filename = "test.csv"
 
-        if updateCSV(benchID, averageWER, averageCER, noItems, scanSpeed, "test.csv"):
-            return jsonify({"update_status":"success"})
+        if data:
+            return jsonify(updateCSV(benchID, scantype, WER_data, CER_data, no_items, scanSpeed, filename))
         
         return jsonify({"update_status":"failed"})
     except Exception as e:
