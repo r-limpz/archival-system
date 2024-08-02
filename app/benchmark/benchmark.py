@@ -36,7 +36,7 @@ def fetchCSV(filename):
         print(f"Error fetching CSV file: {e}")
         return None
 
-def updateCSV(benchID, WER_data, CER_data, no_items, filename):
+def updateCSV(benchID, WER_data, CER_data, no_items, scanSpeed, filename):
     try:
         script_dir = os.path.dirname(__file__)  # Directory of the current script
         file_path = os.path.join(script_dir, filename)
@@ -50,6 +50,7 @@ def updateCSV(benchID, WER_data, CER_data, no_items, filename):
         new_data = {
             'ID': benchID,
             'Entries': no_items,
+            'scanning time': scanSpeed,
             'Average_WER': WER_data,
             'Average_CER': CER_data,
             'Date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),

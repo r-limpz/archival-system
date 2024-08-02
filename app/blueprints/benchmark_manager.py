@@ -32,11 +32,12 @@ def saveBench():
         data = request.get_json()
         # Extract corrected_data and ocr_data from the JSON
         noItems = data.get('items')
+        scanSpeed = data.get('scannerTime')
         averageWER = data.get('averageWER')
         averageCER = data.get('averageCER')
         benchID = randomChar(16)
 
-        if updateCSV(benchID, averageWER, averageCER, noItems, "test.csv"):
+        if updateCSV(benchID, averageWER, averageCER, noItems, scanSpeed, "test.csv"):
             return jsonify({"update_status":"success"})
         
         return jsonify({"update_status":"failed"})

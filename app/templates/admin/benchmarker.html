@@ -69,6 +69,10 @@
                 <div class="d-flex justify-content-end pt-3 gap-3 w-full align-items-center">
                     <span class="d-flex justify-content-end gap-3 fs-medium">
                         <div class="px-2 fw-medium d-flex gap-2">
+                            <span >Scan Time: </span>
+                            <div class="fw-bold" id="scannTimeOCR" style="width: 120px;">0s</div>
+                        </div>
+                        <div class="px-2 fw-medium d-flex gap-2">
                             <span>Avg. WER: </span>
                             <div class="fw-bold" id="AverageWER_Result" style="width: 70px;">000.00%</div>
                         </div>
@@ -88,10 +92,11 @@
 <script src="{{url_for('static',filename='js/benchmark.js')}}"></script>
 <script src="{{url_for('static',filename='js/drag_drop.js')}}"></script>
 <script>
+
     function updateTimerDisplay(milliseconds, type) {
         let seconds = milliseconds / 1000;
-        console.log(`${type} Request took ${seconds} seconds.`);
-        // Display or update the timer on your page as needed
+        let scantime = document.getElementById('scannTimeOCR');
+        scantime.innerHTML = seconds.toFixed(2)+'s';
     }
 
     let ocr_resultsList;
@@ -103,7 +108,7 @@
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
         formData.append('document_image', file);
-
+        
         if (file) {
             scanningModal.show();
 
@@ -120,7 +125,7 @@
                 success: function (data) {
                     // Calculate elapsed time
                     let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime, "Auto-Scan");
+                    updateTimerDisplay(elapsedTime, "auto");
 
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
@@ -228,7 +233,7 @@
                 success: function (data) {
                     // Calculate elapsed time
                     let elapsedTime = new Date().getTime() - startTime;
-                    updateTimerDisplay(elapsedTime, "Manual-Scan");
+                    updateTimerDisplay(elapsedTime, "manual");
                     if (data === 'No file uploaded') {
                         showToast('No file uploaded!', 'Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -362,12 +367,14 @@
 
     $(document).on('click', '#saveToCSV', function () {
         if (benchData) {
+            var scannerTime = document.getElementById('scannTimeOCR').innerText;
             var averageWER = benchData.average_WER;
             var averageCER = benchData.average_CER;
             var items = benchData.error_rate.length;
 
             let formData = {
                 'items': items,
+                'scannerTime': scannerTime,
                 'averageWER': averageWER,
                 'averageCER': averageCER
             };
