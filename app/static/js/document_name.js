@@ -70,6 +70,8 @@ function updateDocumentName(document_filename) {
             '';
 
         $(document_filename).val(doc_name);
+
+        console.log(documentDetails.pageNum);
     }
 }
 
@@ -87,7 +89,7 @@ function updateObject(college, course, year_level, section, subject, unit, semes
     };
 }
 
-function updateObjectEdit(college, course, year_level, section, subject, unit, semester, starting_year, ending_year) {
+function updateObjectEdit(college, course, year_level, section, subject, unit, semester, starting_year, ending_year, pageNum) {
     documentDetails = {
         college: $(college + ' option:selected').text().match(/\((.*?)\)/)?.[1] || '',
         course: $(course + ' option:selected').text().match(/\((.*?)\)/)?.[1] || '',
@@ -97,6 +99,7 @@ function updateObjectEdit(college, course, year_level, section, subject, unit, s
         subjectType: $(unit + ' option:selected').val(),
         semester: $(semester + ' option:selected').text() ? $(semester + ' option:selected').text().replace(/\s+/g, '') : '',
         academicYear: $(starting_year).val() && $(ending_year).val() ? $(starting_year).val() + '-' + $(ending_year).val() : '',
+        pageNum: $(pageNum + ' option:selected').text(),
     };
 }
 
