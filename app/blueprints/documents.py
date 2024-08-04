@@ -36,6 +36,7 @@ def fetchDocumentData(document_id):
                     'unit': document['unit'],
                     'semester': document['semester'],
                     'academic_year': document['academic_year'],
+                    'page_number': document['page_num'],
                 }
         
                 return document_header
@@ -71,6 +72,7 @@ def editDocumentsData(document_id, document_header):
                 new_unit = document.get('document_unit')
                 new_semester = document.get('semester')
                 new_academic_year = document.get('academicYear')
+                new_document_page = document.get('update_document_page') 
 
                 searchID = checkDuplicateFile(new_filename)
                 
@@ -80,8 +82,8 @@ def editDocumentsData(document_id, document_header):
                     else:
                         return 'no changes'
                 else:
-                    cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s WHERE docs_id = %s', 
-                                        (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, document_id))
+                    cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s, page_num = %s WHERE docs_id = %s', 
+                                        (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, new_document_page, document_id))
                     config.conn.commit() 
 
                     if cursor.rowcount > 0:
@@ -261,6 +263,8 @@ def editDocument():
         update_subject = request.form.get('update_subject')
         update_unit = request.form.get('update_unit')
         update_academicYear = request.form.get('update_academicYear')
+        update_academicYear = request.form.get('update_academicYear')
+        update_document_page = request.form.get('update_document_page')
         
 
         document_header = {
@@ -273,6 +277,7 @@ def editDocument():
             'document_unit': int(update_unit),
             'semester': int(update_semester),
             'academicYear': update_academicYear,
+            'update_document_page': int(update_document_page),
         }
         
         update_query = editDocumentsData(document_id, document_header)

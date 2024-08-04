@@ -355,6 +355,7 @@
                 let unit = documentsData.unit;
                 let semester = documentsData.semester;
                 let academic_year = documentsData.academic_year;
+                let pageNumber = documentsData.page_number;
 
                 function extractYears(year) {
                     if (!year || year.trim() === "") {
@@ -376,9 +377,21 @@
                 const school_year = extractYears(academic_year);
 
                 let html = `
-                    <div id="form-item" class="py-2">
-                        <label class="fw-medium" for="update_documentfilename">Filename</label>
-                        <input type="text" class="form-control" id="update_documentfilename" name="update_documentfilename" placeholder="${filename}" value="${filename}" disabled required>
+                    <div class="d-flex gap-3 py-2">
+                        <div id="form-item" class="flex-fill">
+                            <label class="fw-medium" for="update_documentfilename">Filename</label>
+                            <input type="text" class="form-control" id="update_documentfilename" name="update_documentfilename" placeholder="${filename}" value="${filename}" disabled required>
+                        </div>
+                        <div id="form-item" style="width: 80px;">
+                            <label class="fw-medium" for="update_document_page">Page #</label>
+                            <select class="form-select rounded-3" name="update_document_page" id="update_document_page"  value="${pageNumber}" required>
+                                <option value="1" ${pageNumber === 1 ? 'selected' : ''}>1</option>
+                                <option value="2" ${pageNumber === 2 ? 'selected' : ''}>2</option>
+                                <option value="3" ${pageNumber === 3 ? 'selected' : ''}>3</option>
+                                <option value="4" ${pageNumber === 4 ? 'selected' : ''}>4</option>
+                                <option value="5" ${pageNumber === 5 ? 'selected' : ''}>5</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="d-flex gap-3 py-2">
                         <div id="form-item" class="flex-fill">
@@ -387,7 +400,7 @@
                         </div>
                         <div id="form-item" style="width:130px;">
                             <label class="fw-medium" for="update_documentUnit">Unit</label>
-                            <select class="form-select rounded-3 text-truncate" id="update_documentUnit" name="update_documentUnit" placeholder="${unit}" value="${unit}" required>
+                            <select class="form-select rounded-3 text-truncate" id="update_documentUnit" name="update_documentUnit" value="${unit}" required>
                                 <option value="0" ${unit === 0 ? 'selected' : ''}></option>
                                 <option value="1" ${unit === 1 ? 'selected' : ''}>Lecture</option>
                                 <option value="2" ${unit === 2 ? 'selected' : ''}>Laboratory</option>
@@ -409,7 +422,7 @@
                     <div class="d-flex gap-4 py-2">
                         <div id="form-item" style="width:120px;">
                             <label class="fw-medium" for="update_documentYear_level">Year level</label>
-                            <select class="form-select rounded-3 text-truncate" id="update_documentYear_level" name="update_documentYear_level" placeholder="${year_level}" value="${year_level}" required>
+                            <select class="form-select rounded-3 text-truncate" id="update_documentYear_level" name="update_documentYear_level" value="${year_level}" required>
                                 <option value="0" ${year_level === 0 ? 'selected' : ''}> </option>
                                 <option value="1" ${year_level === 1 ? 'selected' : ''}> 1st </option>
                                 <option value="2" ${year_level === 2 ? 'selected' : ''}> 2nd </option>
@@ -426,7 +439,7 @@
                         </div>
                         <div id="form-item" style="width:120px">
                             <label class="fw-medium" for="update_documentSemester">Semester</label>
-                            <select class="form-select rounded-3 text-truncate" id="update_documentSemester" name="update_documentSemester" placeholder="${semester}" value="${semester}" required>
+                            <select class="form-select rounded-3 text-truncate" id="update_documentSemester" name="update_documentSemester" value="${semester}" required>
                                 <option value="0" ${semester === 0 ? 'selected' : ''}> </option>
                                 <option value="1" ${semester === 1 ? 'selected' : ''}> 1st Sem </option>
                                 <option value="2" ${semester === 2 ? 'selected' : ''}> 2nd Sem</option>
@@ -501,12 +514,12 @@
                 });
 
                 //doument file name formatter function
-                $("#update_documentCollege, #update_documentCourse, #update_documentYear_level, #update_documentUnit, #update_documentSemester").change(function () {
-                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year');
+                $("#update_documentCollege, #update_documentCourse, #update_documentYear_level, #update_documentUnit, #update_documentSemester, #update_document_page").change(function () {
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year', '#update_document_page');
                     updateDocumentName('#update_documentfilename');
                 });
                 $("#update_documentSubject, #update_documentSection, #starting_year, #ending_year").on('input', function () {
-                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year');
+                    updateObjectEdit('#update_documentCollege', '#update_documentCourse', '#update_documentYear_level', '#update_documentSection', '#update_documentSubject', '#update_documentUnit', '#update_documentSemester', '#starting_year', '#ending_year', '#update_document_page');
                     updateDocumentName('#update_documentfilename');
                 });
 
@@ -543,6 +556,7 @@
             let update_ending_year = $('#ending_year').val();
             let update_academicYear = update_starting_year && update_ending_year ? update_starting_year + '-' + update_ending_year : '';
 
+            let update_document_page = $('#update_document_page').val();
             //set the data
             let formData = {
                 'document_id': document_id,
@@ -555,6 +569,7 @@
                 'update_subject': update_subject,
                 'update_unit': update_unit,
                 'update_academicYear': update_academicYear,
+                'update_document_page' : update_document_page
             };
 
             $.ajax({
