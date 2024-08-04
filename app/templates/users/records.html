@@ -47,12 +47,6 @@
                 </div>
                 <div class="d-flex" style="width: 120px;">
                     <select id="filterYear" class="form-select fs-medium" style="width: 120px;">
-                        <option value="">Year Level</option>
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                        <option value="5">Masteral</option>
                     </select>
                 </div>
             </div>
@@ -77,82 +71,8 @@
 {% endblock%}
 
 {% block scripts %}
-<script>
-    //populate data table
-    var collegesArray = [];
-
-    function getCollege() {
-        fetch('/fetch_college/courseList/data')
-            .then(response => response.json())
-            .then(colleges => {
-                collegesArray = [];
-                let collegeSelect = document.getElementById('filterCollege');
-                let courseSelect = document.getElementById('filterCourse');
-                collegeSelect.innerHTML = '';
-                collegeSelect.innerHTML = `<option value=""> College </option>`;
-                courseSelect.innerHTML = '';
-                courseSelect.innerHTML = `<option value=""> Course </option>`;
-
-                colleges.forEach(college => {
-
-                    let college_id = college.college_id;
-                    let college_name = college.college_name;
-                    let college_description = college.college_description;
-                    let coursesArray = [];
-                    let collegeOption = '';
-
-                    collegeOption = `<option value= "${college_name}">${college_name}</option>`;
-
-                    if (college.courses && Array.isArray(college.courses)) {
-                        if (college.courses.length > 0) {
-
-                            college.courses.forEach(course => {
-                                let course_name = course.course_name;
-                                let course_id = course.course_id;
-                                let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
-                            });
-                        }
-                    }
-                    const collegeObject = {
-                        college_id,
-                        college_name,
-                        college_description,
-                        courses: coursesArray
-                    };
-                    collegesArray.push(collegeObject);
-                    collegeSelect.innerHTML += collegeOption;
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching colleges:', error);
-            });
-    }
-
-    getCollege();
-
-    function populateCourses(selectedCollegeName) {
-        const courseSelect = document.getElementById('filterCourse');
-        const option = document.createElement('option');
-        courseSelect.innerHTML = '<option value="">Course</option>';
-
-        const selectedCollege = collegesArray.find(college => college.college_name === selectedCollegeName);
-        if (selectedCollege) {
-            selectedCollege.courses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.course_name;
-                option.textContent = course.course_name;
-                courseSelect.appendChild(option);
-            });
-        }
-    }
-
-    const collegeSelect = document.getElementById('filterCollege');
-    collegeSelect.addEventListener('change', () => {
-        const selectedCollegeId = collegeSelect.value;
-        populateCourses(selectedCollegeId);
-    });
-</script>
+<script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
+<script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script>
     var recordsDataTable;
 

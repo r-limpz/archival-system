@@ -75,14 +75,6 @@
                             <label class="fw-bold ps-2" for="document_yearLevel">Year-level</label>
                             <select class="form-select rounded-3 text-truncate" name="document_yearLevel"
                                 id="document_yearLevel" required>
-                                <option value="">Year Level</option>
-                                <option value="1">1st Year</option>
-                                <option value="2">2nd Year</option>
-                                <option value="3">3rd Year</option>
-                                <option value="4">4th Year</option>
-                                <option value="5">5th Year</option>
-                                <option value="6">6th Year</option>
-                                <option value="7">Masteral</option>
                             </select>
                         </div>
                         <div id="form-item" style="max-width: 80px;">
@@ -101,9 +93,6 @@
                             <label class="fw-bold ps-2" for="document_subject_type">Unit</label>
                             <select class="form-select rounded-3 text-truncate" name="document_subject_type"
                                 id="document_subject_type" required>
-                                <option value="0"></option>
-                                <option value="1">Lecture</option>
-                                <option value="2">Laboratory</option>
                             </select>
                         </div>
                         <div id="form-item" style="min-width: 105px;">
@@ -177,77 +166,8 @@
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>
 <script src="{{url_for('static',filename='js/drag_drop.js')}}"></script>
-<script>
-    var collegesArray = [];
+<script src="{{url_for('static',filename='js/setup_uploadHeader.js')}}"></script>
 
-    function getCollege() {
-        fetch('/fetch_college/courseList/data')
-            .then(response => response.json())
-            .then(colleges => {
-                collegesArray = [];
-                let collegeSelect = document.getElementById('document_college');
-                collegeSelect.innerHTML = '';
-                collegeSelect.innerHTML = `<option value= "0"></option>`;;
-                colleges.forEach(college => {
-                    let college_id = college.college_id;
-                    let college_name = college.college_name;
-                    let college_description = college.college_description;
-                    let coursesArray = [];
-                    let collegeOption = '';
-
-                    collegeOption = `<option value= "${college_id}">${college_name}</option>`;
-
-                    if (college.courses && Array.isArray(college.courses)) {
-                        if (college.courses.length > 0) {
-                            college.courses.forEach(course => {
-                                let course_name = course.course_name;
-                                let course_id = course.course_id;
-                                let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
-                            });
-                        }
-                        else {
-                        }
-                    }
-                    const collegeObject = {
-                        college_id,
-                        college_name,
-                        college_description,
-                        courses: coursesArray
-                    };
-                    collegesArray.push(collegeObject);
-                    collegeSelect.innerHTML += collegeOption;
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching colleges:', error);
-            });
-    }
-
-    getCollege();
-
-    function populateCourses(selectedCollegeId) {
-        const courseSelect = document.getElementById('document_course');
-        const option = document.createElement('option');
-        courseSelect.innerHTML = '<option value="0"></option>';
-
-        const selectedCollege = collegesArray.find(college => college.college_id === selectedCollegeId);
-        if (selectedCollege) {
-            selectedCollege.courses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.course_id;
-                option.textContent = course.course_name;
-                courseSelect.appendChild(option);
-            });
-        }
-    }
-
-    const collegeSelect = document.getElementById('document_college');
-    collegeSelect.addEventListener('change', () => {
-        const selectedCollegeId = parseInt(collegeSelect.value);
-        populateCourses(selectedCollegeId);
-    });
-</script>
 <script>
     let ocr_resultsList = [];
     let xhr = null;
@@ -380,7 +300,7 @@
                             checkAllInputs()
                             showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            
+
                         } else {
                             let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
                             modal.show();
@@ -446,7 +366,7 @@
         let document_academicYear = starting_year && ending_year ? starting_year + '-' + ending_year : '';
 
         let document_page = $('#document_page').val();
-        
+
         formData.append('document_filename', document_filename);
         formData.append('document_college', document_college);
         formData.append('document_course', document_course);
@@ -463,6 +383,7 @@
         formData.append('studentsData', JSON.stringify(studentsData));
         formData.append('document_image', file);
 
+        console.log(formData);
         if (file) {
             $.ajax({
                 url: '/archival/newRecord/document_upload',
