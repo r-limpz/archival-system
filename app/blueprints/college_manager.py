@@ -3,6 +3,7 @@ from flask_login import login_required
 from app.database import config
 from app.college.college_selector import fetch_course
 from app.secure.authorization import admin_required
+from app.dynamic.source_updater import updater
 
 college_manager = Blueprint('college_manager', __name__,url_prefix='/admin/colleges/manage/data')
 
@@ -30,6 +31,7 @@ def createCollege(college_name, college_description):
                     query = cursor.fetchone()
 
                     if query:
+                        updater('college_courses')
                         return 'success'
                     else:
                         return 'failed'
@@ -59,6 +61,7 @@ def createCourse(addon_College, newcourse_name,  newcourse_description):
                     success = cursor.fetchone()
 
                     if success:
+                        updater('college_courses')
                         return 'success'
                     else:
                         return 'failed'
@@ -103,6 +106,7 @@ def updateCollege(college_id, college_name, college_description, courses):
                     course_updatedCount += 1
 
             if course_updatedCount > 0:
+                updater('college_courses')
                 query_result = 'success'
             else:
                 query_result = 'failed'
@@ -126,6 +130,7 @@ def unlink_courseitemCollege(course, newCollege):
             isMoved = cursor.fetchone()
 
             if isMoved:
+                updater('college_courses')
                 query_result = 'success'
             else:
                 query_result = 'failed'
@@ -148,6 +153,7 @@ def removeCollege(college_id):
             isDeleted = cursor.fetchone()
 
             if not isDeleted:
+                updater('college_courses')
                 query_result = 'success'
             else:
                 query_result = 'cannot delete data'
@@ -168,6 +174,7 @@ def removeCourse(course_id):
             isDeleted = cursor.fetchone()
 
             if not isDeleted:
+                updater('college_courses')
                 query_result = 'success'
             else:
                 query_result = 'cannot delete data'
