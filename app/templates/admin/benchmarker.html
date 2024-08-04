@@ -11,7 +11,7 @@
 
 <section>
     <div class="page-header-title p-2 mb-2">
-        <h5 class="fw-bold">Benchmark</h5>
+        <h5 class="fw-bold fs-def">Benchmark</h5>
     </div>
 
     <div class="d-flex justify-content-between gap-4" style="height: calc(100vh - 10rem ); min-height: 600px;">
@@ -25,10 +25,11 @@
                         <img class="m-auto" id="preview" alt="Preview">
                         <div class="d-flex justify-content-end gap-3 fs-medium"
                             style="position: absolute; right: 1rem; bottom: 0.5rem">
-                            <button id="cancel_image" class="border-1 fw-medium px-4">Cancel</button>
-                            <button id="continueButton" class="border-0 fw-medium btn-green px-4"> Save </button>
-                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none" data-bs-toggle="modal"
-                                data-bs-target="#ocr_confirmation">
+                            <button id="cancel_image" class="border-1 fw-medium fs-medium px-4">Cancel</button>
+                            <button id="continueButton" class="border-0 fw-medium btn-green fs-medium px-4"> Save
+                            </button>
+                            <button id="submitOCR" class="fw-medium border-0 btn-orange d-none fs-medium px-4"
+                                data-bs-toggle="modal" data-bs-target="#ocr_confirmation">
                                 <span class="fa-solid fa-expand me-3"></span> Scan Text
                             </button>
                         </div>
@@ -40,23 +41,23 @@
                 </div>
             </div>
         </div>
-        <div style="max-width:60vw; min-width: 700px; width: auto;">
+        <div style="width: 700px; width: auto;">
             <div class="p-2">
                 <div class="table-fixed-head" id="student_listContainer">
                     <table class="table w-100 table-sm table-borderless" id="studentList">
-                        <thead class="border-bottom">
+                        <thead class="border-bottom fs-medium">
                             <tr>
-                                <th data-field="state" data-checkbox="true" class="text-center px-2">
-                                    <input id="select-all" type="checkbox" class="checkbox form-check-input">
+                                <th class="text-center p-2 fs-def">
+                                    <input type="checkbox" class="checkbox form-check-input" id="select-all">
                                 </th>
-                                <th>Surename</th>
-                                <th>First name</th>
-                                <th style="width:50px"> M.I.</th>
-                                <th style="width:60px"> Suffix </th>
-                                <th style="width:100px"> WER% </th>
-                                <th style="width:100px"> CER% </th>
-                                <th class="px-2 text-center" style="width:24px">
-                                    <button class="px-2 py-0 border-0" id="populateInputs">
+                                <th class="fs-medium">Surename</th>
+                                <th class="fs-medium">First name</th>
+                                <th class="fs-medium" style="width:50px"> M.I.</th>
+                                <th class="fs-medium" style="width:60px"> Suffix </th>
+                                <th class="fs-medium" style="width:100px"> WER% </th>
+                                <th class="fs-medium" style="width:100px"> CER% </th>
+                                <th class="fs-medium" class="px-2 text-center" style="width:24px">
+                                    <button class="px-2 py-0 border-0 no-border-button" id="populateInputs">
                                         <span class="fa-solid fa-plus">
                                     </button>
                                 </th>
@@ -66,6 +67,16 @@
                         </tbody>
                     </table>
                 </div>
+                <span class="d-flex justify-content-start gap-3 pt-2 w-full align-items-center">
+                    <button class="border-0 px-3 no-border-button" id="select_clear" data-bs-toggle="modal"
+                        data-bs-target="#clearSelctedList_confirmation"> <span class="fas fa-eraser me-2 fs-medium"></span>
+                        <span class="fs-small">Clear rows</span>
+                    </button>
+                    <button class="border-0 px-3 no-border-button" id="select_remove" data-bs-toggle="modal"
+                        data-bs-target="#deleteSelctedList_confirmation"> <span class="fa fa-trash me-2 fs-medium"></span>
+                        <span class="fs-small">Remove rows</span>
+                    </button>
+                </span>
                 <div class="d-flex justify-content-end pe-3 py-3 gap-3 w-full align-items-center">
                     <span class="d-flex justify-content-between fs-medium flex-grow-1">
                         <div class="fw-medium d-flex" style="min-width: 80px;">
