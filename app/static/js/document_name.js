@@ -70,8 +70,6 @@ function updateDocumentName(document_filename) {
             '';
 
         $(document_filename).val(doc_name);
-
-        console.log(documentDetails.pageNum);
     }
 }
 
