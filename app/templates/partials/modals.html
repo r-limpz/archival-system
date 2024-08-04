@@ -127,16 +127,14 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <div class="">
-          <h5 class="fw-bold mb-3"> Manual Text Extraction </h5>
-          <div id='crop-image-container rounded-3' style="height: 400px;">
-            <img id="crop_imageSrc" style="max-width: 100%; max-height: 100%;">
-          </div>
-          <div class="alert alert-light m-2 fs-small alert-message-instruct">
-            <span class="fa-solid fa-circle-info"></span>
-            Drag to select the area of the image containing the text you want to extract.
-            For best results, focus on the names or text areas you need to capture.
-          </div>
+        <h5 class="fw-bold mb-3"> Manual Text Extraction </h5>
+        <div id='crop-image-container rounded-3' style="height: 400px;">
+          <img id="crop_imageSrc" style="max-width: 100%; max-height: 100%;">
+        </div>
+        <div class="alert alert-light m-2 fs-small alert-message-instruct">
+          <span class="fa-solid fa-circle-info me-2"></span>
+          Drag to select the area of the image containing the text you want to extract.
+          For best results, focus on the names or text areas you need to capture.
         </div>
       </div>
       <div class="modal-footer">
@@ -161,7 +159,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Cancel</button>
+        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Close</button>
         <button type="button" id="ocr_auto" class="btn-orange button fs-medium fw-medium px-4" data-bs-toggle="modal"
           data-bs-target="#ManualScanImageModal">
           Manual Scan
@@ -266,17 +264,15 @@
     <div class="modal-content">
       <div class="modal-body">
         <h5 class="fw-bold mb-3">Edit Document Information </h5>
-        <div class="p-2">
-          <form action="{{ url_for('fetch_documents.editDocument')}}" method="post" id="update_document">
-            <div class="inputs-forms px-3 mb-3" id="updateDocument_data">
-            </div>
-          </form>
-          <div class="mt-5 d-flex justify-content-end">
-            <button class="fs-medium fw-medium px-4 me-2" type="button" data-bs-dismiss="modal">Close</button>
-            <button class="btn-red me-3 fs-medium fw-medium px-4" data-bs-toggle="modal"
-              data-bs-target="#UpdateDocuemnt_confirmation" type="button" id="button_showConfirmationUpdateDocument">
-              Update </button>
+        <form action="{{ url_for('fetch_documents.editDocument')}}" method="post" id="update_document" class="mb-3">
+          <div class="inputs-forms px-3 mb-3" id="updateDocument_data">
           </div>
+        </form>
+        <div class="d-flex justify-content-end">
+          <button class="fs-medium fw-medium px-4 me-3" type="button" data-bs-dismiss="modal">Close</button>
+          <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+            data-bs-target="#UpdateDocuemnt_confirmation" type="button" id="button_showConfirmationUpdateDocument">
+            Update </button>
         </div>
       </div>
     </div>
@@ -486,28 +482,26 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
       <div class="modal-content">
         <div class="modal-body">
-          <h5 class="fw-bold">Add a College</h5>
-          <div class="p-2">
-            <form action="{{ url_for('college_manager.create_college')}}" method="post" id="new_college">
-              <div class="d-flex gap-3 py-3">
-                <div id="form-item" style="width: 120px;">
-                  <label class="fw-medium" for="newcollege_name">Abbrevation.</label>
-                  <input type="text" class="form-control" id="newcollege_name" name="newcollege_name"
-                    placeholder="e.g CIC" required>
-                </div>
-                <div id="form-item" class="flex-fill">
-                  <label class="fw-medium" for="newcourse_name">Course</label>
-                  <input type="text" class="form-control text-truncate flex-fill" id="newcollege_nameDescription"
-                    name="newcollege_nameDescription" placeholder="e.g College of Information and Computing" required>
-                </div>
+          <h5 class="fw-bold mb-3">Add a College</h5>
+          <form action="{{ url_for('college_manager.create_college')}}" method="post" id="new_college" class="mb-3">
+            <div class="d-flex gap-3">
+              <div id="form-item" style="width: 120px;">
+                <label class="fw-medium" for="newcollege_name">Abbrevation.</label>
+                <input type="text" class="form-control" id="newcollege_name" name="newcollege_name"
+                  placeholder="e.g CIC" required>
               </div>
-            </form>
-            <div class="mt-5 d-flex justify-content-end">
-              <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
-              <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
-                data-bs-target="#addColleges_confirmation" type="button" id="button_showConfirmationAddColleges"
-                disabled> Submit </button>
+              <div id="form-item" class="flex-fill">
+                <label class="fw-medium" for="newcourse_name">Course</label>
+                <input type="text" class="form-control text-truncate flex-fill" id="newcollege_nameDescription"
+                  name="newcollege_nameDescription" placeholder="e.g College of Information and Computing" required>
+              </div>
             </div>
+          </form>
+          <div class="d-flex justify-content-end">
+            <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
+            <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+              data-bs-target="#addColleges_confirmation" type="button" id="button_showConfirmationAddColleges" disabled>
+              Submit </button>
           </div>
         </div>
       </div>
@@ -519,36 +513,34 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
       <div class="modal-content">
         <div class="modal-body">
-          <h5 class="fw-bold">Add a Course</h5>
-          <div class="p-2">
-            <form action="{{ url_for('college_manager.create_courses')}}" method="post" id="new_courses">
-              <div class="inputs-forms px-3">
-                <div id="form-item" class="py-2">
-                  <label class="fw-medium" for="addon_College">College</label>
-                  <select class="form-select py-2 rounded-3" name="addon_College" id="addon_College" required>
-                  </select>
+          <h5 class="fw-bold mb-3">Add a Course</h5>
+          <form action="{{ url_for('college_manager.create_courses')}}" method="post" id="new_courses" class="mb-3">
+            <div class="inputs-forms">
+              <div id="form-item" class="py-2">
+                <label class="fw-medium" for="addon_College">College</label>
+                <select class="form-select rounded-3" name="addon_College" id="addon_College" required>
+                </select>
+              </div>
+              <div class="d-flex gap-3 py-3">
+                <div id="form-item" style="width: 120px;">
+                  <label class="fw-medium" for="newcourse_name">Abbrevation.</label>
+                  <input type="text" class="form-control" id="newcourse_name" name="newcourse_name"
+                    placeholder="e.g BSIT" required>
                 </div>
-                <div class="d-flex gap-3 py-3">
-                  <div id="form-item" style="width: 120px;">
-                    <label class="fw-medium" for="newcourse_name">Abbrevation.</label>
-                    <input type="text" class="form-control" id="newcourse_name" name="newcourse_name"
-                      placeholder="e.g BSIT" required>
-                  </div>
-                  <div id="form-item" class="flex-fill">
-                    <label class="fw-medium" for="newcourse_name">Course</label>
-                    <input type="text" class="form-control text-truncate flex-fill" id="newcourse_nameDescription"
-                      name="newcourse_nameDescription" placeholder="e.g Bachelor of Science in Information Security"
-                      required>
-                  </div>
+                <div id="form-item" class="flex-fill">
+                  <label class="fw-medium" for="newcourse_name">Course</label>
+                  <input type="text" class="form-control text-truncate flex-fill" id="newcourse_nameDescription"
+                    name="newcourse_nameDescription" placeholder="e.g Bachelor of Science in Information Security"
+                    required>
                 </div>
               </div>
-            </form>
-            <div class="mt-5 d-flex justify-content-end">
-              <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
-              <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
-                data-bs-target="#addCourses_confirmation" type="button" id="button_showConfirmationAddCourses" disabled>
-                Submit </button>
             </div>
+          </form>
+          <div class="d-flex justify-content-end">
+            <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
+            <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+              data-bs-target="#addCourses_confirmation" type="button" id="button_showConfirmationAddCourses" disabled>
+              Submit </button>
           </div>
         </div>
       </div>
@@ -560,32 +552,30 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width:700px;">
       <div class="modal-content">
         <div class="modal-body">
-          <h5 class="fw-bold">Manage College</h5>
-          <div class="p-2">
-            <form action="{{ url_for('college_manager.update_college')}}" method="post" id="edit_college">
-              <div class="inputs-forms px-3">
-                <div id="form-item" class="py-2">
-                  <label class="fw-medium" for="update_college">College</label>
-                  <div class="d-flex gap-2">
-                    <input type="text" class="form-control update_collegeField" name="update_college"
-                      style="width: 100px;" required>
-                    <input type="text" class="form-control update_collegeDescriptionField flex-fill"
-                      name="update_collegeDescription" required>
-                    <span class="p-2" style="max-width:50px;">
-                      <a class="m-0 deleteCollege-button" id="" data-bs-toggle="modal"
-                        data-bs-target="#deleteCollegeModal"> <span class="fa-solid fa-trash"></span></a>
-                    </span>
-                  </div>
+          <h5 class="fw-bold mb-3">Manage College</h5>
+          <form action="{{ url_for('college_manager.update_college')}}" method="post" id="edit_college" class="mb-3">
+            <div class="inputs-forms">
+              <div id="form-item" class="py-2">
+                <label class="fw-medium" for="update_college">College</label>
+                <div class="d-flex gap-3">
+                  <input type="text" class="form-control update_collegeField" name="update_college"
+                    style="width: 100px;" required>
+                  <input type="text" class="form-control update_collegeDescriptionField flex-fill"
+                    name="update_collegeDescription" required>
+                  <span class="p-2" style="max-width:50px;">
+                    <a class="m-0 deleteCollege-button" id="" data-bs-toggle="modal"
+                      data-bs-target="#deleteCollegeModal"> <span class="fa-solid fa-trash"></span></a>
+                  </span>
                 </div>
-                <div id="populate_coursesList"></div>
               </div>
-            </form>
-            <div class="mt-5 d-flex justify-content-end">
-              <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
-              <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
-                data-bs-target="#editCollege_confirmation" type="button" id="button_showConfirmation_editCollege">
-                Update </button>
+              <div id="populate_coursesList"></div>
             </div>
+          </form>
+          <div class="d-flex justify-content-end">
+            <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
+            <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+              data-bs-target="#editCollege_confirmation" type="button" id="button_showConfirmation_editCollege">
+              Update </button>
           </div>
         </div>
       </div>
@@ -597,32 +587,37 @@
     <div class="modal-dialog modal-dialog-centered" style="min-width: 55vw; width: auto;">
       <div class="modal-content">
         <div class="modal-body">
-          <h5 class="fw-bold">Move course entry</h5>
-          <div class="p-2">
-            <form action="{{ url_for('college_manager.change_courseCollege')}}" method="post" id="move_course">
-              <div class="inputs-forms px-3 d-flex gap-2">
-                <div id="form-item" class="py-2 w-full flex-fill" style="width: 45%;">
-                  <label class="fw-medium" for="moveCourse_target">Course</label>
-                  <input type="text" class="form-control pe-4 moveCourse_target text-truncate " name="moveCourse_target"
-                    id="moveCourse_target" value="${course_name}" disabled>
-                </div>
-                <div class="py-4">
-                  <p class="py-3"><span class="fa-solid fa-angles-right "></span></p>
-                </div>
-                <div id="form-item" class="py-2 flex-fill" style="width: 45%;">
-                  <label class="fw-medium" for="movetoCollege">College</label>
-                  <select class="form-select pe-5 text-truncate" name="movetoCollege" id="movetoCollege" required>
-                  </select>
+          <h5 class="fw-bold mb-3">Move course entry</h5>
+          <form action="{{ url_for('college_manager.change_courseCollege')}}" method="post" id="move_course">
+            <div class="inputs-forms d-flex gap-2">
+              <div id="form-item" class="py-2 w-full flex-fill" style="width: 45%;">
+                <label class="fw-medium" for="moveCourse_target">Course</label>
+                <input type="text" class="form-control pe-4 moveCourse_target text-truncate " name="moveCourse_target"
+                  id="moveCourse_target" value="${course_name}" disabled>
+              </div>
+              <div id="form-item" class="p-2">
+                <label class="fw-medium" for="spacing" style="visibility: hidden;">Course</label>
+                <div class="text-center p-2">
+                  <div class="align-self-center fa-medium fa-solid fa-angles-right"></div>
                 </div>
               </div>
-            </form>
-            <div class="mt-2 d-flex justify-content-end">
-              <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
-                data-bs-target="#editCollege_modal">Cancel</button>
-              <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
-                data-bs-target="#moveCourses_confirmation" type="button" id="button_showConfirmation_moveCourses"> Move
-              </button>
+              <div id="form-item" class="py-2 flex-fill" style="width: 45%;">
+                <label class="fw-medium" for="movetoCollege">College</label>
+                <select class="form-select pe-5 text-truncate" name="movetoCollege" id="movetoCollege" required>
+                </select>
+              </div>
             </div>
+          </form>
+          <div class="alert alert-light m-2 fs-small alert-message-instruct mb-3">
+            <span class="fa-solid fa-circle-info me-2"></span>
+            Please select the new college where you want to transfer the course registration.
+          </div>
+          <div class="d-flex justify-content-end">
+            <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
+              data-bs-target="#editCollege_modal">Cancel</button>
+            <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+              data-bs-target="#moveCourses_confirmation" type="button" id="button_showConfirmation_moveCourses"> Move
+            </button>
           </div>
         </div>
       </div>
@@ -641,7 +636,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4"
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3"
             onclick="populateColleges()">Cancel</button>
           <button id="confirm_addCollege" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
             Confirm
@@ -656,14 +651,12 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
-          <div class="">
-            <h5 class="fw-bold mb-3"> Add Courses data </h5>
-            <p class="ms-s"> Please review all entered data are correct. Are you sure you want to add this course to the
-              database?</p>
-          </div>
+          <h5 class="fw-bold mb-3"> Add Courses data </h5>
+          <p class="ms-s"> Please review all entered data are correct. Are you sure you want to add this course to the
+            database?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4"
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3"
             onclick="populateColleges()">Cancel</button>
           <button id="confirm_addCourse" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
             Confirm
@@ -678,14 +671,12 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
-          <div class="">
-            <h5 class="fw-bold mb-3"> Update College </h5>
-            <p class="ms-2">Please review all entered data are correct. Are you sure you want to change the college
-              information?</p>
-          </div>
+          <h5 class="fw-bold mb-3"> Update College </h5>
+          <p class="ms-2">Please review all entered data are correct. Are you sure you want to change the college
+            information?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4"
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3"
             onclick="populateColleges()">Cancel</button>
           <button id="confirm_updateCollege" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
             Confirm
@@ -700,11 +691,9 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
-          <div class="">
-            <h5 class="fw-bold mb-3"> Move Course</h5>
-            <p class="ms-2"> Are you sure you move the <span id="modal_courseChangeText"></span> to <span
-                id="modal_collgeChangeText"></span></p>
-          </div>
+          <h5 class="fw-bold mb-3"> Move Course</h5>
+          <p class="ms-2"> Are you sure you move the <span id="modal_courseChangeText"></span> to <span
+              id="modal_collgeChangeText"></span></p>
         </div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4"
@@ -722,11 +711,9 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-orange border-3">
         <div class="modal-body">
-          <div class="">
-            <h5 class="fw-bold mb-4">Are you sure to delete this course?</h5>
-            <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this course data
-              in the database.</p>
-          </div>
+          <h5 class="fw-bold mb-3">Are you sure to delete this course?</h5>
+          <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this course data
+            in the database.</p>
         </div>
         <div class="modal-footer ">
           <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
@@ -744,10 +731,9 @@
       <div class="modal-content border-orange border-3">
         <div class="modal-body">
           <div class="">
-            <h5 class="fw-bold mb-4">Are you sure to delete this College?</h5>
+            <h5 class="fw-bold mb-3">Are you sure to delete this College?</h5>
             <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this college
-              data
-              in the database.</p>
+              data in the database.</p>
           </div>
         </div>
         <div class="modal-footer ">
@@ -767,12 +753,10 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-orange border-3">
         <div class="modal-body">
-          <div class="">
-            <h5 class="fw-bold mb-4">Record Benchmark Data</h5>
+            <h5 class="fw-bold mb-3">Record Benchmark Data</h5>
             <p class="ms-2" style="text-align: justify; text-justify: inter-word;">
               Please review all entered data are correct. Are you sure you want to save this benchmark entry
               to the csv? </p>
-          </div>
         </div>
         <div class="modal-footer ">
           <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Cancel</button>
@@ -791,11 +775,9 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body ">
-          <div class="">
             <h5 class="fw-bold mb-3"> Restore File</h5>
             <p class="ms-2"> Are you sure you want to resotre this file?</p>
           </div>
-        </div>
         <div class="modal-footer ">
           <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
           <button id="initial_restoreFile" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
@@ -814,14 +796,13 @@
           <div class="">
             <h5 class="fw-bold mb-3">Document Restoration Error </h5>
             <p class="ms-2">It appears that a document with similar content is already active in the database. Please
-              review the
-              existing documents before proceeding with restoration.</p>
+              review the existing documents before proceeding with restoration.</p>
           </div>
         </div>
         <div class="modal-footer ">
-          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Custom Restore</button>
           <button id="customRestore" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
-            Continue
+            Close
           </button>
         </div>
       </div>

@@ -14,10 +14,10 @@
             <input type="text" name="filterCards" class="form-control w-full text-truncate rounded-3 mx-3 border-1 fs-medium"
                 id="filterCards" oninput="searchCards()" placeholder="Search for College..." style="height: 100%;">
         </div>
-        <button class="fs-medium fw-medium px-3" data-bs-toggle="modal" data-bs-target="#addColleges_modal">
+        <button class="fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#addColleges_modal">
             <span class="fc-default fa-solid fa-plus me-2 align-self-center">
             </span>College</button>
-        <button class="fs-medium fw-medium px-3" data-bs-toggle="modal" data-bs-target="#addCourses_modal">
+        <button class="fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#addCourses_modal">
             <span class="fc-default fa-solid fa-plus me-2 align-self-center">
             </span>Courses</button>
     </div>
@@ -97,8 +97,8 @@
                                                             <div id="courses_list">
                                                                 <ul class="list-group list-group-flush fs-medium">
                                                                     ${courseslist} 
-                                                                    <li class="list-group-item text-end">
-                                                                        <a class="fa-solid fa-ellipsis p-2 pe-0" onclick="show_editModal(${college_id})"></a>
+                                                                    <li class="list-group-item text-end mt-3">
+                                                                        <a class="text-decoration-none" onclick="show_editModal(${college_id})"> Manage </a>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -376,22 +376,25 @@
 
                 college.courses.forEach(course => {
                     let inputField = `  <div id="${course.course_id}" class="py-2 course-item">
-                                            <div class="d-flex gap-2 w-full">
+                                            <div class="d-flex gap-3 w-full">
                                                 <input type="text" class="form-control" id="${course.course_id}" name="update_course" value="${course.course_name}" placeholder="${course.course_name}" style="width: 100px;" required>
                                                 <input type="text" class="form-control flex-fill" id="${course.course_id}" name="update_courseDescription" value="${course.course_description}" placeholder="${course.course_description}" required>
-                                                <span class="p-2" style="max-width:50px;">
-                                                    <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
-                                                </span>
-                                                <span class="p-2" style="max-width:50px;">
-                                                    <a class="m-0" onclick="deleteCourse(${course.course_id})"> <span class="fa-solid fa-trash"></span></a>
-                                                </span>
+                                                <div class="d-flex gap-2">
+                                                    <span class="p-2" style="max-width:50px;">
+                                                        <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
+                                                    </span>
+                                                    <span class="p-2" style="max-width:50px;">
+                                                        <a class="m-0" onclick="deleteCourse(${course.course_id})"> <span class="fa-solid fa-trash"></span></a>
+                                                    </span>
+                                                </div>
+                                                
                                             </div>
                                         </div> `;
                     containerPopulate.innerHTML += inputField;
                 });
             }
             else {
-                containerPopulate.innerHTML += `<div class="p-3 mt-3 text-center">No Courses Registered ...</div>`;
+                containerPopulate.innerHTML += `<div class="p-3 my-3 text-center fc-gray">No Courses Registered ...</div>`;
             }
             // Show the modal
             $('#editCollege_modal').modal('show');
