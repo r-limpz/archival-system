@@ -8,6 +8,8 @@ from werkzeug.exceptions import HTTPException
 from app.secure.login_form import LoginForm
 from app.database import config
 from app.secure.user_logs import updateDB
+from app.dynamic.source_updater import updater
+from app.dynamic.settings import json_data_selector
 from app.routes.admin import admin_bp
 from app.routes.staff import staff_bp
 from app.blueprints.account_manager import account_manager
@@ -49,7 +51,6 @@ login_manager.login_view = 'auth.login'
 
 csrf = CSRFProtect()
 csrf.init_app(app)
-
 argon2 = Argon2(app)
 
 app.config['UPLOAD_FOLDER'] = os.path.realpath('app/upload_folder')
@@ -88,7 +89,12 @@ def index():
 @app.route('/ards')
 def home():
     form = LoginForm()
+
     return render_template('public/index.html', form=form)
+
+@app.route('/fetch_selector/<selector>')
+def fetchSource(selector):
+    return jsonify(json_data_selector(selector))
 
 #Account page route
 @app.route('/account')
@@ -139,6 +145,7 @@ def account_manager():
 @app.route('/col_course_manager')
 @login_required
 def col_course_manager():
+    updater('all')
     return redirect(url_for('admin.col_course_manager'))
 
 #Collage and Course Manager page route
@@ -168,6 +175,7 @@ def checkConnection():
 #error handling of pages
 @app.errorhandler(Exception)
 def handle_error(e):
+    updater('all')
     code = 500
     error_message = '500 Internal Server Error'
     description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
