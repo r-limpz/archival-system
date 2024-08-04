@@ -88,7 +88,7 @@ function noSelectedData(event, message, buttonFunction) {
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Cancel</button>
+            <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Close</button>
             <button onclick="${buttonFunction}" class="button btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
                 Confirm
             </button>
