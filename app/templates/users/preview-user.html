@@ -41,25 +41,26 @@
                 </div>
             </div>
             <div>
-                <h5 class="fw-bold" id="profile_username">
+                <h5 class="fw-bold fs-def" id="profile_username">
                     {{ preview_fullname }}
                 </h5>
                 <h6>
-                    <span class="mx-2 fw-medium fs-medium fst-italic"> @{{ preview_username }}</span>
+                    <span class="mx-2 fw-medium fs-small fst-italic"> @{{ preview_username }}</span>
                 </h6>
             </div>
-            <div>
-                settings
-            </div>
+           
         </div>
     </div>
 
     <div class="p-3 mx-auto" style="width: 1020px;">
         <div class="p-2 card mb-3">
             <div class="d-flex gap-2" id="progress_container">
-                <div>
+                <div class="container-fluid">
                     <div class="d-flex justify-content-between">
-                        <h6 class="fw-medium px-2 mb-2"><span id="uploadedByYear"></span>Contributions</h6>
+                        <h6 class="px-2 mb-2 d-flex fs-medium gap-2">
+                            <span class="fw-bold" id="uploadedByYear"></span>
+                            <span class="fw-medium">Contributions</span>
+                        </h6>
                         <select name="customYear" id="customYear" class="form-select fs-medium" style="width: 80px;">
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
@@ -69,9 +70,9 @@
                         </select>
                     </div>
                     <div class="p-3" id="progressReport_container">
-                        <div class="overflow-x-auto" id="progress-heatmap" style="height:170;"></div>
+                        <div class="overflow-x-none" id="progress-heatmap" style="height:170;"></div>
                     </div>
-                    <div class="d-flex justify-content-end p-2">
+                    <div class="d-flex justify-content-end p-2 my-2">
                         <span class="mx-2 d-flex fs-medium align-items-center gap-3">
                             Less <span id="progress_legend"></span> More</span>
                     </div>
@@ -79,13 +80,13 @@
             </div>
         </div>
         <div class="p-2 card mb-3">
-            <h6 class="fw-medium px-2 mb-2">Progress Analysis</h6>
+            <h6 class="fw-medium px-2 mb-2 fs-medium">Progress Analysis</h6>
             <div class="chartbox py-3 px-2" style="height: 300px;">
                 <canvas id="myChart"></canvas>
             </div>
         </div>
         <div class="p-2 card mb-3">
-            <h6 class="fw-medium px-2 mb-3">Upload History</h6>
+            <h6 class="fw-medium px-2 mb-3 fs-medium fs-medium">Upload History</h6>
             <table id='upload_Logs' class='display dataTable table-borderless table-hover fc-default fs-medium'
                 cellspacing="0" width="100%">
             </table>
@@ -95,8 +96,8 @@
 
 <div class="card p-2 fixed-bottom mx-auto align-items-center" style="width: 700px; bottom:1rem;" id="floatElement">
     <div class="d-flex justify-content-end w-100">
-        <span class="flex-fill px-2">This page displays a preview of a user account.</span>
-        <a class="button btn-gray fw-bold fs-medium text-center text-decoration-none" style="width: 150px;"
+        <span class="flex-fill px-2 fs-medium">This page displays a preview of a user account.</span>
+        <a class="button btn-gray fw-bold fs-medium fw-medium text-center text-decoration-none px-4" 
             href="{{url_for('account_manager')}}">Exit Preview</a>
     </div>
 </div>
