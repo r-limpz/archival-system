@@ -36,7 +36,7 @@
                 class="fa-solid fa-user-plus me-2"> </span> User</button>
     </div>
 
-    <div class="my-5 mx-auto" id="users_data" style="max-width: 1020px;"></div>
+    <div class="my-5 mx-auto" id="users_data" style="max-width: 800px;"></div>
 
 </section>
 {% endblock %}
@@ -305,24 +305,25 @@
 
                     // Change innerHTML of modal inside modal body
                     $('#edit_account_modal .modal-body').html(`
-                     <h5 class="fw-bold p-2">Edit Profile Information </h5>
-                    <div class="p-2 my-4">
-                        <form action="{{ url_for('auth.edit_user')}}" method="post" class="mb-4" id="edit_user">
-                            <div class="inputs-forms px-3">
+                    <h5 class="fw-bold mb-3">Edit Profile Information </h5>
+                        <form action="{{ url_for('auth.edit_user')}}" method="post" id="edit_user" class="mb-3">
+                            <div class="inputs-forms mb-3">
                                 <div id="form-item" class="py-2">
                                     <label class="fw-medium" for="update_fullname">Staff Name</label>
                                     <input type="text" class="form-control" id="update_fullname" name="update_fullname" value="${fullname}" onchange="checkname('fullname', ${profile_id}, 'update_fullname')" placeholder="${fullname}" required>
                                 </div>
-                                <div id="form-item" class="py-2">
-                                    <label class="fw-medium" for="update_username">Username</label>
-                                    <input type="text" class="form-control" id="update_username" name="update_username" value="${username}" onchange="checkname('username', ${profile_id}, 'update_username')" maxlength="16" placeholder="${username}" required>
-                                </div>
-                                <div class="py-2" id="adduser_role">
-                                    <label class="fw-medium" for="update_role">Role</label>
-                                    <select class="form-select py-2 px-2 rounded-3 text-start text-truncate" name="update_role" id="update_role" required>
-                                        <option value="2" ${role === 2 ? 'selected' : ''}> Staff - Upload and Retrieve Archives</option>
-                                        <option value="1" ${role === 1 ? 'selected' : ''}> Admin - Manage Users and Database</option>
-                                    </select>
+                                <div class="d-flex justify-content-between gap-3 py-2">
+                                    <div id="form-item" class="flex-grow-1">
+                                        <label class="fw-medium" for="update_username">Username</label>
+                                        <input type="text" class="form-control" id="update_username" name="update_username" value="${username}" onchange="checkname('username', ${profile_id}, 'update_username')" maxlength="16" placeholder="${username}" required>
+                                    </div>
+                                    <div id="form-item" style="width:350px;">
+                                        <label class="fw-medium" for="update_role">Role</label>
+                                        <select class="form-select rounded-3 text-start text-truncate" name="update_role" id="update_role" required>
+                                            <option value="2" ${role === 2 ? 'selected' : ''}> Staff - Upload and Retrieve Archives</option>
+                                            <option value="1" ${role === 1 ? 'selected' : ''}> Admin - Manage Users and Database</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div id="form-item" class="py-2">
                                     <label class="fw-medium" for="update_password">Password</label>
@@ -345,15 +346,14 @@
                                 </div>
                             </div>
                         </form>
-                        <div class="p-2 mb-3 mx-3">
-                            <span class="text-decorator-underline text-danger fst-italic fw-medium border-0 px-0 prevent-select" onclick="show_deleteConfirmation('${profile_id}')">Delete this account?</span>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn-red fs-medium fw-medium px-3"  onclick="show_deleteConfirmation('${profile_id}')"> Delete User </button>
+                            <div class="d-flex justify-content-end">
+                                <button class="fs-medium fw-medium px-4 me-3" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn-green fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#UpdateCredentials_confirmation"
+                                type="button" id="button_showConfirmation_UpdateUser"> Update </button>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-end">
-                            <button class="fs-medium fw-medium px-4 mx-2" type="button" data-bs-dismiss="modal">Close</button>
-                            <button class="btn-red mx-2 fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#UpdateCredentials_confirmation"
-                            type="button" id="button_showConfirmation_UpdateUser"> Update </button>
-                        </div>
-                    </div>
                 `);
                     // Display the modal edit
                     $('#edit_account_modal').modal('show');
