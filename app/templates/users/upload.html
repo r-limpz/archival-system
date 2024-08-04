@@ -36,14 +36,24 @@
                 </div>
             </div>
         </div>
-        <div style="max-width:40vw; min-width: 700px; width: auto;">
+        <div style="width: 700px; width: auto;">
             <div class="p-2">
                 <div id="document_headerContainer">
-                    <div class="mb-2">
-                        <div id="form-item">
+                    <div class="my-3 d-flex gap-3">
+                        <div id="form-item" class="flex-grow-1">
                             <label class="fw-bold ps-2" for="document_filename">Document name</label>
                             <input type="text" class="form-control prevent-select" id="document_filename"
                                 name="document_filename" placeholder="" required disabled>
+                        </div>
+                        <div id="form-item" style="width: 70px;">
+                            <label class="fw-bold ps-2" for="document_page">Page #</label>
+                            <select class="form-select rounded-3" name="document_page" id="document_page" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between my-3 gap-3">
@@ -108,11 +118,10 @@
                         </div>
                         <div id="form-item" style="max-width: 165px;">
                             <label class="fw-bold ps-2" for="documnt_academicYear">Academic Year</label>
-                            <span class="d-flex">
+                            <span class="d-flex align-items-center">
                                 <input type="number" class="form-control text-center" id="starting_year"
                                     name="ending_year" placeholder="YYYY" min="1978" max="9999" required>
-                                <span class="mx-2 fa-solid fa-minus fs-default"
-                                    style="padding: 9.1px 0px;max-width: 1rem;"></span>
+                                <span class="mx-2 fa-solid fa-minus fs-medium"></span>
                                 <input type="number" class="form-control text-center" id="ending_year"
                                     name="ending_year" placeholder="YYYY" min="1978" max="9999" required>
                             </span>
@@ -122,17 +131,17 @@
 
                 <div class="mt-4 table-fixed-head " id="student_listContainer">
                     <table class="table w-100 table-sm table-borderless" id="studentList">
-                        <thead class="border-bottom">
+                        <thead class="border-bottom fs-medium">
                             <tr>
-                                <th data-field="state" data-checkbox="true" class="text-center px-2">
-                                    <input id="select-all" type="checkbox" class="checkbox form-check-input">
+                                <th class="text-center p-2 fs-def">
+                                    <input type="checkbox" class="checkbox form-check-input" id="select-all">
                                 </th>
-                                <th>Surname</th>
-                                <th>First name</th>
-                                <th style="width:50px"> M.I.</th>
-                                <th style="width:60px"> Suffix </th>
-                                <th class="px-2 text-center" style="width:24px">
-                                    <button class="px-2 py-0 border-0" id="populateInputs" onclick="addRows(1)">
+                                <th class="fs-medium py-2">Surname</th>
+                                <th class="fs-medium py-2">First name</th>
+                                <th class="fs-medium py-2" style="width:50px"> M.I.</th>
+                                <th class="fs-medium py-2" style="width:60px"> Suffix </th>
+                                <th class="fs-medium" class="px-2 text-center align-self-center" style="width:24px">
+                                    <button class="no-border-button" id="populateInputs">
                                         <span class="fa-solid fa-plus">
                                     </button>
                                 </th>
@@ -142,20 +151,22 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-end pt-3 gap-5">
-                    <span class="d-flex justify-content-end gap-3">
-                        <button class="border-0 px-3" id="select_clear" data-bs-toggle="modal"
-                            data-bs-target="#clearSelctedList_confirmation"> <span class="fas fa-eraser me-2"></span>
-                            <span class="fs-small">Clear</span>
+                <div class="d-flex justify-content-end pt-3 gap-5 ">
+                    <span class="d-flex justify-content-end gap-3 align-items-start">
+                        <button class="border-0 px-3 no-border-button" id="select_clear" data-bs-toggle="modal"
+                            data-bs-target="#clearSelctedList_confirmation"> <span
+                                class="fas fa-eraser me-2 fs-medium"></span>
+                            <span class="fs-small">Clear rows</span>
                         </button>
-                        <button class="border-0 px-3" id="select_remove" data-bs-toggle="modal"
-                            data-bs-target="#deleteSelctedList_confirmation"> <span class="fa fa-trash me-2"></span>
-                            <span class="fs-small">Remove</span>
+                        <button class="border-0 px-3 no-border-button" id="select_remove" data-bs-toggle="modal"
+                            data-bs-target="#deleteSelctedList_confirmation"> <span
+                                class="fa fa-trash me-2 fs-medium"></span>
+                            <span class="fs-small">Remove rows</span>
                         </button>
                     </span>
 
                     <button class="fs-medium border-0 fw-medium btn-red px-4" id="uploadRecord" data-bs-toggle="modal"
-                        data-bs-target="#newRecords_confirmation"> Upload </button>
+                        data-bs-target="#newRecords_confirmation" disabled> Upload </button>
                 </div>
             </div>
         </div>
@@ -264,6 +275,7 @@
                     } else {
                         if (data.length > 0) {
                             populateResults(data);
+                            checkAllInputs()
                             showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         } else {
@@ -365,8 +377,10 @@
                     } else {
                         if (data.length > 0) {
                             populateResults(data);
+                            checkAllInputs()
                             showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            
                         } else {
                             let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
                             modal.show();
@@ -431,6 +445,8 @@
         let ending_year = $('#ending_year').val();
         let document_academicYear = starting_year && ending_year ? starting_year + '-' + ending_year : '';
 
+        let document_page = $('#document_page').val();
+        
         formData.append('document_filename', document_filename);
         formData.append('document_college', document_college);
         formData.append('document_course', document_course);
@@ -440,6 +456,8 @@
         formData.append('document_subject_type', document_subject_type);
         formData.append('document_semester', document_semester);
         formData.append('document_academicYear', document_academicYear);
+        formData.append('document_page', document_page);
+
         // Append student data
         var studentsData = fetchrowValues();
         formData.append('studentsData', JSON.stringify(studentsData));
@@ -455,7 +473,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     switch (data.query_result) {
-                           case 'success':
+                        case 'success':
                             showToast('Success!', 'Document uploaded successfully.', 'text-success', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
@@ -484,7 +502,6 @@
                 }
             });
         }
-
     });
 
 </script>

@@ -33,6 +33,7 @@ def newDocumentUploader(document_header, imageFile):
         unit = document.get('subject_type')
         semester = document.get('semester')
         academic_year = document.get('academicYear')
+        document_page = document.get('document_page')
 
     if college != "" and course != "":
         try:
@@ -45,7 +46,7 @@ def newDocumentUploader(document_header, imageFile):
                     image_id = imageUploader(imageFile)
 
                     if image_id:
-                        cursor.execute('INSERT INTO documents (filename, college, course, image_id, section, subject, academic_year, semester, year_level, unit, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, college, course, image_id, section, subject_name, academic_year, semester, year_level, unit, editor))
+                        cursor.execute('INSERT INTO documents (filename, college, course, image_id, section, subject, academic_year, semester, year_level, unit, page_num, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, college, course, image_id, section, subject_name, academic_year, semester, year_level, unit, document_page, editor))
                         config.conn.commit()
 
                         document_id = cursor.lastrowid
@@ -64,13 +65,11 @@ def newDocumentUploader(document_header, imageFile):
     
 def imageUploader(imageFile):
     document_image = imageFile.read()
-    print('uploading image')
     try:
         with config.conn.cursor() as cursor:
             cursor.execute('INSERT INTO img_files (document_file) VALUES (%s)', (document_image))
             config.conn.commit()
             uploaded = cursor.lastrowid
-            print('upload id: ', uploaded)
 
             return uploaded
     except Exception as e:
@@ -159,7 +158,8 @@ def uploader():
         document_subject_type = request.form.get('document_subject_type')
         document_semester = request.form.get('document_semester')
         document_academicYear = request.form.get('document_academicYear')
-    
+        document_page = request.form.get('document_page')
+
         document_header = {
             'filename': document_filename,
             'college': int(document_college),
@@ -170,6 +170,7 @@ def uploader():
             'subject_type': int(document_subject_type),
             'semester': int(document_semester),
             'academicYear': document_academicYear,
+            'document_page': int(document_page),
         }
 
         students_data_str = request.form.get('studentsData')
