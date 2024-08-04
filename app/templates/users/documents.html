@@ -14,7 +14,8 @@
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
-            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch" placeholder="Search..." >
+            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
+                placeholder="Search...">
         </div>
         <div class="d-flex justify-content-end gap-4 fs-medium p-0" id="filterContainer">
             <div class="d-flex justify-content-between gap-2 p-0">
@@ -63,8 +64,8 @@
         </div>
     </div>
 
-    <table id='documentsTable' class='display dataTable table-borderless table-hover fc-default fs-medium' cellspacing="0"
-        width="100%">
+    <table id='documentsTable' class='display dataTable table-borderless table-hover fc-default fs-medium'
+        cellspacing="0" width="100%">
     </table>
 
 </section>
@@ -73,88 +74,12 @@
 
 {% block scripts %}
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
-<script>
-    //populate data table
-    let collegesArray = [];
-
-    function getCollege() {
-        fetch('/fetch_college/courseList/data')
-            .then(response => response.json())
-            .then(colleges => {
-                collegesArray = [];
-                let collegeSelect = document.getElementById('filterCollege');
-                let courseUpdateSelect = document.getElementById('filterCourse');
-                collegeSelect.innerHTML = '';
-                collegeSelect.innerHTML = `<option value=""> College </option>`;
-                courseUpdateSelect.innerHTML = '';
-                courseUpdateSelect.innerHTML = `<option value=""> Course </option>`;
-
-                colleges.forEach(college => {
-
-                    let college_id = college.college_id;
-                    let college_name = college.college_name;
-                    let college_description = college.college_description;
-                    let coursesArray = [];
-                    let collegeOption = '';
-
-                    collegeOption = `<option value="${college_name}">${college_name}</option>`;
-
-                    if (college.courses && Array.isArray(college.courses)) {
-                        if (college.courses.length > 0) {
-
-                            college.courses.forEach(course => {
-                                let course_name = course.course_name;
-                                let course_id = course.course_id;
-                                let course_description = course.course_description;
-                                coursesArray.push({ course_id: course_id, course_name: course_name, course_description: course_description });
-                            });
-                        }
-                    }
-                    const collegeObject = {
-                        college_id,
-                        college_name,
-                        college_description,
-                        courses: coursesArray
-                    };
-                    collegesArray.push(collegeObject);
-                    collegeSelect.innerHTML += collegeOption;
-
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching colleges:', error);
-            });
-    }
-
-    getCollege();
-    
-    function populateCourses(selectedCollegeName) {
-        const courseSelect = document.getElementById('filterCourse');
-        const option = document.createElement('option');
-        courseSelect.innerHTML = '<option value="">Course</option>';
-
-        const selectedCollege = collegesArray.find(college => college.college_name === selectedCollegeName);
-        if (selectedCollege) {
-            selectedCollege.courses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.course_name;
-                option.textContent = course.course_name;
-                courseSelect.appendChild(option);
-            });
-        }
-    }
-
-    const collegeSelect = document.getElementById('filterCollege');
-    collegeSelect.addEventListener('change', () => {
-        const selectedCollegeId = collegeSelect.value;
-        populateCourses(selectedCollegeId);
-    });
-</script>
+<script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script>
     var documentsDataTable;
     var visLog = false;
 
-    if('{{ current_user.role }}' === 'admin'){
+    if ('{{ current_user.role }}' === 'admin') {
         visLog = true
     }
 
@@ -204,7 +129,7 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'id', orderable: true, title: '#' , width:'30px'},
+                { data: 'id', orderable: true, title: '#', width: '30px' },
                 {
                     'data': 'Filename',
                     title: 'File',
@@ -233,7 +158,7 @@
                     "render": function (data, type, row) {
                         const Uploader = '<span>' + data + '</span>'
                         const htmlUploader = `<div class="fw-medium d-flex w-full gap-2" style="max-width:100px;"><span class="fa-solid fa-user fs-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
-                            return data ? htmlUploader : null;
+                        return data ? htmlUploader : null;
                     }
                 },
                 {
@@ -459,59 +384,11 @@
                         </div>
                     </div>
                 `;
+
+                
                 // Set the HTML of the parent element
                 document.getElementById('updateDocument_data').innerHTML = html;
-                //populate the colleges select
-                function setCollegesUpdate(selectedCollegeid) {
-                    const collegeUpdateSelect = document.getElementById('update_documentCollege');
-
-                    collegeUpdateSelect.innerHTML = '';
-                    collegeUpdateSelect.innerHTML = `<option value=""> </option>`;
-
-                    collegesArray.forEach(college => {
-                        const option = document.createElement('option');
-                        option.value = college.college_id;
-                        option.textContent = '(' + college.college_name + ') ' + college.college_description;
-
-                        if (selectedCollegeid !== 0) {
-                            if (college.college_id === selectedCollegeid) {
-                                option.selected = true;
-                            }
-                        }
-                        collegeUpdateSelect.appendChild(option);
-                    });
-                }
-                //populate the course select
-                function setCoursesUpdate(selectedCollegeid, selectedCourseID) {
-                    const selected_college_id = parseInt(selectedCollegeid);
-                    const courseUpdateSelect = document.getElementById('update_documentCourse');
-                    const option = document.createElement('option');
-                    courseUpdateSelect.innerHTML = '<option value=""> </option>';
-
-                    const selectedCollege = collegesArray.find(college => college.college_id === selected_college_id);
-                    if (selectedCollege) {
-                        selectedCollege.courses.forEach(course => {
-                            const option = document.createElement('option');
-                            option.value = course.course_id;
-                            option.textContent = '(' + course.course_name + ') ' + course.course_description;
-                            if (selectedCourseID !== 0) {
-                                if (course.course_id === selected_college_id) {
-                                    option.selected = true;
-                                }
-                            }
-                            courseUpdateSelect.appendChild(option);
-                        });
-                    }
-                }
-                //setting up college and course selection populate values and selected from fetch data
-                setCollegesUpdate(document_college);
-                setCoursesUpdate(document_college, document_course);
-
-                const update_collegeSelect = document.getElementById('update_documentCollege');
-                update_collegeSelect.addEventListener('change', () => {
-                    const selectedCollegeId = update_collegeSelect.value;
-                    setCoursesUpdate(selectedCollegeId, 0);
-                });
+                updateHeader(documentsData)
 
                 //doument file name formatter function
                 $("#update_documentCollege, #update_documentCourse, #update_documentYear_level, #update_documentUnit, #update_documentSemester, #update_document_page").change(function () {
@@ -569,7 +446,7 @@
                 'update_subject': update_subject,
                 'update_unit': update_unit,
                 'update_academicYear': update_academicYear,
-                'update_document_page' : update_document_page
+                'update_document_page': update_document_page
             };
 
             $.ajax({
