@@ -1,7 +1,6 @@
 from flask import Blueprint, request, redirect, render_template, jsonify, url_for
 from flask_login import login_required
 from app.database import config
-import argon2
 from app.tools.date_formatter import onlineStatus, sched_accountDeletion
 from app.secure.randomizer import generate_key
 from app.secure.authorization import admin_required
@@ -127,106 +126,6 @@ def checkDuplicateAccount(user_id, credential, dataSearch):
         except Exception as e:
             print(f"An error occurred while checking for duplicate accounts: {e}")
 
-# account creation function
-def addNewUser( add_fullname, add_username, add_password):
-
-    if not add_fullname and not add_username and not add_password:
-        return 'failed'
-    else:
-        try:
-            with config.conn.cursor() as cursor: 
-                # Check if the username or fullname already exists
-                usernameExists = checkDuplicateAccount(0, 'username', add_username)
-                fullnameExists = checkDuplicateAccount(0, 'fullname', add_fullname)
-
-                # If the username or fullname does not exist, proceed with adding the new user
-                if not usernameExists and not fullnameExists:
-                    h_password = argon2.generate_password_hash(add_password) # Generate a hashed password and a new pass_key
-                    pass_key = generate_key()
-                    role = 2 # Define the role and status for the new user
-
-                    # Insert the new user data into the database
-                    cursor.execute('INSERT INTO user (username, fullname, password, pass_key, role, status, online, last_online) VALUES (%s, %s, %s, %s, %s, %s, %s, NULL)',
-                                (add_username, add_fullname, h_password, pass_key , role, 1, 0) )
-                    config.conn.commit()
-                    # Check if the user creation was successful
-                    cursor.execute('SELECT user_id FROM user WHERE username = %s', (add_username))
-                    insertSuccess = cursor.fetchone()
-
-                    # Set the return value based on the success of the user creation
-                    if insertSuccess:
-                        data = 'success'
-                    else:
-                        data = 'failed'
-                else:
-                    data = 'duplicate user'
-                return data
-            
-        except Exception as e:
-                print(f"addNewUser() : {e}")
-    
-# dynamic update user data function
-def updateAccount(user_id, fullname, username, role, password):
-    # Initialize the query and parameters
-    query = 'UPDATE user SET '
-    params = []
-    hasChanged = {}
-    role = get_role(role) # Convert the role to its corresponding value
-
-    try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
-            user = cursor.fetchone()
-
-            if not user:
-                return 'user not found'
-            
-            else:
-                if user['fullname'] != fullname:
-                    query += 'fullname = %s, '
-                    params.append(fullname)
-                    hasChanged.update({"fullname": fullname})
-
-                if user['username'] != username:
-                    query += 'username = %s, '
-                    params.append(username)
-                    hasChanged.update({"username": username})
-
-                if user['role'] != role:
-                    query += 'role = %s, '
-                    params.append(role)
-                    hasChanged.update({"role": role})
-
-                    # If the password has changed, add it to the query and parameters
-                if password and not argon2.check_password_hash(user['password'], password):
-                    query += 'password = %s, '
-                    hashed_password = argon2.generate_password_hash(password)
-                    params.append(hashed_password)
-                    hasChanged.update({"password": hashed_password})
-
-                # Remove the trailing comma and space from the query
-                query = query.rstrip(', ')
-                query += ' WHERE user_id = %s'
-                params.append(user_id)
-                    
-                # Execute the update query
-                cursor.execute(query, tuple(params))
-                config.conn.commit()
-
-                # Verify if the update was successful
-                keys_str = ', '.join(list(hasChanged.keys()))
-                verifyQuery = 'SELECT '+ keys_str + ' FROM user WHERE user_id = %s'
-                cursor.execute(verifyQuery, (user_id,))
-                user_update = cursor.fetchone()
-
-                if user_update == hasChanged:
-                    return 'success'
-                else:
-                    return 'failed'
-                
-    except Exception as e:
-        print(f"updateAccount() : {e}")
-
 #temporary disbale and delete account schedule
 def removeAccount(profile_id):
     try:
@@ -295,33 +194,6 @@ def preview_account(profile_id):
         except Exception as e:
             print(f"preview user route error occurred: {e}")
 
-#setup route to create an user account
-@account_manager.route('/new-user/data-credentials/register-account' , methods=['POST', 'GET'])
-@login_required
-@admin_required
-def create_account():
-    try:
-        if request.method == "POST":
-            fullname = request.form.get('newuser_fullname')
-            username = request.form.get('newuser_username')
-            password = request.form.get('newuser_password')
-            re_password = request.form.get('newuser_repassword')
-            
-            if password == re_password:
-                account_added = addNewUser(fullname, username, password)
-                
-                if account_added:
-                    update_query = account_added
-                else:
-                    update_query = 'error occured'
-            else:
-                update_query = 'Password not the same'
-                
-            return jsonify({'update_query': update_query})
-            
-    except Exception as e:
-         print(f"create user route error occurred: {e}")
-
 #setup route to update account status activate/deactivated
 @account_manager.route('/user/account-status/update', methods=['POST', 'GET'])
 @login_required
@@ -385,33 +257,6 @@ def manage_user(profile_id):
             print(f"manage user error occurred: {e}")
     else:
         return jsonify('error, user not found')
-
-#setup route to update account credentials
-@account_manager.route('/user/update/account-credentials/new-data', methods=['POST', 'GET'])
-@login_required
-@admin_required
-def edit_user():
-    try:
-        if request.method == "POST":
-            user_id = request.form.get('update_user_id')
-            fullname = request.form.get('update_fullname')
-            username = request.form.get('update_username')
-            role = request.form.get('update_role')
-            password = request.form.get('update_password')
-            re_password = request.form.get('update_repassword')
-
-            if password == re_password:
-                update_status = updateAccount(user_id, fullname, username, role, password)
-
-                if update_status:
-                    return jsonify({'update_query': update_status})
-                else:
-                    return jsonify({'update_query': 'error occured'})
-            else:
-                return jsonify({'update_query': 'incorrect password'})
-                
-    except Exception as e:
-            print(f"update user credentials  error occurred: {e}")
 
 #setup route to deactivate and account for deletion 30 days permanent deletion
 @account_manager.route('/user/update/account-status/deactivate/delete', methods=['POST', 'GET'])
