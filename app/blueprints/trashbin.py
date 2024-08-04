@@ -8,7 +8,65 @@ from app.secure.authorization import admin_required
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
     
-def restoreDocumentFile(document_id):
+def checkDuplicateFile(document_id):
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM documents WHERE filename = ( SELECT filename FROM documents WHERE docs_id = %s ) AND delete_status = 0', (document_id))
+            result = cursor.fetchone()
+
+            if result:
+                return int(result['docs_id'])
+        
+            return None
+    except Exception as e:
+        print('Check Duplicate Filename Error:', e)
+
+def fetchTags(document_id):
+    try:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT student FROM tagging WHERE document = %s ', (document_id))
+            result = cursor.fetchall()
+            
+            if result:
+                return result
+        
+        return None
+    except Exception as e:
+        print('fetchTags Error:', e)
+
+
+def restoreDefault(document_id, activeFile):
+    try:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute('DELETE FROM documents WHERE delete_status = 1 AND docs_id = %s', (activeFile,)) 
+            config.conn.commit()
+
+            if cursor.rowcount > 0:
+                cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
+                config.conn.commit()
+                return 'success'
+
+            return 'failed'
+    except Exception as e:
+            print('Recover data Error: ',e)
+
+def restoreMerge(document_id, activeFile):
+    try:
+        with config.conn.cursor() as cursor:
+            trashed_tags = fetchTags(document_id)
+
+            cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
+            config.conn.commit()
+
+            if cursor.rowcount > 0:
+                    return 'success'
+
+            return 'failed'
+    except Exception as e:
+            print('Recover data Error: ',e)
+
+def restoreDelete(document_id, activeFile):
     try:
         with config.conn.cursor() as cursor:
 
@@ -16,11 +74,42 @@ def restoreDocumentFile(document_id):
             config.conn.commit()
 
             if cursor.rowcount > 0:
-                    cursor.execute('DELETE FROM trashdocs WHERE document_id = %s', (document_id))
-                    config.conn.commit()
-
                     return 'success'
 
+            return 'failed'
+    except Exception as e:
+            print('Recover data Error: ',e)
+
+# This will restore the record and update the existing record with the same details, including merging linked items.    
+def restoreCustom(reference_document, customFile):
+    try:
+        activeFile = checkDuplicateFile(reference_document)
+
+        if activeFile and restoreCustom:
+            match customFile:
+                case 'default': # Restore will delete new version to restore trashed version
+                    return restoreDefault(reference_document, activeFile)
+                case 'merge': # Restore will merge records tags
+                    return restoreMerge(reference_document, activeFile)
+                case 'delete_onUpdate':
+                    return restoreDelete(reference_document, activeFile)
+
+    except Exception as e:
+            print('Recover default Error: ',e)
+
+def restoreDocumentFile(document_id):
+    try:
+        with config.conn.cursor() as cursor:
+
+            if not checkDuplicateFile(document_id):
+                cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
+                config.conn.commit()
+
+                if cursor.rowcount > 0:
+                    return 'success'
+            else:
+                return 'duplicate'
+            
             return 'failed'
     except Exception as e:
             print('Recover data Error: ',e)
