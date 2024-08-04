@@ -59,7 +59,6 @@ body {
 .middle-sidebar,
 .bottom-sidebar {
     margin: 8px 0px;
-    font-size: 14px;
 }
 
 .sidebar .middle-sidebar {
@@ -89,7 +88,6 @@ body {
 /*Header*/
 .header-sidebar {
     color: #333333;
-    font-size: 1rem;
 }
 
 .header-info {
@@ -167,7 +165,6 @@ body {
     margin-left: 0rem;
     transition: opacity var(--animation-duration) var(--animation-timing-curve);
     transition: margin 200ms var(--animation-timing-curve);
-    font-size: 14px;
 }
 
 .sidebar.open .hidden-sidebar {
