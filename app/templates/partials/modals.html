@@ -1,16 +1,17 @@
 <div class="toast-container position-fixed top-0 end-0 m-3" id="toastContainer">
 </div>
 
-<div class="modal fade" id="logout_Confirmation" tabindex="-1" role="dialog" aria-labelledby="logout_Confirmation"
-  aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content border-3 border-orange">
-      <div class="modal-body mx-3">
-        <h5 class="fw-bold">Sign out</h5>
-        <p class="ms-2"> Are you sure you want to signout? All your unsaved data will be erased.</p>
+<div class="modal fade backdrop-modal-none" id="logout_Confirmation" tabindex="-1" role="dialog"
+  aria-labelledby="logout_Confirmation" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-2 border-orange">
+      <div class="modal-body text-center">
+        <h5 class="fw-bold mb-3">Sign out</h5>
+        <p class="fs-medium">Are you sure you wish to sign out? Please note that any unsaved data will be permanently
+          lost.</p>
       </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="button me-3 fs-medium fw-medium px-4">Close</button>
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4">Close</button>
         <a href="{{url_for('auth.logout')}}" id="logout_currentUser"
           class="btn-orange text-decoration-none button fs-medium fw-medium px-4">
           Sign out
@@ -41,11 +42,9 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <div class="px-3">
-          <h5 class="fw-bold mb-3"> Upload Document </h5>
-          <p class="ms-2">Please review all entered data are correct. Are you sure you want to upload this document
-            data to the database?</p>
-        </div>
+        <h5 class="fw-bold mb-3"> Upload Document </h5>
+        <p class="ms-2">Please review all entered data are correct. Are you sure you want to upload this document
+          data to the database?</p>
       </div>
       <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4">Cancel</button>
@@ -65,14 +64,12 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <div class="mx-3">
-          <h5 class="fw-bold mb-3"> Remove Selected data </h5>
-          <p class="ms-2"> Are you sure you want delete this rows?</p>
-        </div>
+        <h5 class="fw-bold mb-3"> Remove Selected data </h5>
+        <p class="ms-2"> Are you sure you want delete this rows?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4">Cancel</button>
-        <button id="removeButton" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4">Cancel</button>
+        <button id="removeButton" class="btn-red button fs-medium fw-medium px-4" data-bs-dismiss="modal">
           Confirm
         </button>
       </div>
@@ -85,14 +82,12 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <div class="mx-3">
-          <h5 class="fw-bold mb-3"> Clear Selected data </h5>
-          <p class="ms-2"> Are you sure you clear this input fields?</p>
-        </div>
+        <h5 class="fw-bold mb-3"> Clear Selected data </h5>
+        <p class="ms-2"> Are you sure you clear this input fields?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4">Cancel</button>
-        <button id="clearButton" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4">Cancel</button>
+        <button id="clearButton" class="btn-red button fs-medium fw-medium px-4" data-bs-dismiss="modal">
           Confirm
         </button>
       </div>
@@ -103,27 +98,23 @@
 <div class="modal fade" id="selection_uploadTools" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   role="dialog" aria-labelledby="selection_uploadTools" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-red border-2" id="errorContainerTools">
+    <div class="modal-content border-0" id="errorContainerTools">
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="ocr_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  role="dialog" aria-labelledby="ocr_confirmation" aria-hidden="true">
+<div class="modal fade" id="ocr_confirmation" data-bs-keyboard="false" tabindex="-1" role="dialog"
+  aria-labelledby="ocr_confirmation" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content mx-3">
-      <div class="modal-header border-0 d-flex justify-content-between align-items-center p-0">
-        <h5 class="fw-bold m-3">Scan the image</h5>
-        <button type="button" class="fs-small p-2 fa-solid fa-x" data-bs-dismiss="modal"
-          style="margin-top: -1rem; margin-right: 0.5rem;"> </button>
-      </div>
-      <div class="modal-body mx-3">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="fw-bold mb-3">Scan the image</h5>
         <p class="ms-2">Automatic extract student names from the table or manually crop the table?</p>
       </div>
-      <div class="modal-footer mx-3">
-        <button type="button" id="ocr_manual" class="fs-medium fw-medium px-4 me-3" data-bs-toggle="modal"
+      <div class="modal-footer">
+        <button type="button" id="ocr_manual" class="button fs-medium fw-medium px-4 px-4 me-3" data-bs-toggle="modal"
           data-bs-target="#ManualScanImageModal">Manual</button>
-        <button type="button" id="ocr_auto" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+        <button type="button" id="ocr_auto" class="btn-red button fs-medium fw-medium px-4" data-bs-dismiss="modal">
           Auto
         </button>
       </div>
@@ -135,18 +126,24 @@
   role="dialog" aria-labelledby="ManualScanImageModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-body mx-3">
+      <div class="modal-body">
         <div class="">
-          <h5 class="fw-bold my-3"> Crop Image </h5>
-          <div id='crop-image-container' style="height: 500px;">
+          <h5 class="fw-bold mb-3"> Manual Text Extraction </h5>
+          <div id='crop-image-container rounded-3' style="height: 400px;">
             <img id="crop_imageSrc" style="max-width: 100%; max-height: 100%;">
+          </div>
+          <div class="alert alert-light m-2 fs-small alert-message-instruct">
+            <span class="fa-solid fa-circle-info"></span>
+            Drag to select the area of the image containing the text you want to extract.
+            For best results, focus on the names or text areas you need to capture.
           </div>
         </div>
       </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-        <button id="crop_customOcr" class="btn-green fs-medium fw-medium px-4">
-          Extract text
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal"
+          class="button fs-medium fw-medium px-4 me-3">Cancel</button>
+        <button id="crop_customOcr" class="btn-green button fs-medium fw-medium px-4">
+          Extract Text
         </button>
       </div>
     </div>
@@ -156,16 +153,17 @@
 <div class="modal fade" id="error_ocr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog"
   aria-labelledby="error_ocr" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content mx-3 border-orange border-3">
+    <div class="modal-content border-orange border-3">
       <div class="modal-body ">
         <div class="mx-3">
           <h5 class="fw-bold my-3">Table Detection Failed</h5>
-          <p class="ms-2">No tables or names were detected in the scanned image. Please perform a manual scan instead.</p>
+          <p class="ms-2">No tables or names were detected in the scanned image. Please perform a manual scan instead.
+          </p>
         </div>
       </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-        <button type="button" id="ocr_auto" class="btn-orange fs-medium fw-medium px-4" data-bs-toggle="modal"
+      <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Cancel</button>
+        <button type="button" id="ocr_auto" class="btn-orange button fs-medium fw-medium px-4" data-bs-toggle="modal"
           data-bs-target="#ManualScanImageModal">
           Manual Scan
         </button>
@@ -203,21 +201,19 @@
 
 <div class="modal fade" id="EditRecordModal" tabindex="-1" role="dialog" aria-labelledby="EditRecordModal"
   aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="width:350px;">
+  <div class="modal-dialog modal-dialog-centered" style="width:300px;">
     <div class="modal-content">
       <div class="modal-body">
-        <h5 class="fw-bold">Edit Entry </h5>
-        <div class="p-2">
-          <form action="{{ url_for('fetch_records.editEntryData')}}" method="post" id="add_user">
-            <div class="inputs-forms px-3 my-3" id="updateTag_data">
-            </div>
-          </form>
-          <div class="mt-5 d-flex justify-content-end">
-            <button class="fs-medium fw-medium px-4 mx-2" type="button" data-bs-dismiss="modal">Close</button>
-            <button class="btn-red mx-2 fs-medium fw-medium px-4" data-bs-toggle="modal"
-              data-bs-target="#UpdateTag_confirmation" type="button" id="button_showConfirmationUpdateTag"> Update
-            </button>
+        <h5 class="fw-medium text-center">Edit Record </h5>
+        <form action="{{ url_for('fetch_records.editEntryData')}}" method="post" id="add_user">
+          <div class="inputs-forms my-3" id="updateTag_data">
           </div>
+        </form>
+        <div class="mt-5 d-flex justify-content-end">
+          <button class="button fs-medium fw-medium px-4 me-3" type="button" data-bs-dismiss="modal">Close</button>
+          <button class="button btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
+            data-bs-target="#UpdateTag_confirmation" type="button" id="button_showConfirmationUpdateTag"> Update
+          </button>
         </div>
       </div>
     </div>
@@ -228,14 +224,12 @@
   role="dialog" aria-labelledby="UpdateTag_confirmation" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-body mx-3">
-        <div class="mx-3">
-          <h5 class="fw-bold my-3"> Update Student Credentials </h5>
-          <p class="ms-2"> Please review all entered data are correct. Are you sure you want to update the credentials
-            of the student tagged to this document?</p>
-        </div>
+      <div class="modal-body">
+        <h5 class="fw-bold mb-3"> Update Student Credentials </h5>
+        <p class="ms-2"> Please review all entered data are correct. Are you sure you want to update the credentials
+          of the student tagged to this document?</p>
       </div>
-      <div class="modal-footer mx-3">
+      <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
         <button id="update_entry_credentials" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
           Update
@@ -249,13 +243,11 @@
   role="dialog" aria-labelledby="DeleteTag_confirmation" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-orange border-3">
-      <div class="modal-body mx-3">
-        <div class="mx-3">
-          <h5 class="fw-bold my-3">Delete Student Tag</h5>
-          <p class="ms-2"> Are you sure you want to delete the tag of the student from this document?</p>
-        </div>
+      <div class="modal-body">
+        <h5 class="fw-bold mb-3">Delete Student Tag </h5>
+        <p class="ms-2"> Are you sure you want to delete the tag of the student from this document?</p>
       </div>
-      <div class="modal-footer mx-3">
+      <div class="modal-footer">
         <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
         <button id="delete_entry_credentials" class="btn-orange fw-bold fs-medium fw-medium px-4"
           data-bs-dismiss="modal">
@@ -335,70 +327,7 @@
 </div>
 
 {% endif %}
-{% if request.path == url_for('admin.trashbin') %}
 
-<div class="modal fade" id="restoreFile_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body mx-3">
-        <div class="mx-3">
-          <h5 class="fw-bold my-3"> Restore File</h5>
-          <p class="ms-2"> Are you sure you want to resotre this file?</p>
-        </div>
-      </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-        <button id="restore_file" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
-          Restore
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="deleteTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  role="dialog" aria-labelledby="deleteTrash_confirmation" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content mx-3 border-orange border-3">
-      <div class="modal-body ">
-        <div class="mx-3">
-          <h5 class="fw-bold my-3">Confirm Permanent Deletion</h5>
-          <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this file?</p>
-        </div>
-      </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-        <button id="delete_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
-          Confirm
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content mx-3 border-orange border-3">
-      <div class="modal-body ">
-        <div class="mx-3">
-          <h5 class="fw-bold my-3">Confirm Clear Trash</h5>
-          <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all documents in
-            the trash bin?</p>
-        </div>
-      </div>
-      <div class="modal-footer mx-3">
-        <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-        <button id="clear_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal"
-          onclick="clearAllTrash()">
-          Confirm
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
 {% if current_user.role == 'admin' and request.path == url_for('admin.account_manager')%}
 <! --add account form -->
   <div class="modal fade" id="addUser_modal" tabindex="-1" role="dialog" aria-labelledby="addUser_modal"
@@ -408,7 +337,7 @@
         <div class="modal-body">
           <h5 class="p-2 fw-bold">Create Account</h5>
           <div class="p-2">
-            <form action="{{ url_for('account_manager.create_account')}}" method="post" id="add_user">
+            <form action="{{ url_for('auth.create_account')}}" method="post" id="add_user">
               <div class="inputs-forms px-3 my-3">
                 <div id="form-item" class="py-2">
                   <label class="fw-medium" for="newuser_fullname">Staff Name</label>
@@ -858,4 +787,90 @@
     </div>
   </div>
 
+  {% endif %}
+  {% if request.path == url_for('admin.trashbin') %}
+
+  <div class="modal fade" id="restoreFile_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body mx-3">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3"> Restore File</h5>
+            <p class="ms-2"> Are you sure you want to resotre this file?</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+          <button id="initial_restoreFile" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            Restore
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="restoreFileError" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="restoreFileError" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mx-3 border-orange border-3">
+        <div class="modal-body">
+          <div class="mx-3">
+            <h5 class="fw-bold mb-3">Document Restoration Error </h5>
+            <p class="ms-2">It appears that a document with similar content is already active in the database. Please
+              review the
+              existing documents before proceeding with restoration.</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+          <button id="customRestore" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="deleteTrash_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mx-3 border-orange border-3">
+        <div class="modal-body ">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3">Confirm Permanent Deletion</h5>
+            <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this file?</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+          <button id="delete_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mx-3 border-orange border-3">
+        <div class="modal-body ">
+          <div class="mx-3">
+            <h5 class="fw-bold my-3">Confirm Clear Trash</h5>
+            <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all documents in
+              the trash bin?</p>
+          </div>
+        </div>
+        <div class="modal-footer mx-3">
+          <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+          <button id="clear_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal"
+            onclick="clearAllTrash()">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   {% endif %}
