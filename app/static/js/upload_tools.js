@@ -9,12 +9,12 @@ function populateList(index, surname, fname, midname, sfxname, tbody) {
     var cell5 = row.insertCell(4);
     var cell6 = row.insertCell(5);
 
-    cell1.innerHTML = `<div class="text-center p-2" style="width: 12px;height:12px;"><input type="checkbox" class="checkbox form-check-input m-auto" id="${index}"></div>`;
-    cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_surname" name="student_surname" value="${surname}" placeholder = "${surname}"> `; // Last Name
-    cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate" id="student_firstname" name="student_firstname" value="${fname}" placeholder = "${fname}"> `; // First Name
-    cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_middlename" name="student_middlename" maxlength="1" value="${midname}" placeholder = "${midname}"> `; // MI
-    cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center" id="student_suffixname" name="student_suffixname" maxlength="4" value="${sfxname}" placeholder = "${sfxname}"> `; // Suffix
-    cell6.innerHTML = `<button class="text-center border-0 bg-transparent w-full" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+    cell1.innerHTML = `<div class="text-center p-2 fs-def"><input type="checkbox" class="checkbox form-check-input m-auto" id="${index}"></div>`;
+    cell2.innerHTML = `<input type="text" class="form-control w-full text-truncate fs-medium" id="student_surname" name="student_surname" value="${surname}" placeholder = "${surname}" onkeyup = "checkAllInputs()"> `; // Last Name
+    cell3.innerHTML = `<input type="text" class="form-control w-full text-truncate fs-medium" id="student_firstname" name="student_firstname" value="${fname}" placeholder = "${fname}" onkeyup = "checkAllInputs()"> `; // First Name
+    cell4.innerHTML = `<input type="text" class="form-control text-truncate text-center fs-medium" id="student_middlename" name="student_middlename" maxlength="1" value="${midname}" placeholder = "${midname}" onkeyup = "checkAllInputs()"> `; // MI
+    cell5.innerHTML = `<input type="text" class="form-control text-truncate text-center fs-medium" id="student_suffixname" name="student_suffixname" maxlength="4" value="${sfxname}" placeholder = "${sfxname}" onkeyup = "checkAllInputs()"> `; // Suffix
+    cell6.innerHTML = `<button class="text-center border-0 bg-transparent w-full fs-medium no-border-button" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
     (function (row) {
         cell6.querySelector(`#deleteButton${index}`).addEventListener('click', function () {
@@ -24,6 +24,7 @@ function populateList(index, surname, fname, midname, sfxname, tbody) {
             setTimeout(function () {
                 setTimeout(function () {
                     row.remove();
+                    checkAllInputs();
                 }, 100);
             }, 250);
         });
@@ -54,7 +55,7 @@ function addRows(count) {
 function checkForEmptyTable() {
     var tbodyIsEmpty = document.querySelector('tbody').childElementCount === 0;
     if (tbodyIsEmpty) {
-        addRows(10);
+        addRows(20);
     }
 }
 
@@ -81,14 +82,14 @@ function noSelectedData(event, message, buttonFunction) {
 
     messageErrorTools.innerHTML = `
         <div class="modal-body">
-            <div class="mx-3">
+            <div class="">
                 <h5 class="fw-bold mb-3"> Oops! No rows selected </h5>
-                <p class="mb-3"> Please choose one or more rows to ${event}. ${message} </p>
+                <p class=""> Please choose one or more rows to ${event}. ${message} </p>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-            <button onclick="${buttonFunction}" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Cancel</button>
+            <button onclick="${buttonFunction}" class="button btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
                 Confirm
             </button>
         </div>
@@ -197,8 +198,6 @@ document.querySelectorAll('tbody .checkbox').forEach(function (checkbox) {
     });
 });
 
-addRows(10);
-
 function populateResults(students) {
     var table = document.getElementById('studentList');
     var tbody = table.getElementsByTagName('tbody')[0];
@@ -229,7 +228,85 @@ function populateResults(students) {
     }
 }
 
+addRows(20);
+
+// Function to check all inputs and enable/disable the button
+function checkAllInputs() {
+    const uploadButton = document.getElementById('uploadRecord');
+    const table = document.getElementById('studentList');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const inputs = [
+        document.getElementById('document_image'), // File input
+        document.getElementById('document_filename'),
+        document.getElementById('document_college'),
+        document.getElementById('document_course'),
+        document.getElementById('document_yearLevel'),
+        document.getElementById('document_subject_name'),
+        document.getElementById('document_semester'),
+        document.getElementById('starting_year'),
+        document.getElementById('ending_year')
+    ];
+
+    // Check if any required input is empty
+    const isAnyInputEmpty = inputs.some(input => {
+        if (!input) return true; // Check if the input element exists
+
+        if (input.type === 'file') {
+            return input.files.length === 0; // Check if no files are selected
+        } else if (input.tagName === 'SELECT') {
+            return input.value === '' || input.value === '0'; // Check if no option is selected
+        } else {
+            return input.value.trim() === ''; // Check if text input is empty
+        }
+    });
+
+    // Count rows with non-empty surname and firstname
+    const countListNonEmpty = Array.from(tbody.querySelectorAll('tr')).filter(row => {
+        const surname = row.querySelector('[name="student_surname"]').value.trim();
+        const firstname = row.querySelector('[name="student_firstname"]').value.trim();
+        return surname && firstname;
+    }).length;
+
+    if (countListNonEmpty > 0 && !isAnyInputEmpty){
+        uploadButton.disabled = false;
+    }
+    else{
+        uploadButton.disabled = true;
+    }
+    
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('populateInputs').onclick = function () {
+        addRows(1);
+        checkAccuracyData();
+    }
     document.querySelector('#removeButton').addEventListener('click', handleRemoveOrClear);
     document.querySelector('#clearButton').addEventListener('click', handleRemoveOrClear);
+    
+    const inputs = [
+        document.getElementById('document_image'), // File input
+        document.getElementById('document_filename'),
+        document.getElementById('document_college'),
+        document.getElementById('document_course'),
+        document.getElementById('document_yearLevel'),
+        document.getElementById('document_subject_name'),
+        document.getElementById('document_subject_type'),
+        document.getElementById('document_semester'),
+        document.getElementById('starting_year'),
+        document.getElementById('ending_year')
+    ];
+
+
+
+    // Add event listeners to all input fields
+    inputs.forEach(input => {
+        if (input.type === 'file') {
+            input.addEventListener('change', checkAllInputs);
+        } else {
+            input.addEventListener('input', checkAllInputs);
+        }
+    });
+
 });
