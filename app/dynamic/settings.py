@@ -81,7 +81,7 @@ def build_CollegeCourses(college_list, courses_list):
 
 def build_YearLevel(academic_year):
     if academic_year and len(academic_year) > 0:
-        return [{'id': year_level['id'], 'year_level': year_level['year_level']} for year_level in academic_year]
+        return [{'id': year_level['id'], 'year_level': year_level['year_level'], 'description': year_level['description']} for year_level in academic_year]
     return None
 
 def build_AcademicUnits(academic_units):
@@ -158,3 +158,4 @@ def updateSettingsJson(academic_units, academic_year, college_list, courses_list
             return False  # Return False on error
 
     return False  # Return False if jsonFile is None or update failed
+
