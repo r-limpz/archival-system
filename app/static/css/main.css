@@ -123,7 +123,7 @@ body {
     height: 100%;
     color: var(--fc-default) !important;
     font-family: "Quicksand", sans-serif;
-    font-size: var(--fs-default) !important;
+    font-size: var(--fs-medium) !important;
     font-weight: 500;
 }
 
@@ -140,6 +140,35 @@ a {
 a:hover,
 a:active {
     color: var(--fc-dark);
+}
+h1 {
+    font-size: calc(var(--fs-medium) * 2.5);
+    /* 2.5 times the default size */
+}
+
+h2 {
+    font-size: calc(var(--fs-medium) * 2);
+    /* 2 times the default size */
+}
+
+h3 {
+    font-size: calc(var(--fs-medium) * 1.75);
+    /* 1.75 times the default size */
+}
+
+h4 {
+    font-size: calc(var(--fs-medium) * 1.5);
+    /* 1.5 times the default size */
+}
+
+h5 {
+    font-size: calc(var(--fs-medium) * 1.25);
+    /* 1.25 times the default size */
+}
+
+h6 {
+    font-size: var(--fs-medium);
+    /* Same as the default size */
 }
 
 /* font size */
@@ -448,11 +477,27 @@ button {
     padding: var(--button-p-default);
     background-color: var(--button-bg-light);
     border-radius: var(--roundness-default);
-    border: solid 1px var(--border-default);
+    border: none;
     color: var(--fc-default);
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+button:not(.no-border-button):not(.btn-red):not(.btn-orange):not(.btn-green):not(.btn-gray)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: solid 0.5px var(--bg-light-gray);
+    border-radius: inherit;
+    opacity: 0.5;
+    pointer-events: none;
+    box-sizing: border-box;
 }
 
 button:not(.not-hover):hover {
@@ -534,10 +579,12 @@ button:disabled {
 }
 
 .form-control {
+    font-size: var(--fs-medium) !important;
     padding: 0.25rem 0.5rem !important;
 }
 
 .form-select {
+    font-size: var(--fs-medium) !important;
     padding: 0.25rem 1rem 0.25rem 0.5rem;
 }
 
@@ -606,4 +653,25 @@ input[type="number"]::-webkit-outer-spin-button {
 .toast {
     width: auto;
     max-width: 500px;
+}
+
+
+.modal-body{
+    padding: 24px !important;
+}
+
+.modal-header{
+    padding:24px 24px 0px 24px !important;
+}
+.modal-footer {
+    padding: 0px 24px 24px 24px !important;
+}
+
+.modal-backdrop {
+    background-color: transparent !important;
+}
+
+/* Custom shadow for modal content */
+.modal-content {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
 }
