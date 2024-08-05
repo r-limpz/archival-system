@@ -23,7 +23,9 @@
 </section>
 
 {% endblock%}
-
+{% block modals%}{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/trashbin_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script>
     var trashDataTable;

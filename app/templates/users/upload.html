@@ -162,6 +162,10 @@
     </div>
 </section>
 {% endblock%}
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/upload_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script src="{{url_for('static',filename='js/upload_tools.js')}}"></script>

@@ -69,7 +69,10 @@
     </table>
 </section>
 {% endblock%}
-
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/records_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>

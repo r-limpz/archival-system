@@ -40,7 +40,10 @@
 
 </section>
 {% endblock %}
-
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/account_manager_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script>
     // Function to show and hide popup

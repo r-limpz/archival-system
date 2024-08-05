@@ -16,7 +16,6 @@ from app.blueprints.account_manager import account_manager
 from app.blueprints.college_manager import college_manager
 from app.blueprints.dashboard import dashboard_data
 from app.blueprints.documents import fetch_documents
-from app.blueprints.fetchColleges import fetchColleges
 from app.blueprints.profile import profile_data
 from app.blueprints.records import fetch_records
 from app.blueprints.trashbin import trashbin_data
@@ -78,7 +77,6 @@ app.register_blueprint(profile_data)
 app.register_blueprint(fetch_records)
 app.register_blueprint(trashbin_data)
 app.register_blueprint(uploader_manager)
-app.register_blueprint(fetchColleges)
 app.register_blueprint(benchmark_manager)
 
 #Non-authentication needed pages
@@ -89,6 +87,7 @@ def index():
 @app.route('/ards')
 def home():
     updateDB()
+    updater('all')
     form = LoginForm()
 
     return render_template('public/index.html', form=form)

@@ -25,7 +25,10 @@
 </section>
 
 {% endblock%}
-
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/college_manager_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script>
     var collegesArray = [];

@@ -63,7 +63,10 @@
 </section>
 
 {% endblock%}
-
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/documents_modals.html'%}
+{% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
@@ -366,7 +369,7 @@
                     </div>
                 `;
 
-                
+
                 // Set the HTML of the parent element
                 document.getElementById('updateDocument_data').innerHTML = html;
                 updateHeader(documentsData)

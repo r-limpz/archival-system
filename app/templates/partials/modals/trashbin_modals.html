@@ -1,0 +1,97 @@
+<div class="modal fade backdrop-modal-present" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="showPreviewModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered border-0">
+        <div class="modal-content p-0 border-0">
+            <div class="modal-body" style="padding: 0px !important;">
+                <div class="imageContainer p-0">
+                    <img src="" alt="" id="previewImageDisplay">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="restoreFile_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body ">
+                <h5 class="fw-bold mb-3"> Restore File</h5>
+                <p class="ms-2"> Are you sure you want to resotre this file?</p>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+                <button id="initial_restoreFile" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                    Restore
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="restoreFileError" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="restoreFileError" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content  border-orange border-3">
+            <div class="modal-body">
+                <div class="">
+                    <h5 class="fw-bold mb-3">Document Restoration Error </h5>
+                    <p class="ms-2">It appears that a document with similar content is already active in the database.
+                        Please
+                        review the existing documents before proceeding with restoration.</p>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Custom
+                    Restore</button>
+                <button id="customRestore" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="deleteTrash_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content  border-orange border-3">
+            <div class="modal-body ">
+                <div class="">
+                    <h5 class="fw-bold mb-3">Confirm Permanent Deletion</h5>
+                    <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this file?
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+                <button id="delete_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clearTrash_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="clearTrash_confirmation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content  border-orange border-3">
+            <div class="modal-body ">
+                <div class="">
+                    <h5 class="fw-bold mb-3">Confirm Clear Trash</h5>
+                    <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete all
+                        documents in
+                        the trash bin?</p>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
+                <button id="clear_trash" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal"
+                    onclick="clearAllTrash()">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

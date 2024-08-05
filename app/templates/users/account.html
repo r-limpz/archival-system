@@ -93,7 +93,9 @@
     </div>
 </section>
 {% endblock%}
-
+{% block modals%}
+{% include '/partials/modals/account_modals.html' %}
+{% endblock%}
 {% block scripts %}
 <script>
     function initializeCalHeatMap(progress_report) {
