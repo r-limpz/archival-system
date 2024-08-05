@@ -58,6 +58,7 @@ def restoreVersion(document_id, activeFile):
 def restoreAsCopy(document_id, activeFile):
     try:
         with config.conn.cursor() as cursor:
+            activeFile = checkDuplicateFile(activeFile)
 
             if cursor.rowcount > 0:
                 cursor.execute("UPDATE documents SET filename = CONCAT(filename, '-copy'), delete_status = 0 WHERE docs_id = %s", (document_id,))
@@ -85,31 +86,33 @@ def restoreMerge(document_id, activeFile, restoreType):
 
             success_counter = 0
 
-            for item in trash_tagsList:
-                try:
-                    cursor.execute('INSERT INTO tagging (student, document) VALUES (%s, %s)', (item, activeFile))
-                    config.conn.commit()
-                    success_counter += 1
+            if trash_tagsList:
+                for item in trash_tagsList:
+                    try:
+                        cursor.execute('INSERT INTO tagging (student, document) VALUES (%s, %s)', (item, activeFile))
+                        config.conn.commit()
+                        success_counter += 1
 
-                except Exception as insert_error:
-                    config.conn.rollback()  # Rollback on failure
-                    print(f"Failed to insert {item} into tagging table: {insert_error}")
+                    except Exception as insert_error:
+                        config.conn.rollback()  # Rollback on failure
+                        print(f"Failed to insert {item} into tagging table: {insert_error}")
 
-            if success_counter == len(trash_tagsList):
-                return 'success'
-            else:
-                return 'failed'
-
+                if success_counter == len(trash_tagsList) or success_counter > 0:
+                    return 'success'
+                else:
+                    return 'failed'
+                
+            return 'no changes'
     except Exception as e:
         print('Recover data Error: ', e)
         return 'failed'
 
 # This will restore the record and update the existing record with the same details, including merging linked items.    
-def restoreCustom(reference_document, customFile):
+def restoreActionType(reference_document, customFile):
     try:
         activeFile = checkDuplicateFile(reference_document)
 
-        if activeFile and restoreCustom:
+        if activeFile and customFile:
             match customFile:
                 case 'default': # Restore will delete new version to restore trashed version
                     return restoreVersion(reference_document, activeFile)
