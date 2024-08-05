@@ -12,9 +12,3 @@ function showToast(title, message, className, bordercol) {
 
     toastContainer.innerHTML = toastHTML;
 }
-
-// Initialize Bootstrap tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-});
