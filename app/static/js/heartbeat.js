@@ -36,8 +36,9 @@ function sendHeartbeat() {
 
 setInterval(() => sendHeartbeat(), 1200000); // check session every 20 mins
 
-document.getElementById('logout_currentUser').addEventListener('click', function () {
-    channel.postMessage('session expired');
-});
-
+function heartAttack(){
+    document.getElementById('logout_currentUser').addEventListener('click', function () {
+        channel.postMessage('session expired');
+    });
+}
 

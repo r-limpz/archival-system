@@ -19,7 +19,10 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
     cell6.innerHTML = `<input type="text" class="form-control text-truncate text-center fs-medium" id="student_wer" name="student_wer" value="${student_wer}" placeholder = "${student_wer}" disabled> `; // wer
     cell7.innerHTML = `<input type="text" class="form-control text-truncate text-center fs-medium" id="student_cer" name="student_cer" value="${student_cer}" placeholder = "${student_cer}" disabled> `; // cer
 
-    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full updateERRperDelete fs-medium no-border-button" id="deleteButton${index}"><span class="fa-solid fa-square-minus"></span></button>`; // Button
+    cell8.innerHTML = `<button class="text-center border-0 bg-transparent w-full updateERRperDelete fs-medium no-border-button" id="deleteButton${index}"
+     data-bs-placement="left" data-bs-trigger="hover" data-bs-html="true"
+                                            title="Remove this row"
+                                            ><span class="fa-solid fa-square-minus"></span></button>`; // Button
 
     (function (row) {
         cell8.querySelector(`#deleteButton${index}`).addEventListener('click', function () {

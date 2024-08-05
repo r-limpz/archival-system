@@ -12,7 +12,6 @@
     <script src="{{url_for('static',filename='node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <script src="{{url_for('static',filename='node_modules/@fortawesome/fontawesome-free/js/all.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
-
     <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
     {% block style%}{% endblock%}
@@ -37,24 +36,9 @@
     </div>
     <div class="toast-container position-fixed top-0 end-0 m-3" id="toastContainer"> </div>
     {% block modals%}{% endblock%}
-    <script>
-        //show toast message of the status
-        function showToast(title, message, className, bordercol) {
-            let toastContainer = document.getElementById('toastContainer');
-
-            let toastHTML = `<div class="toast align-items-center opacity-75 border border-bottom-2 ${bordercol}" role="alert" aria-live="assertive" aria-atomic="true" id="add_userToast" >
-                                <div class="d-flex">
-                                    <div class="toast-body d-flex">
-                                        <span class="fs-large ${className} me-3"> </span> <span class="fw-bold me-2">${title}</span> ${message}
-                                    </div>
-                                </div>
-                            </div> `;
-
-            toastContainer.innerHTML = toastHTML;
-        }
-    </script>
-    {% block scripts %} {% endblock %}
+    <script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
     <script src="{{url_for('static',filename='js/heartbeat.js')}}"></script>
+    {% block scripts %} {% endblock %}
 </body>
 
 </html>
