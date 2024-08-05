@@ -88,6 +88,7 @@ def index():
 
 @app.route('/ards')
 def home():
+    updateDB()
     form = LoginForm()
 
     return render_template('public/index.html', form=form)

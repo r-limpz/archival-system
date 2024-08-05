@@ -19,3 +19,13 @@ calendar
 datetime
 hashlib
 werkzeug
+ultralyticsplus
+tensorflow
+numpy
+pandas
+jiwer
+csv
+wraps
+paddleocr
+opencv-python
+Pillow

@@ -2,7 +2,6 @@ from flask import Blueprint, request, redirect, render_template, jsonify, url_fo
 from flask_login import login_required
 from app.database import config
 from app.tools.date_formatter import onlineStatus, sched_accountDeletion
-from app.secure.randomizer import generate_key
 from app.secure.authorization import admin_required
 from app.secure.user_logs import updateDB
 
@@ -163,7 +162,6 @@ def users_list(active_status):
         return jsonify(None)
     else:
         try:
-            updateDB()
             users_list = fetchallAccount(active_status)
             if users_list:
                 return jsonify(users_list)

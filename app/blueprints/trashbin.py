@@ -3,7 +3,6 @@ from flask_login import login_required
 import base64
 from app.database import config
 from app.tools.filesize_selector import filesize_format
-from app.tools.date_formatter import get_deletionTime
 from app.secure.authorization import admin_required
 
 trashbin_data = Blueprint('trashbin', __name__, url_prefix='/admin/trash/manage/data')
@@ -21,12 +20,18 @@ def checkDuplicateFile(document_id):
     except Exception as e:
         print('Check Duplicate Filename Error:', e)
 
-def fetchTags(document_id):
+def fetchTags(document_id, status):
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute('SELECT student FROM tagging WHERE document = %s ', (document_id))
-            result = cursor.fetchall()
-            
+            delete_status = {0: 'trash', 1: 'active', 99 : 'all'}.get(status, 1)
+
+            if status == 'all':
+                cursor.execute('SELECT student FROM tagging WHERE document = %s', (document_id))
+                result = cursor.fetchall()
+            else:
+                cursor.execute('SELECT student FROM tagging WHERE document = %s AND delete_status = %s', (document_id, delete_status))
+                result = cursor.fetchall()
+                
             if result:
                 return result
         
@@ -34,8 +39,7 @@ def fetchTags(document_id):
     except Exception as e:
         print('fetchTags Error:', e)
 
-
-def restoreDefault(document_id, activeFile):
+def restoreVersion(document_id, activeFile):
     try:
         with config.conn.cursor() as cursor:
 
@@ -51,34 +55,54 @@ def restoreDefault(document_id, activeFile):
     except Exception as e:
             print('Recover data Error: ',e)
 
-def restoreMerge(document_id, activeFile):
+def restoreAsCopy(document_id, activeFile):
     try:
         with config.conn.cursor() as cursor:
-            trashed_tags = fetchTags(document_id)
-
-            cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
-            config.conn.commit()
 
             if cursor.rowcount > 0:
-                    return 'success'
+                cursor.execute("UPDATE documents SET filename = CONCAT(filename, '-copy'), delete_status = 0 WHERE docs_id = %s", (document_id,))
+                config.conn.commit()
+                return 'success'
 
             return 'failed'
     except Exception as e:
             print('Recover data Error: ',e)
 
-def restoreDelete(document_id, activeFile):
+def restoreMerge(document_id, activeFile, restoreType):
     try:
         with config.conn.cursor() as cursor:
+            trashed_tags = fetchTags(document_id, restoreType)
+            active_tags = fetchTags(activeFile, restoreType)
 
-            cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
-            config.conn.commit()
+            trash_tagsList = []
 
-            if cursor.rowcount > 0:
-                    return 'success'
+            for trashed_item in trashed_tags:
+                for active_item in active_tags:
+                    if not trashed_item['student'] == active_item['student']:
+                        trash_tagsList.append(trashed_item['student'])
+                    else:
+                        break
 
-            return 'failed'
+            success_counter = 0
+
+            for item in trash_tagsList:
+                try:
+                    cursor.execute('INSERT INTO tagging (student, document) VALUES (%s, %s)', (item, activeFile))
+                    config.conn.commit()
+                    success_counter += 1
+
+                except Exception as insert_error:
+                    config.conn.rollback()  # Rollback on failure
+                    print(f"Failed to insert {item} into tagging table: {insert_error}")
+
+            if success_counter == len(trash_tagsList):
+                return 'success'
+            else:
+                return 'failed'
+
     except Exception as e:
-            print('Recover data Error: ',e)
+        print('Recover data Error: ', e)
+        return 'failed'
 
 # This will restore the record and update the existing record with the same details, including merging linked items.    
 def restoreCustom(reference_document, customFile):
@@ -88,11 +112,11 @@ def restoreCustom(reference_document, customFile):
         if activeFile and restoreCustom:
             match customFile:
                 case 'default': # Restore will delete new version to restore trashed version
-                    return restoreDefault(reference_document, activeFile)
+                    return restoreVersion(reference_document, activeFile)
                 case 'merge': # Restore will merge records tags
                     return restoreMerge(reference_document, activeFile)
-                case 'delete_onUpdate':
-                    return restoreDelete(reference_document, activeFile)
+                case 'copy': # Restore will merge records tags
+                    return restoreAsCopy(reference_document, activeFile)
 
     except Exception as e:
             print('Recover default Error: ',e)

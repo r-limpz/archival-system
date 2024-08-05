@@ -1,5 +1,4 @@
 from app.database import config
-import hashlib
 
 #account history login
 def loginHistory(user_id, session_data):
