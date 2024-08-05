@@ -90,9 +90,11 @@
                                 <input type="text" class="form-control update_collegeDescriptionField flex-fill"
                                     name="update_collegeDescription" required>
                                 <span class="p-2" style="max-width:50px;">
-                                    <a class="m-0 deleteCollege-button" id="" data-bs-toggle="modal" data-bs-target="#deleteCollegeModal" data-toggle="tooltip" data-placement="top" title="Delete College"> 
-                                        <span class="fa-solid fa-trash"
-                                            data-bs-placement="top" data-bs-trigger="hover" data-bs-html="true" title="Delete College">
+                                    <a class="m-0 deleteCollege-button" id="" data-bs-toggle="modal"
+                                        data-bs-target="#deleteCollegeModal" data-toggle="tooltip" data-placement="top"
+                                        title="Delete College">
+                                        <span class="fa-solid fa-trash" data-bs-placement="top" data-bs-trigger="hover"
+                                            data-bs-html="true" title="Delete College">
                                         </span>
                                     </a>
                                 </span>
@@ -227,8 +229,11 @@
         <div class="modal-content">
             <div class="modal-body">
                 <h5 class="fw-bold mb-3"> Move Course</h5>
-                <p class="ms-2"> Are you sure you move the <span id="modal_courseChangeText"></span> to <span
-                        id="modal_collgeChangeText"></span></p>
+                <p class="ms-2"> Are you want to transer
+                    <span class="fw-medium" id="modal_courseChangeText"></span>
+                    to
+                    <span class="fw-medium" id="modal_collgeChangeText"></span>
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4"
@@ -256,7 +261,7 @@
                 <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
                     data-bs-target="#editCollege_modal">Cancel</button>
                 <button id="confirm_deleteCourseEntry" class="btn-orange text-decoration-none fs-medium fw-medium px-4"
-                    data-bs-dismiss="modal">Confirm</button>
+                    data-bs-dismiss="modal">Delete</button>
             </div>
         </div>
     </div>
@@ -278,7 +283,7 @@
                 <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
                     data-bs-target="#editCollege_modal">Cancel</button>
                 <button id="confirm_deleteCollegeEntry" class="btn-orange text-decoration-none fs-medium fw-medium px-4"
-                    data-bs-dismiss="modal">Confirm</button>
+                    data-bs-dismiss="modal">Delete</button>
             </div>
         </div>
     </div>

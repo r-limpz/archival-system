@@ -433,7 +433,7 @@
         var selectedText = $('#movetoCollege option:selected').text();
         $('#collegeText').text(selectedText);
 
-        collegeText.innerText = selectedText;
+        collegeText.innerText = college.college_name;
         courseText.innerText = course.course_name;
 
         $('#confirm_changeCourse').on('click', function (event) {
