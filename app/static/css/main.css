@@ -661,18 +661,30 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 0px 24px 24px 24px !important;
 }
 
-/* Custom CSS to hide backdrop for modals not marked with backdrop-modal-present */
 .modal-backdrop {
     display: none !important;
-    /* Hide all modal backdrops by default */
 }
 
 .modal.fade.show.backdrop-modal-present~.modal-backdrop {
     display: block !important;
-    /* Show backdrop for modals with backdrop-modal-present class */
 }
 
-/* Custom shadow for modal content */
+.modal.fade.show.backdrop-modal-present~.modal-backdrop+.modal {
+    .modal-content {
+        box-shadow: none !important;
+    }
+}
+
 .modal-content {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.tooltip-inner {
+    font-size: var(--fs-small);
+    background-color: var(--button-bg-default-active);
+}
+
+/* Ensure the tooltip text wraps properly */
+.tooltip-inner {
+    white-space: nowrap;
 }
