@@ -1,6 +1,5 @@
 @import url(main.css);
 
-
 #login_container {
     width: 300px;
 }
@@ -8,29 +7,33 @@
 button:focus,
 .form-item input {
     outline: none;
+    background: white; /* Ensure input background is always white */
 }
 
 .form-item {
     position: relative;
 }
 
-.form-item input{
+.form-item input {
     display: block;
     width: 100%;
-    height: 40px;
-    background: white;
+    height: 38px;
+    background: white; /* Set initial background to white */
     border: solid 1px #868686;
     transition: all 0.3s ease;
     line-height: 0rem !important;
     font-size: 16px;
+    padding: 4px 8px !important;
 }
 
 .form-item input:not(.captcha) {
     padding-left: 32px;
 }
-.form-item input .captcha{
-    padding-left: 16px;
+
+.form-item input.captcha { /* Corrected selector for captcha input */
+    padding-left: 18px;
 }
+
 .form-item label {
     position: absolute;
     cursor: text;
@@ -40,13 +43,13 @@ button:focus,
     font-size: var(--fs-medium);
     font-weight: bold;
     background: #fff;
-    padding: 0 0.25rem;
+    padding: 0 8px;
     transition: all 0.3s ease;
 }
 
-.form-item input:focus+label,
-.form-item input:valid+label {
-    top: -0.5rem;
+.form-item input:focus + label,
+.form-item input:valid + label {
+    top: -8px;
     font-size: var(--fs-small);
 }
 
@@ -55,15 +58,12 @@ button:focus,
     outline: none !important;
 }
 
-.form-item input:focus+label {
+.form-item input:focus + label {
     color: var(--border-black);
 }
 
-
-
-
 #error_message {
-    padding: 0.5rem 0.25rem;
+    padding: 10px 5px;
     font-size: var(--fs-small);
 }
 
@@ -82,4 +82,3 @@ button:focus,
 #container_content {
     padding: 0px 62px;
 }
-

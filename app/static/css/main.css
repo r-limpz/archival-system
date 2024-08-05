@@ -110,7 +110,6 @@
             #24ac0c 100%);
     /* Navigation bar */
     --header-height: 53px;
-    --sidebar-width-open: 13rem;
     --animation-duration: 350ms;
     --animation-timing-curve: ease-in-out;
     --sidebar-list-active: #e3e5eb;
@@ -588,16 +587,12 @@ button:disabled {
     padding: 0.25rem 1rem 0.25rem 0.5rem;
 }
 
-.form-control:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: var(--fc-darker);
-}
-
+.form-control:focus,
 .form-select:focus {
     outline: none !important;
     box-shadow: none !important;
     border-color: var(--fc-darker);
+    background-color: white !important;
 }
 
 .is-invalid {
