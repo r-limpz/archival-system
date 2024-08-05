@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
     <link rel="stylesheet" href="{{url_for('static', filename='css/sidebar.css')}}">
     <script src="{{url_for('static',filename='node_modules/@fortawesome/fontawesome-free/js/all.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='node_modules/@popperjs/core/dist/umd/popper.min.js')}}"></script>
+    <script src="{{url_for('static',filename='node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     {% block style%}{% endblock%}
 </head>
 
@@ -34,9 +37,6 @@
     </div>
     <div class="toast-container position-fixed top-0 end-0 m-3" id="toastContainer"> </div>
     {% block modals%}{% endblock%}
-    <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
-    <script src="{{url_for('static',filename='node_modules/@popperjs/core/dist/umd/popper.min.js')}}"></script>
-    <script src="{{url_for('static',filename='node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
     <script src="{{url_for('static',filename='js/heartbeat.js')}}"></script>
     <script>
