@@ -11,8 +11,9 @@
     </div>
     <div class="d-flex justify-content-end gap-3">
         <div class="me-5" style="width: 30vw;min-width:400px;">
-            <input type="text" name="filterCards" class="form-control w-full text-truncate rounded-3 mx-3 border-1 fs-medium"
-                id="filterCards" oninput="searchCards()" placeholder="Search for College..." style="height: 100%;">
+            <input type="text" name="filterCards"
+                class="form-control w-full text-truncate rounded-3 mx-3 border-1 fs-medium" id="filterCards"
+                oninput="searchCards()" placeholder="Search for College..." style="height: 100%;">
         </div>
         <button class="fs-medium fw-medium px-4" data-bs-toggle="modal" data-bs-target="#addColleges_modal">
             <span class="fc-default fa-solid fa-plus me-2 align-self-center">
@@ -101,7 +102,7 @@
                                                                 <ul class="list-group list-group-flush fs-medium">
                                                                     ${courseslist} 
                                                                     <li class="list-group-item text-end mt-3">
-                                                                        <a class="text-decoration-none" onclick="show_editModal(${college_id})"> Manage </a>
+                                                                        <a class="text-decoration-none fw-medium" onclick="show_editModal(${college_id})"> Manage </a>
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -384,10 +385,22 @@
                                                 <input type="text" class="form-control flex-fill" id="${course.course_id}" name="update_courseDescription" value="${course.course_description}" placeholder="${course.course_description}" required>
                                                 <div class="d-flex gap-2">
                                                     <span class="p-2" style="max-width:50px;">
-                                                        <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"> <span class="fa-solid fa-circle-chevron-right"></span></a>
+                                                        <a class="m-0" onclick="moveCourse(${college.college_id}, ${course.course_id})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-trigger="hover"
+                                                            data-bs-html="true"
+                                                            title="Change Course registered College">
+                                                             <span class="fa-solid fa-circle-chevron-right"></span></a>
                                                     </span>
                                                     <span class="p-2" style="max-width:50px;">
-                                                        <a class="m-0" onclick="deleteCourse(${course.course_id})"> <span class="fa-solid fa-trash"></span></a>
+                                                        <a class="m-0" onclick="deleteCourse(${course.course_id})"
+                                                        data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-trigger="hover"
+                                                            data-bs-html="true"
+                                                            title="Delete Course"> 
+                                                            <span class="fa-solid fa-trash"></span></a>
                                                     </span>
                                                 </div>
                                                 
