@@ -291,7 +291,7 @@
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add college data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Failed to add college!', 'Please try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'duplicate'://user already exist in the database
@@ -335,7 +335,7 @@
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add couse data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Failed to add couse!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'cannot modify'://user already exist in the database
@@ -461,7 +461,7 @@
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'failed'://error in processing occured
-                                showToast('Error occurred!', 'Failed to update course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                                showToast('Failed updating course!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                         }

@@ -194,7 +194,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'no file') {
-                        showToast('No file uploaded!', 'Please upload a file first. Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        showToast('Missing File!', 'Please upload a file first and try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
@@ -296,7 +296,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     if (data === 'no file') {
-                        showToast('No file uploaded!', 'Please upload a file first. Please try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
+                        showToast('Missing File!', 'Please upload a file first and try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     } else {
                         if (data.length > 0) {
@@ -407,15 +407,15 @@
                             upload_DuplicateError.show();
                             break;
                         case 'failed':
-                            showToast('Upload Failed', 'Failed to upload document data.', 'text-danger', 'border-danger');
+                            showToast('Upload Failed', '', 'text-danger', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'no file':
-                            showToast('No File Uploaded', 'Please upload a file and try again.', 'text-danger', 'border-danger');
+                            showToast('Missing File', 'Please upload document image.', 'text-danger', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'unsupported file_type':
-                            showToast('Unsupported File Type', 'Please upload a different file type.', 'text-danger', 'border-danger');
+                            showToast('Unsupported File', 'Please upload a .JPG or .PNG image file', 'text-danger', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }

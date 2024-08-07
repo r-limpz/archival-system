@@ -230,15 +230,15 @@
                     case 'success'://the user successfully appended in the database
                         populateUsers('all-any');
                         clearForm('#add_user');
-                        showToast('Success!', 'User added successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'User registered successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Upload Error occurred!', 'Failed to add user.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Registration Error!', 'Please try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'duplicate user'://user already exist in the database
-                        showToast('User Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('User Already Exist!', '', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }
@@ -260,7 +260,8 @@
             'user_id': profile_id,
             'user_state': state
         }
-        var status = { 'active': 'activate', 'deactivated': 'deactivated' }[state];
+        var status = { 'active': 'activate', 'deactivated': 'deactivate' }[state];
+        
         let status_confirmation = document.querySelector('#Change_UserStatus_confirmation .modal-body');
         status_confirmation.innerHTML = `<h5 class="fw-bold mb-3">Change Account Status</h5>
                                   <p>Are you sure you want to <span>${status}</span> this account?</p>`;
@@ -278,16 +279,15 @@
                     populateUsers('all-any');
 
                     if (data.change_state === 'success') {
-                        showToast('Success!', 'Account ' + status +' successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'Account ' + status +'d successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                     else if (data.change_state === 'failed') {
-                        showToast('Change Status Error occurred!', 'Failed to ' + status + ' user account.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Error occurred!', 'Failed to ' + status + ' user account.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                     }
                 },
                 error: function (error) {
-                    populateUsers('all-any');
                     console.error('Error:', error);
                     showToast('Error', 'Change status error occurred.', 'text-danger fa-solid fa-triangle-exclamation', 'border-warning');
                     new bootstrap.Toast(document.querySelector('#add_userToast')).show();
@@ -559,16 +559,16 @@
                     switch (data.delete_query) {
                         case 'success'://the user successfully appended in the database
                             populateUsers('all-any');
-                            showToast('Account Deactivated!', 'Scheduled for deletion.', 'fc-green fa-solid fa-circle-check', 'border-success');
+                            showToast('Account Deleted!', '', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed'://error in processing occured
-                            showToast('Request Error', 'Failed to delete user. Please Try Again', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            showToast('Request Error!', 'Please Try Again', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'cannot delete user'://user already exist in the database
                             populateUsers('all-any');
-                            showToast('Cannot process the request', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                            showToast('Cannot delete User', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         default:

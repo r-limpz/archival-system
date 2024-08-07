@@ -313,7 +313,7 @@
                             modal.show();
                             break;
                         case 'failed'://error in processing occured
-                            showToast('Update Error occurred!', 'Failed to modify entry credentials.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            showToast('Update Error occurred!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'entry not found'://user already exist in the database
@@ -359,7 +359,7 @@
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'failed':
-                            showToast('Deletion Error occurred!', 'Failed to delete record. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                            showToast('Deletion Error occurred!', 'Please try again. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         default:
