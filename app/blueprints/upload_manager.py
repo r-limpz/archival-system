@@ -43,15 +43,18 @@ def newDocumentUploader(document_header, imageFile):
 
                 if not document_exist:
                     editor = getEditor()
-                    image_id = imageUploader(imageFile)
+                    
+                    cursor.execute('INSERT INTO documents (filename, college, course, section, subject, academic_year, semester, year_level, unit, page_num, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, college, course, section, subject_name, academic_year, semester, year_level, unit, document_page, editor))
+                    config.conn.commit()
 
-                    if image_id:
-                        cursor.execute('INSERT INTO documents (filename, college, course, image_id, section, subject, academic_year, semester, year_level, unit, page_num, editor) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (filename, college, course, image_id, section, subject_name, academic_year, semester, year_level, unit, document_page, editor))
-                        config.conn.commit()
+                    document_id = cursor.lastrowid
+                    
+                    print(document_id)
 
-                        document_id = cursor.lastrowid
+                    if document_id:
+                        image_id = imageUploader(imageFile, document_id)
 
-                        if document_id:
+                        if document_id and image_id:
                             return document_id
                         else:
                             return None
@@ -63,15 +66,19 @@ def newDocumentUploader(document_header, imageFile):
     else:
         return None
     
-def imageUploader(imageFile):
+def imageUploader(imageFile, document_id):
     document_image = imageFile.read()
+    document_id = int(document_id)
     try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('INSERT INTO img_files (document_file) VALUES (%s)', (document_image))
-            config.conn.commit()
-            uploaded = cursor.lastrowid
+        if document_id and document_image:
 
-            return uploaded
+            with config.conn.cursor() as cursor:
+                cursor.execute('INSERT INTO img_files (document_file, document) VALUES (%s, %s)', (document_image, document_id))
+                config.conn.commit()
+                uploaded = cursor.lastrowid
+
+                return uploaded
+        return None
     except Exception as e:
                 print(f"Upload image error occurred: {e}")
 
