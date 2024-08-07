@@ -442,16 +442,14 @@
                     documentsDataTable.draw();
                     switch (data.update_query) {
                         case 'no changes':
-                            showToast('Nothing changed', 'Same document Information.', 'fc-green fa-warning fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'success'://the user successfully appended in the database
                             showToast('Success!', 'Document updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'filename exist'://user already exist in the database
-                            showToast('Filename Exist!', 'Please Try again.', 'text-warning fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            let modal = new bootstrap.Modal(document.getElementById('update_DuplicateError'));
+                            modal.show();
                             break;
                         case 'failed'://error in processing occured
                             showToast('Update Error occurred!', 'Failed to modify document data.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');

@@ -44,14 +44,29 @@ def fetchDocumentData(document_id):
         print('Fetch Document Info Error :', e)
 
 
-def checkDuplicateFile(filename):
+def checkDuplicateFile(fileContent):
     try:
-        with config.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM documents WHERE filename = %s AND delete_status = 0', (filename))
-            result = cursor.fetchone()
+        if fileContent:
+            document_header = fileContent
+            college = document_header.get('college')
+            course = document_header.get('course')
+            year_level = document_header.get('yearLevel')
+            section = document_header.get('section')
+            subject = document_header.get('subject_name')
+            unit = document_header.get('document_unit')
+            semester = document_header.get('semester')
+            academic_year = document_header.get('academicYear')
+            page_num = document_header.get('update_document_page')
 
-            if result:
-                return int(result['docs_id'])
+            with config.conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM documents WHERE college = %s AND course = %s AND section = %s AND subject = %s AND academic_year = %s AND semester = %s AND unit = %s AND year_level = %s AND page_num = %s AND delete_status = 0', 
+                               (college, course, section, subject, academic_year, semester, unit, year_level, page_num))
+                result = cursor.fetchone()
+                
+                print("Dupicates : ", result)
+
+                if result:
+                    return int(result['docs_id'])
         
         return None
     except Exception as e:
@@ -74,14 +89,9 @@ def editDocumentsData(document_id, document_header):
                 new_academic_year = document.get('academicYear')
                 new_document_page = document.get('update_document_page') 
 
-                searchID = checkDuplicateFile(new_filename)
+                searchID = checkDuplicateFile(document_header)
                 
-                if searchID:
-                    if not searchID == document_id:
-                        return 'filename exist'
-                    else:
-                        return 'no changes'
-                else:
+                if not searchID:
                     cursor.execute('UPDATE documents SET filename = %s, college = %s, course = %s, section = %s, subject = %s, academic_year = %s, semester = %s, unit = %s, year_level = %s, page_num = %s WHERE docs_id = %s', 
                                         (new_filename, new_college, new_course, new_section, new_subject_name, new_academic_year, new_semester, new_unit, new_year_level, new_document_page, document_id))
                     config.conn.commit() 
@@ -90,6 +100,12 @@ def editDocumentsData(document_id, document_header):
                         return 'success'
                         
                     return 'failed'
+
+                else:
+                    if not searchID == document_id:
+                        return 'filename exist'
+                    else:
+                        return 'no changes'
                     
             return 'not found'
     except Exception as e:
