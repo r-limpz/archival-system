@@ -351,6 +351,7 @@
 
     $('#comfirm_newRecords').on('click', function (event) {
         event.preventDefault();
+        let upload_DuplicateError = new bootstrap.Modal(document.getElementById('upload_DuplicateError'));
         var formData = new FormData();
         var file = $('#document_image')[0].files[0];
 
@@ -403,8 +404,7 @@
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                         case 'duplicate file':
-                            showToast('File Already Exists', 'Please try uploading a different file.', 'text-warning', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            upload_DuplicateError.show();
                             break;
                         case 'failed':
                             showToast('Upload Failed', 'Failed to upload document data.', 'text-danger', 'border-danger');

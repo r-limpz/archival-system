@@ -18,12 +18,30 @@
     </div>
 </div>
 
+<div class="modal fade" id="upload_DuplicateError" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="upload_DuplicateError" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-orange border-3">
+            <div class="modal-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold mb-3">Duplicate File Detected</h5>
+                    <button type="button" class="no-border-button fs-small" data-bs-dismiss="modal" aria-label="Close"> <i class="fa-solid fa-xmark"></i></button>
+                </div> 
+                <div class="ms-2">
+                    <p class="mb-4">A file with the same name or content already exists. Please rename your file or choose a
+                        different one to upload.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="deleteSelctedList_confirmation" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" role="dialog" aria-labelledby="deleteSelctedList_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="fw-bold mb-3"> Remove Selected data </h5>
+                <h5 class="fw-bold mb-3">Confirm Removal</h5>
                 <p class="ms-2"> Are you sure you want delete this rows?</p>
             </div>
             <div class="modal-footer">
@@ -42,7 +60,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <h5 class="fw-bold mb-3"> Clear Selected data </h5>
-                <p class="ms-2"> Are you sure you clear this input fields?</p>
+                <p class="ms-2"> Are you sure you want to clear the input fields for the selected rows? This action will reset the input fields to empty.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4">Cancel</button>
@@ -132,10 +150,10 @@
     </div>
 </div>
 
-<div class="modal fade backdrop-modal-present" id="scanningAnimation" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1"
-    role="dialog" aria-labelledby="scanningAnimation" aria-hidden="true">
+<div class="modal fade backdrop-modal-present" id="scanningAnimation" data-bs-keyboard="false" data-bs-backdrop="static"
+    tabindex="-1" role="dialog" aria-labelledby="scanningAnimation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-transparent border-0"  style="box-shadow: none !important;">
+        <div class="modal-content bg-transparent border-0" style="box-shadow: none !important;">
             <div class="modal-body border-0 bg-transparent" style="height: 30vh;">
                 <div class="scannerLoading">
                     <div class="scanningAnimation">
