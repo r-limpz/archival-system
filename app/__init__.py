@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from werkzeug.exceptions import HTTPException
 from flask_login import LoginManager, login_required, current_user, AnonymousUserMixin
 from flask_argon2 import Argon2
@@ -86,8 +86,6 @@ def index():
 
 @app.route('/ards')
 def home():
-    updateDB()
-    updater('all')
     form = LoginForm()
 
     return render_template('public/index.html', form=form)
@@ -100,6 +98,7 @@ def fetchSource(selector):
 @app.route('/account')
 @login_required
 def account():
+    updateDB()
     redirect_url = {'admin': 'admin.account', 'staff': 'staff.account'}.get(current_user.role)
     return redirect(url_for(redirect_url, user = current_user.username))
 
@@ -127,6 +126,7 @@ def upload():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    updater('all')
     return redirect(url_for('admin.dashboard'))
 
 #Dashboard page route
@@ -145,7 +145,6 @@ def account_manager():
 @app.route('/col_course_manager')
 @login_required
 def col_course_manager():
-    updater('all')
     return redirect(url_for('admin.col_course_manager'))
 
 #Collage and Course Manager page route
@@ -177,15 +176,20 @@ def checkConnection():
 def handle_error(e):
     updater('all')
     code = 500
-    error_message = '500 Internal Server Error'
-    description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
     print('ERROR HANDLER: ',e)
-    if isinstance(e, HTTPException):
+
+    if isinstance(e, CSRFError):
+        code = e.code
+        name = "Invalid Token"
+        code_message = f"{code} {name}"
+        description = "The form token provided is invalid. Please ensure you are using the correct token and try again."
+    
+    elif isinstance(e, HTTPException):
         code = e.code
         code_message = f"{code} {e.name}"
         description = e.description
     else:
-        code_message = "500 Internal Server Error"
-        description = str(e)
+        code_message = "Internal Server Error"
+        description = 'The server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the browser or client.'
         
     return render_template('errors/error.html', error_number=code_message, error_message=description), code
