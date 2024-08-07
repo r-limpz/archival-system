@@ -35,6 +35,29 @@
     </div>
 </div>
 
+<div class="modal fade" id="update_DuplicateError" data-bs-keyboard="false" tabindex="-1" role="dialog"
+    aria-labelledby="update_DuplicateError" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-orange border-3">
+            <div class="modal-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold mb-3">Student Entry Already Exists</h5>
+                </div>
+                <div class="ms-2">
+                    <p class="mb-4">The student entry cannot be renamed or updated because an entry with the same name
+                        already exists in the document.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="returnEdit" class="btn-orange fs-medium fw-medium px-4"
+                    data-bs-toggle="modal" data-bs-target="#EditRecordModal">
+                    Go Back and Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="UpdateTag_confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="UpdateTag_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
