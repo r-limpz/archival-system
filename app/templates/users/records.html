@@ -23,7 +23,8 @@
     </div>
     <div class="d-flex justify-content-between gap-5 mb-3 mx-2">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
-            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch" placeholder="Search..." >
+            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
+                placeholder="Search...">
         </div>
         <div class="d-flex justify-content-end gap-3 fs-medium p-0" id="filterContainer">
             <div class="d-flex justify-content-between gap-2 p-0">
@@ -75,7 +76,6 @@
 {% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
-<script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script>
     var recordsDataTable;
 
@@ -87,7 +87,7 @@
                     previous: '<a class="fa-solid fa-caret-left"></a>',
                     next: '<a class="fa-solid fa-caret-right"></a>',
                 },
-                'emptyTable': 'No records found. Please check back or refresh the page.' 
+                'emptyTable': 'No records found. Please check back or refresh the page.'
             },
             scrollY: '60vh',
             scrollX: true,
@@ -125,7 +125,7 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'id', orderable: true, title: '#',width: '30px'  },
+                { data: 'id', orderable: true, title: '#', width: '30px' },
                 { data: 'FullName', title: 'FullName', orderable: true, wrap: true, className: 'fw-medium', width: '300px' },
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: '', width: '70px' },
                 { data: 'Section', title: 'Course', orderable: true, wrap: false, className: '', width: '200px' },
@@ -238,10 +238,13 @@
     })
 
     //edit
-    function editRecord(documentID) {
-        fetch('/documents/records/tags/manage/data/students/request/credentials/' + documentID)
+    function editRecord(taggingId) {
+        var taggedDocument = 0
+
+        fetch('/documents/records/tags/manage/data/students/request/credentials/' + taggingId)
             .then(response => response.json())
             .then(recordsData => {
+                taggedDocument = recordsData.document;
                 let surname = recordsData.surname;
                 let firstname = recordsData.firstname;
                 let middlename = recordsData.middlename;
@@ -271,11 +274,11 @@
 
         let modal = new bootstrap.Modal(document.getElementById('EditRecordModal'));
         modal.show();
-
+        
         $('#update_entry_credentials').on('click', function (event) {
             event.preventDefault();
-
-            var tagging_id = documentID;
+            let tagging_id = taggingId;
+            let document_id = taggedDocument;
             let update_surname = $('#update_Entrysurname').val();
             let update_firstname = $('#update_Entryfirstname').val();
             let update_middlename = $('#update_Entrymiddlename').val();
@@ -284,10 +287,11 @@
             //set the data
             let formData = {
                 'tagging_id': tagging_id,
+                'document_id': document_id,
                 'update_surname': update_surname,
                 'update_firstname': update_firstname,
                 'update_middlename': update_middlename,
-                'update_suffix': update_suffix
+                'update_suffix': update_suffix,
             };
 
             $.ajax({
@@ -304,11 +308,15 @@
                             showToast('Success!', 'Entry updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
+                        case 'duplicate tags':
+                            let modal = new bootstrap.Modal(document.getElementById('update_DuplicateError'));
+                            modal.show();
+                            break;
                         case 'failed'://error in processing occured
                             showToast('Update Error occurred!', 'Failed to modify entry credentials.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
-                        case 'Entry not found'://user already exist in the database
+                        case 'entry not found'://user already exist in the database
                             showToast('Entry not Found', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;

@@ -21,52 +21,83 @@ def getEditor():
 def fetchEntryData(tag_id):
     try:
         with config.conn.cursor() as cursor:
-            cursor.execute(""" SELECT students.*, tagging.* FROM students JOIN tagging ON students.student_id = tagging.student WHERE tagging.tag_id = %s """, (tag_id,))
+            cursor.execute(""" SELECT students.*, tagging.*, documents.docs_id FROM students JOIN tagging ON students.student_id = tagging.student JOIN documents ON tagging.document = documents.docs_id WHERE tagging.tag_id = %s """, (tag_id,))
             student_data = cursor.fetchone()
 
-            record_data = { 'surname': '', 'firstname': '', 'middlename': '', 'suffix': '' }
-
+            record_data = { 'surname': '', 'firstname': '', 'middlename': '', 'suffix': '', 'document': ''}
             record_data['surname'] = student_data['surname']
             record_data['firstname'] = student_data['firstname']
             record_data['middlename'] = student_data['middlename']
             record_data['suffix'] = student_data['suffix']
+            record_data['document'] = student_data['docs_id']
 
             return record_data
 
     except Exception as e:
         print('Fetch Recordds Error :', e)
 
+def checkDuplicateTags(document_id, student_id):
+    try:
+        if document_id and student_id:
+
+            with config.conn.cursor() as cursor:
+                cursor.execute('SELECT * FROM tagging WHERE student = %s AND document = %s', 
+                               (student_id, document_id))
+                tagExist = cursor.fetchone()
+
+                print(tagExist)
+                if tagExist:
+                    return True
+
+                return False
+        return None
+    except Exception as e:
+        print('Check Duplicate Student tags Error:', e)
+
+def newStudent(entry_surname,entry_firstname, entry_middlename, entry_suffix):
+
+    if not entry_surname and not entry_firstname:
+        return None
+    else:
+        with config.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (entry_surname, entry_firstname, entry_middlename, entry_suffix) )
+            student_credentials = cursor.fetchone()
+
+            if not student_credentials:
+                cursor.execute('INSERT INTO students(surname, firstname, middlename, suffix) VALUES (%s,%s,%s,%s)', (entry_surname, entry_firstname, entry_middlename, entry_suffix))
+                config.conn.commit()
+                return cursor.lastrowid
+            else:
+                return student_credentials['student_id']
+
 # update the tagged student information/credentials
-def editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix):
+def editRecordsData(tagging_id, document_id, new_surname, new_firstname, new_middlename, new_suffix):
     try:
         with config.conn.cursor() as cursor:
-            tagging_id = int(tagging_id)
-            cursor.execute(""" SELECT students.*, tagging.* FROM students JOIN tagging ON students.student_id = tagging.student WHERE tagging.tag_id = %s """, (tagging_id,))
-            studentData = cursor.fetchone()
 
-            if studentData:
-                if studentData['surname'] == new_surname and studentData['firstname'] == new_firstname and studentData['middlename'] == new_middlename and studentData['suffix'] == new_middlename:
-                    return 'no changes'
-                else:
-                    cursor.execute(""" INSERT INTO students (surname, firstname, middlename, suffix) SELECT %s, %s, %s, %s WHERE NOT EXISTS 
-                                  ( SELECT 1 FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s ) """,
-                                    (new_surname, new_firstname, new_middlename, new_suffix, new_surname, new_firstname, new_middlename, new_suffix))
-                   
-                    cursor.execute('SELECT student_id FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (new_surname, new_firstname, new_middlename, new_suffix))
-                    studentID = cursor.fetchone()['student_id']
+            if tagging_id and document_id:
+                tagging_id = int(tagging_id)
+                document_id = int(document_id)
+                
+                cursor.execute('SELECT * FROM students WHERE surname = %s AND firstname = %s AND middlename = %s AND suffix = %s', (new_surname, new_firstname, new_middlename, new_suffix))
+                student_exist = cursor.fetchone()
 
-                    if studentID:
-                        cursor.execute('UPDATE tagging SET student = %s WHERE tag_id = %s', (studentID, tagging_id))
+                student_id = student_exist['student_id'] if student_exist else newStudent(new_surname, new_firstname, new_middlename, new_suffix)
+                
+                if student_id:
+                    if checkDuplicateTags(document_id, student_id) == True and student_id:
+                        return 'duplicate tags'
+                    else:
+                        cursor.execute('UPDATE tagging SET student =%s , delete_status = 0 WHERE tag_id = %s', (student_id, tagging_id))
                         config.conn.commit()
 
                         if cursor.rowcount > 0:
-                            return 'success'
-                            
-                        return 'failed'
-                
-            return 'entry not found'
+                                return 'success'
+                       
+            return 'failed'
     except Exception as e:
-        print('Unlink Recordds Error :', e)
+        print('Update Error :', e)
+        return 'failed'
 
 #remove record data 
 def removeRecordData(tagging_id):
@@ -209,15 +240,17 @@ def getEntryData(tag_id):
 def editEntryData():
     if request.method == "POST":
         tagging_id = request.form.get('tagging_id')
-        new_surname = request.form.get('update_surname')
-        new_firstname = request.form.get('update_firstname')
-        new_middlename = request.form.get('update_middlename')
-        new_suffix = request.form.get('update_suffix')
+        document_id = request.form.get('document_id')
+        new_surname = request.form.get('update_surname') if request.form.get('update_surname') else ""
+        new_firstname = request.form.get('update_firstname') if request.form.get('update_firstname') else ""
+        new_middlename = request.form.get('update_middlename') if request.form.get('update_middlename') else ""
+        new_suffix = request.form.get('update_suffix') if request.form.get('update_suffix') else ""
 
         tagging_id = int(tagging_id)
+        document_id = int(document_id)
 
         if tagging_id:
-            update_query = editRecordsData(tagging_id, new_surname, new_firstname, new_middlename, new_suffix)
+            update_query = editRecordsData(tagging_id, document_id, new_surname, new_firstname, new_middlename, new_suffix)
 
             if update_query:
                 return jsonify({'update_query': update_query})
