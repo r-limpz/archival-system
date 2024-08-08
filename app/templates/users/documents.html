@@ -68,6 +68,7 @@
 {% include '/partials/modals/documents_modals.html'%}
 {% endblock%}
 {% block scripts %}
+<script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
 <script src="{{url_for('static',filename='js/document_name.js')}}"></script>
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script>
@@ -440,7 +441,7 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     documentsDataTable.draw();
-                     switch (data.query_result) {
+                    switch (data.query_result) {
                         case 'duplicate':
                             let modal = new bootstrap.Modal(document.getElementById('update_DuplicateError'));
                             modal.show();

@@ -75,6 +75,7 @@
 {% include '/partials/modals/records_modals.html' %}
 {% endblock%}
 {% block scripts %}
+<script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
 <script src="{{url_for('static',filename='js/setup_Filter.js')}}"></script>
 <script>
     var recordsDataTable;

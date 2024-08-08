@@ -32,6 +32,7 @@
 {% include '/partials/modals/college_manager_modals.html' %}
 {% endblock%}
 {% block scripts %}
+<script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
 <script>
     var collegesArray = [];
     var coursesArray = [];
@@ -323,7 +324,6 @@
     });
 </script>
 <script>
-
     function show_editModal(input_colID) {
         // Assuming you have already fetched the collegesArray
         college_id = parseInt(input_colID)

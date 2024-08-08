@@ -46,6 +46,7 @@
 {% include '/partials/modals/account_manager_modals.html' %}
 {% endblock%}
 {% block scripts %}
+<script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
 <script>
     // Function to show and hide popup
     function populateUsers(toggle) {
@@ -450,7 +451,7 @@
                     //handle the ajax error 
                     error: function (error) {
                         console.error('Error:', error);
-                        generateNotification('updateUserCredentials','error');
+                        generateNotification('updateUserCredentials', 'error');
                     }
                 });
             }

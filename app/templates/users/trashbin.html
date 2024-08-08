@@ -14,11 +14,12 @@
     </div>
     <div class="d-flex justify-content-between">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
-            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch" placeholder="Search..." >
+            <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
+                placeholder="Search...">
         </div>
     </div>
-    <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default fs-medium' cellspacing="0"
-        width="100%">
+    <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default fs-medium'
+        cellspacing="0" width="100%">
     </table>
 </section>
 
@@ -27,6 +28,7 @@
 {% include '/partials/modals/trashbin_modals.html' %}
 {% endblock%}
 {% block scripts %}
+<script src="{{url_for('static',filename='js/allertBuilder.js')}}"></script>
 <script>
     var trashDataTable;
 
