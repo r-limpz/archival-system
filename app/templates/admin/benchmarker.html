@@ -105,8 +105,9 @@
 </section>
 {% endblock%}
 {% block modals%}
-{% include '/partials/modals/benchmarking_modals.html' %}
 {% include '/partials/modals/account_modals.html' %}
+{% include '/partials/modals/scanner_modals.html' %}
+{% include '/partials/modals/benchmarking_modals.html' %}
 {% endblock%}
 {% block scripts %}
 <script src="{{url_for('static',filename='js/benchmark.js')}}"></script>
