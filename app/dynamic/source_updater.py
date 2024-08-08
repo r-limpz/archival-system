@@ -45,5 +45,3 @@ def updater(selector):
             courses_list = fetch_courses()
                 
         result = updateSettingsJson(academic_units, academic_year, college_list, courses_list, selector)
-    
-        print("Updated Settings :", result)

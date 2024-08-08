@@ -130,7 +130,6 @@ def upload():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    updater('all')
     return redirect(url_for('admin.dashboard'))
 
 #Dashboard page route
