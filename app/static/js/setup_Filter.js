@@ -39,15 +39,6 @@ function populateYearLevel(academic_year_level) {
     });
 }
 
-
-
-
-
-
-
-
-
-
 function editPopulateSelector(data, documentsData) {
     const edit_collegeSelector = document.getElementById('update_documentCollege');
     const edit_courseSelect = document.getElementById('update_documentCourse');

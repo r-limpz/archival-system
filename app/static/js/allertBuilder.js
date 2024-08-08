@@ -16,7 +16,7 @@ function showToast(title, message, theme) {
             icon = "fa-solid fa-triangle-exclamation";
             break;
         case 'error':
-            container_theme = "bg-danger";
+            container_theme = "bg-danger-subtle";
             font_color = "text-danger";
             icon = "fa-solid fa-circle-xmark";
             break;
@@ -39,3 +39,41 @@ function showToast(title, message, theme) {
     toastContainer.innerHTML = toastHTML;
 }
 
+// Declare and initialize the notifSelector variable
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+let activeElementId = null;
+for (let i = 0; i < sidebarLinks.length; i++) {
+    const link = sidebarLinks[i];
+
+    if (link.classList.contains('active')) {
+        activeElementId = link.id;
+        break;
+    }
+}
+
+let notifSelector = activeElementId;
+
+async function fetchNotification(selector) {
+    try {
+        const response = await fetch('/fetch_toast/' + selector);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching notification:', error);
+        throw error;
+    }
+}
+
+const tempMessage = fetchNotification(notifSelector);
+
+function generateNotification(group, message) {
+    tempMessage.then(result => {
+        if (result !== null && result !== undefined) {
+            const selectedMessage = result[group][message];
+            showToast(selectedMessage.title, selectedMessage.description, selectedMessage.type);
+            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+        }
+    }).catch(error => {
+        console.error('Error from actionMessage:', error);
+    });
+}
