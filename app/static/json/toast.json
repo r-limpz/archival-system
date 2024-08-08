@@ -488,5 +488,6 @@
             }
         }
     },
-    "trahbinManager": {}
+    "trahbinManager": {},
+    "dashboardManager": {}
 }
