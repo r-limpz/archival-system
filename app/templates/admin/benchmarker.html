@@ -250,7 +250,8 @@
                 success: function (data) {
                     let elapsedTime = new Date().getTime() - startTime;
                     updateTimerDisplay(elapsedTime, "Manual");
-                    
+                    button.html('Extract Text'); // Restore original button text
+                    button.prop('disabled', false); // Re-enable the button
                     if (Array.isArray(data)) {
                         if (data.length > 0) {
                             populateResults(data);
@@ -266,6 +267,8 @@
                 },
                 error: function (error) {
                     console.error(error);
+                    button.html('Extract Text'); // Restore original button text
+                    button.prop('disabled', false); // Re-enable the button
                     generateNotification('autoOCR', 'error');
                 },
                 complete: function () {

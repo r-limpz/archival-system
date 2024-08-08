@@ -294,6 +294,8 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
+                    button.html('Extract Text'); // Restore original button text
+                    button.prop('disabled', false); // Re-enable the button
                     if (Array.isArray(data)) {
                         if (data.length > 0) {
                             populateResults(data);
@@ -310,13 +312,10 @@
                 },
                 error: function (error) {
                     console.error(error);
-                    generateNotification('manualOCR', 'error');
-                },
-                complete: function () {
-                    // Reset button state and text after request completes
                     button.html('Extract Text'); // Restore original button text
                     button.prop('disabled', false); // Re-enable the button
-                }
+                    generateNotification('manualOCR', 'error');
+                },
             });
         });
     });
