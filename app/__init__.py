@@ -79,6 +79,14 @@ app.register_blueprint(trashbin_data)
 app.register_blueprint(uploader_manager)
 app.register_blueprint(benchmark_manager)
 
+@app.route('/fetch_selector/<selector>' , methods=['GET'])
+def fetchSource(selector):
+    return jsonify(json_data_selector(selector, "settings.json"))
+
+@app.route('/fetch_toast/<selector>' , methods=['GET'])
+def fetchToast(selector):
+    return jsonify(json_data_selector(selector, "toast.json"))
+
 #Non-authentication needed pages
 @app.route('/ards/')
 def index():
@@ -89,10 +97,6 @@ def home():
     form = LoginForm()
 
     return render_template('public/index.html', form=form)
-
-@app.route('/fetch_selector/<selector>')
-def fetchSource(selector):
-    return jsonify(json_data_selector(selector))
 
 #Account page route
 @app.route('/account')

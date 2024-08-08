@@ -14,8 +14,7 @@ def settingsJson_Builder(filePath):
     except IOError:
         return False
     
-def settingsJson_loader():
-    filename = "settings.json"
+def settingsJson_loader(filename):
     script_path = os.path.dirname(os.path.abspath(__file__))  # Get current script directory
     filePath = os.path.join(script_path, "../static/json", filename)
     
@@ -41,8 +40,8 @@ def settingsJson_loader():
         else:
             return None
 
-def json_data_selector(selector):
-    jsonFile = settingsJson_loader()
+def json_data_selector(selector, filename):
+    jsonFile = settingsJson_loader(filename)
     
     if jsonFile is None:
         return None  # Return None if JSON file couldn't be loaded
@@ -93,7 +92,7 @@ def updateSettingsJson(academic_units, academic_year, college_list, courses_list
     script_path = os.path.dirname(os.path.abspath(__file__))  # Get current script directory
     filename = "settings.json"
     filePath = os.path.join(script_path, "../static/json", filename)
-
+    
     # Build the required data structures based on input_data
     if selector == "all":
         if academic_units and academic_year and college_list and courses_list:
@@ -126,7 +125,7 @@ def updateSettingsJson(academic_units, academic_year, college_list, courses_list
         return False
 
     # Load existing JSON data
-    jsonFile = settingsJson_loader()
+    jsonFile = settingsJson_loader(filename)
 
     if jsonFile is not None:
         if selector == "all":
