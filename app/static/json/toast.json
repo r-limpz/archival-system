@@ -360,6 +360,40 @@
                 "description": "An error occurred during automatic OCR processing. Please try again later.",
                 "type": "error"
             }
+        },
+        "saveBenchmark": {
+            "success": {
+                "title": "Success!",
+                "description": "Test data successfully added to benchmark.",
+                "theme": "success"
+            },
+            "entryExist": {
+                "title": "Test Data Exists",
+                "description": "The test data already exists in the benchmark.",
+                "theme": "warning"
+            },
+            "missingParameters": {
+                "title": "Missing Parameters",
+                "description": "Benchmarking variables are undefined. Please provide valid data.",
+                "theme": "error"
+            },
+            "failed": {
+                "title": "Saving benchmark Failed!",
+                "description": "Failed to add test data to benchmark.",
+                "theme": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An error occurred during appending benchmark data. Please try again later.",
+                "type": "error"
+            }
+        },
+        "errorTester": {
+            "error": {
+                "title": "Checker Error",
+                "description": "An error occurred during checking error rates.",
+                "type": "error"
+            }
         }
     },
     "documentsManager": {
