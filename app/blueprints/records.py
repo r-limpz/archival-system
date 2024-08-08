@@ -86,13 +86,16 @@ def editRecordsData(tagging_id, document_id, new_surname, new_firstname, new_mid
                 
                 if student_id:
                     if checkDuplicateTags(document_id, student_id) == True and student_id:
-                        return 'duplicate tags'
+                        return 'duplicate'
                     else:
                         cursor.execute('UPDATE tagging SET student =%s , delete_status = 0 WHERE tag_id = %s', (student_id, tagging_id))
                         config.conn.commit()
 
                         if cursor.rowcount > 0:
                                 return 'success'
+                
+                else:
+                    return 'tagNotFound'
                        
             return 'failed'
     except Exception as e:

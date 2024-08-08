@@ -252,57 +252,64 @@ def updateAccount(user_id, fullname, username, role, password):
     params = []
     hasChanged = {}
     role = get_role(role) # Convert the role to its corresponding value
-
+    pChecker = False
     try:
         with config.conn.cursor() as cursor:
             cursor.execute('SELECT * FROM user WHERE user_id = %s', (user_id,))
             user = cursor.fetchone()
 
             if not user:
-                return 'user not found'
-            
+                return 'userNotFound'
+        
             else:
-                if user['fullname'] != fullname:
-                    query += 'fullname = %s, '
-                    params.append(fullname)
-                    hasChanged.update({"fullname": fullname})
-
-                if user['username'] != username:
-                    query += 'username = %s, '
-                    params.append(username)
-                    hasChanged.update({"username": username})
-
-                if user['role'] != role:
-                    query += 'role = %s, '
-                    params.append(role)
-                    hasChanged.update({"role": role})
-
-                    # If the password has changed, add it to the query and parameters
-                if password and not argon2.check_password_hash(user['password'], password):
-                    query += 'password = %s, '
-                    hashed_password = argon2.generate_password_hash(password)
-                    params.append(hashed_password)
-                    hasChanged.update({"password": hashed_password})
-
-                # Remove the trailing comma and space from the query
-                query = query.rstrip(', ')
-                query += ' WHERE user_id = %s'
-                params.append(user_id)
-                    
-                # Execute the update query
-                cursor.execute(query, tuple(params))
-                config.conn.commit()
-
-                # Verify if the update was successful
-                keys_str = ', '.join(list(hasChanged.keys()))
-                verifyQuery = 'SELECT '+ keys_str + ' FROM user WHERE user_id = %s'
-                cursor.execute(verifyQuery, (user_id,))
-                user_update = cursor.fetchone()
-
-                if user_update == hasChanged:
-                    return 'success'
+                if password != "":
+                    pChecker = argon2.check_password_hash(user['password'], password)
+                
+                if user['fullname'] == fullname and user['username'] == username and user['role'] == role and pChecker:
+                    return 'noChanges'
+                
                 else:
-                    return 'failed'
+                    if user['fullname'] != fullname:
+                        query += 'fullname = %s, '
+                        params.append(fullname)
+                        hasChanged.update({"fullname": fullname})
+
+                    if user['username'] != username:
+                        query += 'username = %s, '
+                        params.append(username)
+                        hasChanged.update({"username": username})
+
+                    if user['role'] != role:
+                        query += 'role = %s, '
+                        params.append(role)
+                        hasChanged.update({"role": role})
+
+                        # If the password has changed, add it to the query and parameters
+                    if password and not argon2.check_password_hash(user['password'], password):
+                        query += 'password = %s, '
+                        hashed_password = argon2.generate_password_hash(password)
+                        params.append(hashed_password)
+                        hasChanged.update({"password": hashed_password})
+
+                    # Remove the trailing comma and space from the query
+                    query = query.rstrip(', ')
+                    query += ' WHERE user_id = %s'
+                    params.append(user_id)
+                        
+                    # Execute the update query
+                    cursor.execute(query, tuple(params))
+                    config.conn.commit()
+
+                    # Verify if the update was successful
+                    keys_str = ', '.join(list(hasChanged.keys()))
+                    verifyQuery = 'SELECT '+ keys_str + ' FROM user WHERE user_id = %s'
+                    cursor.execute(verifyQuery, (user_id,))
+                    user_update = cursor.fetchone()
+
+                    if user_update == hasChanged:
+                        return 'success'
+                    else:
+                        return 'failed'
                 
     except Exception as e:
         print(f"updateAccount() : {e}")
@@ -337,7 +344,7 @@ def addNewUser( add_fullname, add_username, add_password):
                     else:
                         data = 'failed'
                 else:
-                    data = 'duplicate user'
+                    data = 'duplicate'
                 return data
             
         except Exception as e:
@@ -358,13 +365,13 @@ def create_account():
                 account_added = addNewUser(fullname, username, password)
                 
                 if account_added:
-                    update_query = account_added
+                    register_querry = account_added
                 else:
-                    update_query = 'error occured'
+                    register_querry = 'error'
             else:
-                update_query = 'Password not the same'
+                register_querry = 'incorrectPassword'
                 
-            return jsonify({'update_query': update_query})
+            return jsonify({'register_querry': register_querry})
             
     except Exception as e:
          print(f"create user route error occurred: {e}")
@@ -388,9 +395,9 @@ def edit_user():
                 if update_status:
                     return jsonify({'update_query': update_status})
                 else:
-                    return jsonify({'update_query': 'error occured'})
+                    return jsonify({'update_query': 'error'})
             else:
-                return jsonify({'update_query': 'incorrect password'})
+                return jsonify({'update_query': 'incorrectPassword'})
                 
     except Exception as e:
             print(f"update user credentials  error occurred: {e}")

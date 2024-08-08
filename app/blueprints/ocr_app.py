@@ -43,12 +43,12 @@ def scanner(auto):
     image_path = "./app/analyzer/" + filenameCrop
 
     if 'document_image' not in request.files:
-            return "no file"
+            return "noFile"
     
     file = request.files['document_image']
     
     if file.filename == '' or not allowed_file(file.filename):
-            return "unsupported file_type"
+            return "unsupported"
     
     if file and allowed_file(file.filename):
 
@@ -68,8 +68,10 @@ def scanner(auto):
             if students:
                 print('Names detected:',len(students))
                 return jsonify([student.__dict__ for student in students])
+            
             else:
-                return None
+                print('no list found')
+                return 'failed'
             
         except Exception as e:
             return jsonify(e)

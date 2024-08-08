@@ -209,24 +209,26 @@ def change_status():
             cursor.execute('SELECT status FROM user WHERE user_id = %s', (user_id,))
             current_status = cursor.fetchone()
 
-            if not current_status or current_status['status'] != status:
-                cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
-                config.conn.commit()
-
-                if status == 0:
-                    cursor.execute('DELETE FROM session WHERE user_id = %s', (user_id,))
+            if current_status:
+                if current_status['status'] != status:
+                    cursor.execute('UPDATE user SET status = %s WHERE user_id = %s', (status, user_id))
                     config.conn.commit()
 
-                cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', (status, user_id))
-                status_changed = cursor.fetchone()
+                    if status == 0:
+                        cursor.execute('DELETE FROM session WHERE user_id = %s', (user_id,))
+                        config.conn.commit()
 
-                if status_changed:
-                    return jsonify({'change_state': 'success'})
+                    cursor.execute('SELECT * FROM user WHERE status = %s AND user_id = %s', (status, user_id))
+                    status_changed = cursor.fetchone()
+
+                    if status_changed:
+                        return jsonify({'change_state': 'success'})
+                    else:
+                        return jsonify({'change_state': 'failed'})
                 else:
-                    return jsonify({'change_state': 'failed'})
-            else:
-                return jsonify({'change_state': 'no changes applied'})
+                    return jsonify({'change_state': 'noChanges'})
 
+            return jsonify({'change_state': 'userNotFound'})
     except Exception as e:
         print(f"change status error occurred: {e}")
 

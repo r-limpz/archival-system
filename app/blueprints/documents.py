@@ -63,8 +63,6 @@ def checkDuplicateFile(fileContent):
                                (college, course, section, subject, academic_year, semester, unit, year_level, page_num))
                 result = cursor.fetchone()
                 
-                print("Dupicates : ", result)
-
                 if result:
                     return int(result['docs_id'])
         
@@ -103,11 +101,11 @@ def editDocumentsData(document_id, document_header):
 
                 else:
                     if not searchID == document_id:
-                        return 'filename exist'
+                        return 'duplicate'
                     else:
-                        return 'no changes'
+                        return 'noChanges'
                     
-            return 'not found'
+            return 'notFound'
     except Exception as e:
         print('Edit Documents Error:', e)
 

@@ -137,7 +137,7 @@ def newRecordData(document_header, imageFile, students_data):
                     else:
                         return 'failed'
             else:
-                return 'duplicate file'  
+                return 'duplicate'  
 
     except Exception as e:
             print(f"new record error occurred: {e}")
@@ -147,12 +147,12 @@ def newRecordData(document_header, imageFile, students_data):
 @authenticate
 def uploader():
     if 'document_image' not in request.files:
-        query_result = "no file"
+        query_result = "noFile"
 
     file = request.files['document_image']
 
     if file.filename == '' or not allowed_file(file.filename):
-        query_result = "unsupported file_type"
+        query_result = "unsupported"
 
     if 'document_image' and allowed_file(file.filename):
         # Extract other document information
