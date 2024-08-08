@@ -35,8 +35,6 @@ function populateList(index, surname, fname, midname, sfxname, student_wer, stud
                     checkAccuracyData();
                 }, 100);
             }, 250);
-
-            checkAccuracyData();
         });
     })(row);
 }

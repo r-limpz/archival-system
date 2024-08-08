@@ -151,8 +151,8 @@
                     scanningModal.hide();
                     if (Array.isArray(data)) {
                         if (data.length > 0) {
+                            ocr_resultsList = data;
                             populateResults(data);
-                            checkAllInputs();
                             generateNotification('autoOCR', 'success');
                         } else {
                             let error_modal = new bootstrap.Modal(document.getElementById('error_ocr'));
@@ -258,8 +258,8 @@
                     button.prop('disabled', false); // Re-enable the button
                     if (Array.isArray(data)) {
                         if (data.length > 0) {
+                            ocr_resultsList = data;
                             populateResults(data);
-                            checkAllInputs();
                             generateNotification('manualOCR', 'success');
                         } else {
                             error_modal.show();
@@ -372,7 +372,7 @@
             };
 
             let formDataJSON = JSON.stringify(formData);
-
+            
             if (formDataJSON) {
                 $.ajax({
                     url: '/admin/benchmark-manager/manage/test_ocr/accuracy',

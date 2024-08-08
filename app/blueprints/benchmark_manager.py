@@ -17,7 +17,7 @@ def testErrorRate():
         corrected_data = data.get('corrected_data')
         ocr_data = data.get('ocr_data')
         result = benchmarkerTest(corrected_data, ocr_data)
-
+        print(len(corrected_data))
         if result:
             return jsonify(result)
         return None
