@@ -173,9 +173,9 @@
 <script src="{{url_for('static',filename='js/setup_uploadHeader.js')}}"></script>
 
 <script>
+    let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
     let ocr_resultsList = [];
     let xhr = null;
-    let scanningModal = new bootstrap.Modal(document.getElementById('scanningAnimation'));
 
     function autoScanOCR() {
         var formData = new FormData();
@@ -193,6 +193,7 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
+                    scanningModal.hide();
                     if (Array.isArray(data)) {
                         if (data.length > 0) {
                             populateResults(data);
