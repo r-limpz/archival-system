@@ -193,26 +193,24 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    if (data === 'no file') {
-                        showToast('Missing File!', 'Please upload a file first and try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                    } else {
+                    if (Array.isArray(data)) {
                         if (data.length > 0) {
                             populateResults(data);
-                            checkAllInputs()
-                            showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            checkAllInputs();
+                            generateNotification('autoOCR', 'success');
                         } else {
-                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
-                            modal.show();
+                            let error_modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            error_modal.show();
                         }
+                    }
+                    else {
+                        generateNotification('manualOCR', data);
                     }
                 },
                 error: function (error) {
                     if (error.statusText !== 'abort') {
                         console.error(error);
-                        let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
-                        modal.show();
+                        generateNotification('autoOCR', 'error');
                     }
                 },
                 complete: function () {
@@ -295,26 +293,23 @@
                 contentType: false,
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
-                    if (data === 'no file') {
-                        showToast('Missing File!', 'Please upload a file first and try again.', 'fc-orange fa-solid fa-circle-check', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                    } else {
+                    if (Array.isArray(data)) {
                         if (data.length > 0) {
                             populateResults(data);
-                            checkAllInputs()
-                            showToast('Extraction success!', 'Text extracted using OCR. ', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-
+                            checkAllInputs();
+                            generateNotification('manualOCR', 'success');
                         } else {
-                            let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
-                            modal.show();
+                            let error_modal = new bootstrap.Modal(document.getElementById('error_ocr'));
+                            error_modal.show();
                         }
+                    }
+                    else {
+                        generateNotification('manualOCR', data);
                     }
                 },
                 error: function (error) {
                     console.error(error);
-                    let modal = new bootstrap.Modal(document.getElementById('error_ocr'));
-                    modal.show();
+                    generateNotification('manualOCR', 'error');
                 },
                 complete: function () {
                     // Reset button state and text after request completes
@@ -399,31 +394,17 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     switch (data.query_result) {
-                        case 'success':
-                            showToast('Success!', 'Document uploaded successfully.', 'text-success', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'duplicate file':
+                        case 'duplicate':
                             upload_DuplicateError.show();
                             break;
-                        case 'failed':
-                            showToast('Upload Failed', '', 'text-danger', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'no file':
-                            showToast('Missing File', 'Please upload document image.', 'text-danger', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'unsupported file_type':
-                            showToast('Unsupported File', 'Please upload a .JPG or .PNG image file', 'text-danger', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        default:
+                            generateNotification('uploadFile', data.query_result);
                             break;
                     }
                 },
                 error: function (error) {
                     console.error(error);
-                    showToast('Error Occured!', error, 'fc-red fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    generateNotification('uploadFile', 'error');
                 }
             });
         }

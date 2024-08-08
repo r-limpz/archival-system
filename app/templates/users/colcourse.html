@@ -287,15 +287,15 @@
                     case 'success'://the user successfully appended in the database
                         populateColleges();
                         clearForm('#new_college');
-                        showToast('Success!', 'College added successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                        showToast('Success!', 'College was added in the database succesfully!', 'success');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'failed'://error in processing occured
-                        showToast('Failed to add college!', 'Please try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                        showToast('Warning!', 'An Error occured while registering new college. Please try again.', 'warning');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                     case 'duplicate'://user already exist in the database
-                        showToast('College Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                        showToast('Error!', 'College already exist in the database.', 'error');
                         new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                         break;
                 }
@@ -303,7 +303,7 @@
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
+                showToast('Error!', 'Failed to proceed with the request. Please try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
             }
         });
@@ -457,11 +457,11 @@
                         populateColleges();
                         switch (data.query_result) {
                             case 'success'://the user successfully appended in the database
-                                showToast('Success!', 'Course moved successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
+                                showToast('Success!', 'Course moved successfully.', 'success')
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                             case 'failed'://error in processing occured
-                                showToast('Failed updating course!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
+                                showToast('Error!', 'An Error occured while migrating course to other college', 'error')
                                 new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                                 break;
                         }
@@ -522,10 +522,6 @@
                             break;
                         case 'failed'://error in processing occured
                             showToast('Update Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        default://user already exist in the database
-                            showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
                             new bootstrap.Toast(document.querySelector('#add_userToast')).show();
                             break;
                     }

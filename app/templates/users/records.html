@@ -274,7 +274,7 @@
 
         let modal = new bootstrap.Modal(document.getElementById('EditRecordModal'));
         modal.show();
-        
+
         $('#update_entry_credentials').on('click', function (event) {
             event.preventDefault();
             let tagging_id = taggingId;
@@ -301,36 +301,22 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     recordsDataTable.draw();
-                    switch (data.update_query) {
-                        case 'no changes':
-                            break;
-                        case 'success'://the user successfully appended in the database
-                            showToast('Success!', 'Entry updated successfully.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'duplicate tags':
+                    switch (data.query_result) {
+                        case 'duplicate':
                             let modal = new bootstrap.Modal(document.getElementById('update_DuplicateError'));
                             modal.show();
                             break;
-                        case 'failed'://error in processing occured
-                            showToast('Update Error occurred!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'entry not found'://user already exist in the database
-                            showToast('Entry not Found', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        case 'noChanges':
                             break;
                         default:
-                            showToast(data.update_query, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                            generateNotification('updateTaggedStudent', data.update_query);
                             break;
                     }
                 },
                 //handle the ajax error 
                 error: function (error) {
                     console.error('Error:', error);
-                    showToast('Error', 'Update error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    generateNotification('updateTaggedStudent', 'error');
                 }
             });
         });
@@ -353,26 +339,12 @@
                 headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                 success: function (data) {
                     recordsDataTable.draw();
-                    switch (data.delete_query) {
-                        case 'success':
-                            showToast('Success!', 'Record deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed':
-                            showToast('Deletion Error occurred!', 'Please try again. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        default:
-                            showToast(data.query_result, 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                    }
+                    generateNotification('deleteTag', data.delete_query);
                 },
                 //handle the ajax error 
                 error: function (error) {
                     console.error('Error:', error);
-                    showToast('Error', 'Deletion error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    generateNotification('deleteTag', 'error');
                 }
             });
         });
