@@ -156,7 +156,7 @@
                         }
                     }
                     else {
-                        generateNotification('manualOCR', data);
+                        generateNotification('autoOCR', data);
                     }
                 },
                 error: function (error) {
@@ -269,7 +269,7 @@
                     console.error(error);
                     button.html('Extract Text'); // Restore original button text
                     button.prop('disabled', false); // Re-enable the button
-                    generateNotification('autoOCR', 'error');
+                    generateNotification('manualOCR', 'error');
                 },
                 complete: function () {
                     // Reset button state and text after request completes
@@ -390,6 +390,7 @@
                     },
                     error: function (error) {
                         console.error('Error:', error);
+                        generateNotification('errorTester', 'error');
                     },
                 });
             }
@@ -423,28 +424,10 @@
                     headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
                     dataType: 'json', // Specify dataType as JSON
                     success: function (data) {
-                        switch (data) {
-                            case 'success':
-                                showToast('Success!', 'Test data successfully added to benchmark.', 'fc-green fa-solid fa-circle-check', 'border-success');
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                            case 'entry exist':
-                                showToast('Test Data Exists', 'The test data already exists in the benchmark.', 'fc-warning fa-solid fa-circle-exclamation', 'border-warning');
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                            case 'missing parameters':
-                                showToast('Missing Parameters', 'Benchmarking variables are undefined. Please provide valid data.', 'fc-danger fa-solid fa-circle-exclamation', 'border-danger');
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                            case 'failed':
-                                showToast('Failed!', 'Failed to add test data to benchmark.', 'fc-danger fa-solid fa-circle-cross', 'border-danger');
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                        }
+                        generateNotification('saveBenchmark', data);
                     },
                     error: function (error) {
-                        showToast('Error!', error, 'fc-danger fa-solid fa-circle-cross', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        generateNotification('saveBenchmark', 'error');
                     },
                 });
 

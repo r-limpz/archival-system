@@ -53,7 +53,7 @@ def updateCSV(benchID, scantype, WER_data, CER_data, no_items, scanSpeed, filena
 
         if missing_variables:
             print(f"Missing or null value for: {', '.join(missing_variables)}")
-            return "missing parameters"
+            return "missingParameters"
         
         script_dir = os.path.dirname(__file__)  # Directory of the current script
         file_path = os.path.join(script_dir, filename)
