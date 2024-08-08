@@ -35,7 +35,6 @@
 <script>
     var collegesArray = [];
     var coursesArray = [];
-    //collegesArray = [{college_id, college_name, courses[index{course_id, course_name}]}]
 
     function populateColleges() {
         collegesArray = [];
@@ -283,28 +282,13 @@
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
-                switch (data.query_result) {
-                    case 'success'://the user successfully appended in the database
-                        populateColleges();
-                        clearForm('#new_college');
-                        showToast('Success!', 'College was added in the database succesfully!', 'success');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    case 'failed'://error in processing occured
-                        showToast('Warning!', 'An Error occured while registering new college. Please try again.', 'warning');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    case 'duplicate'://user already exist in the database
-                        showToast('Error!', 'College already exist in the database.', 'error');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                }
+                populateColleges();
+                generateNotification('addCollege', data.query_result);
             },
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error!', 'Failed to proceed with the request. Please try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                generateNotification('addCollege', 'error');
             }
         });
     });
@@ -327,28 +311,13 @@
             data: formData,
             headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
             success: function (data) {
-                switch (data.query_result) {
-                    case 'success'://the user successfully appended in the database
-                        populateColleges();
-                        clearForm('#new_courses');
-                        showToast('Success!', 'Course added successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    case 'failed'://error in processing occured
-                        showToast('Failed to add couse!', 'Please Try again.', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                    case 'cannot modify'://user already exist in the database
-                        showToast('Course Already Exist!', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                        break;
-                }
+                populateColleges();
+                generateNotification('addCourse', data.query_result);
             },
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                generateNotification('addCourse', 'error');
             }
         });
     });
@@ -455,23 +424,13 @@
                 success: function (data) {
                     if (data) {
                         populateColleges();
-                        switch (data.query_result) {
-                            case 'success'://the user successfully appended in the database
-                                showToast('Success!', 'Course moved successfully.', 'success')
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                            case 'failed'://error in processing occured
-                                showToast('Error!', 'An Error occured while migrating course to other college', 'error')
-                                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                break;
-                        }
+                        generateNotification('moveCourses', data.query_result);
                     }
                 },
                 //handle the ajax error 
                 error: function (error) {
                     console.error('Error:', error);
-                    showToast('Error', 'Upload error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                    generateNotification('moveCourses', 'error');
                 }
             });
 
@@ -515,17 +474,13 @@
             success: function (data) {
                 if (data) {
                     populateColleges();
-                    switch (data.query_result) {
-                        case 'success'://the user successfully appended in the database
-                            showToast('Success!', 'College updated successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed'://error in processing occured
-                            showToast('Update Error occurred!', 'Failed to add update college and courses data. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                    }
+                    generateNotification('updateCollege', data.query_result);
                 }
+            },
+            //handle the ajax error 
+            error: function (error) {
+                console.error('Error:', error);
+                generateNotification('updateCollege', 'error');
             }
         });
     });
@@ -559,28 +514,13 @@
                     success: function (data) {
                         if (data) {
                             populateColleges();
-                            switch (data.query_result) {
-                                case 'success'://the user successfully appended in the database
-                                    removeCourseInList(courseID)
-                                    showToast('Success!', 'Course deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                    break;
-                                case 'failed'://error in processing occured
-                                    showToast('Error occurred!', 'Failed to delete course. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                    break;
-                                case 'cannot delete data'://user already exist in the database
-                                    showToast('Connot delete Course', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                                    new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                                    break;
-                            }
+                            generateNotification('deleteCourses', data.query_result);
                         }
                     },
                     //handle the ajax error 
                     error: function (error) {
                         console.error('Error:', error);
-                        showToast('Error', 'Query error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                        new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                        generateNotification('deleteCourses', 'error');
                     }
                 });
             });
@@ -603,27 +543,13 @@
             success: function (data) {
                 if (data) {
                     populateColleges();
-                    switch (data.query_result) {
-                        case 'success'://the user successfully appended in the database
-                            showToast('Success!', 'College deleted successfully.', 'text-success fa-solid fa-circle-check', 'border-success');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'failed'://error in processing occured
-                            showToast('Error occurred!', 'Failed to delete college. ', 'text-warning fa-solid fa-triangle-exclamation', 'border-warning');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                        case 'cannot delete data'://user already exist in the database
-                            showToast('Connot delete College', 'Please Try again.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                            new bootstrap.Toast(document.querySelector('#add_userToast')).show();
-                            break;
-                    }
+                    generateNotification('deleteCollege', data.query_result);
                 }
             },
             //handle the ajax error 
             error: function (error) {
                 console.error('Error:', error);
-                showToast('Error', 'Query error occurred.', 'text-danger fa-solid fa-circle-exclamation', 'border-danger');
-                new bootstrap.Toast(document.querySelector('#add_userToast')).show();
+                generateNotification('deleteCollege', data.query_result);
             }
         });
     });
