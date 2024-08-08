@@ -7,7 +7,7 @@ function showToast(title, message, theme) {
     switch (theme) {
         case 'success':
             container_theme = "bg-success-subtle opacity-75";
-            font_color = "text-green";
+            font_color = "text-success";
             icon = "fa-solid fa-circle-check";
             break;
         case 'warning':
