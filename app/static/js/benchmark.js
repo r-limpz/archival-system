@@ -86,21 +86,20 @@ function clearEmptyRows() {
     }
 }
 
-
 function noSelectedData(event, message, buttonFunction) {
     let messageErrorTools = document.getElementById('errorContainerTools');
     messageErrorTools.innerHTML = ''; // Clear any existing content
 
     messageErrorTools.innerHTML = `
         <div class="modal-body">
-            <div class="mx-3">
+            <div class="">
                 <h5 class="fw-bold mb-3"> Oops! No rows selected </h5>
-                <p class="mb-3"> Please choose one or more rows to ${event}. ${message} </p>
+                <p class=""> Please choose one or more rows to ${event}. ${message} </p>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" data-bs-dismiss="modal" class="button">Cancel</button>
-            <button onclick="${buttonFunction}" class="btn-red fs-medium fw-medium px-4" data-bs-dismiss="modal">
+            <button type="button" data-bs-dismiss="modal" class="button fs-medium fw-medium px-4 me-3">Close</button>
+            <button onclick="${buttonFunction}" class="button btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
                 Confirm
             </button>
         </div>
