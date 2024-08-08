@@ -170,9 +170,6 @@
                         generateNotification('autoOCR', 'error');
                     }
                 },
-                complete: function () {
-                    scanningModal.hide();
-                }
             });
         }
     }
@@ -275,11 +272,6 @@
                     button.prop('disabled', false); // Re-enable the button
                     generateNotification('manualOCR', 'error');
                 },
-                complete: function () {
-                    // Reset button state and text after request completes
-                    button.html('Extract Text'); // Restore original button text
-                    button.prop('disabled', false); // Re-enable the button
-                }
             });
         });
     });
