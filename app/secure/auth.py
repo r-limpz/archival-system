@@ -7,7 +7,6 @@ from app.secure.login_form import LoginForm
 from app.secure.randomizer import generate_key, generate_token, check_token
 from app.secure.user_logs import loginHistory
 from app.secure.authorization import admin_required
-from app.dynamic.source_updater import updater
 
 auth = Blueprint('auth', __name__)
 
@@ -143,7 +142,6 @@ def login():
                             #return to page according to user roles
                             redirect_url = {1: 'admin.dashboard', 2: 'staff.records'}.get(user['role'], 'auth.logout')
                             if redirect_url:#redirect if user is authenicated and authorized
-                                updater()
                                 return redirect(url_for(redirect_url))
                             else:
                                 error = invalidError
