@@ -488,6 +488,75 @@
             }
         }
     },
-    "trahbinManager": {},
+    "trashbinManager": {
+        "restoreFile": {
+            "success": {
+                "title": "File Restored",
+                "description": "The file has been successfully restored to active status.",
+                "type": "success"
+            },
+            "failed": {
+                "title": "Restoration Failed",
+                "description": "Failed to restore the file. Please try again later or contact support if the issue persists.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while restoring the file. Please try again later.",
+                "type": "error"
+            }
+        },
+        "permanentDeleteFile": {
+            "success": {
+                "title": "File Permanently Deleted",
+                "description": "The file has been permanently deleted from the trashbin.",
+                "type": "success"
+            },
+            "failed": {
+                "title": "Deletion Failed",
+                "description": "Failed to permanently delete the file. Please try again later or contact support.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while deleting the file. Please try again later.",
+                "type": "error"
+            }
+        },
+        "restoreRecord": {
+            "success": {
+                "title": "Record Restored",
+                "description": "The record has been successfully restored to active status.",
+                "type": "success"
+            },
+            "failed": {
+                "title": "Restoration Failed",
+                "description": "Failed to restore the record. Please try again later or contact support.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while restoring the record. Please try again later.",
+                "type": "error"
+            }
+        },
+        "permanentDeleteTag": {
+            "success": {
+                "title": "Tag Permanently Deleted",
+                "description": "The tag has been permanently removed from the system.",
+                "type": "success"
+            },
+            "failed": {
+                "title": "Deletion Failed",
+                "description": "Failed to permanently delete the tag. Please try again later or contact support if the issue persists.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while deleting the tag. Please try again later.",
+                "type": "error"
+            }
+        }
+    },
     "dashboardManager": {}
 }
