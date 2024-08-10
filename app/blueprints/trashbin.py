@@ -405,7 +405,7 @@ def restoreTags():
         record_id = request.form.get('item_id')
         record_id = int(record_id)
         recover_query = restoreRecord(record_id)
-        print(record_id)
+        
         if recover_query:
             return jsonify({'recover_query': recover_query})
 
