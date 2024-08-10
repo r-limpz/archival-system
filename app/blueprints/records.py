@@ -45,7 +45,6 @@ def checkDuplicateTags(document_id, student_id):
                                (student_id, document_id))
                 tagExist = cursor.fetchone()
 
-                print(tagExist)
                 if tagExist:
                     return True
 
