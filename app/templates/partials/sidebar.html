@@ -99,7 +99,7 @@
             {% if current_user.role == 'admin' %}
             <li class="sidebar-list-item">
                 <a href="{{url_for('trashbin')}}"
-                    class="sidebar-link align-items-center {% if request.path == url_for('admin.trashbin') and current_user.role == 'admin' %} active {% endif %}" id="trahbinManager">
+                    class="sidebar-link align-items-center {% if request.path == url_for('admin.trashbin') and current_user.role == 'admin' %} active {% endif %}" id="trashbinManager">
                     <span class="sidebar-icon fa-regular fa-trash-can"></span>
                     <span class="hidden-sidebar fs-medium"> Trash</span>
                 </a>

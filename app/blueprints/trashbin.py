@@ -20,6 +20,24 @@ def checkDuplicateFile(document_id):
     except Exception as e:
         print('Check Duplicate Filename Error:', e)
 
+def checkDuplicateTags(tagging_id):
+    try:
+        if tagging_id:
+            with config.conn.cursor() as cursor:
+
+                cursor.execute('''SELECT * FROM tagging WHERE tag_id != %s AND delete_status = 0
+                               AND student = (SELECT student FROM tagging WHERE tag_id = %s) 
+                               AND document = (SELECT document FROM tagging WHERE tag_id = %s)''',  (tagging_id , tagging_id ,tagging_id))
+                result = cursor.fetchone()
+
+                if result:
+                    return int(result['tag_id'])
+
+                return False
+        return None
+    except Exception as e:
+        print('Check Duplicate Student tags Error:', e)
+
 def fetchTags(document_id, status):
     try:
         with config.conn.cursor() as cursor:
@@ -160,11 +178,47 @@ def deleteDocumentFile(document_id):
     except Exception as e:
             print('Recover data Error: ',e)
 
+def restoreRecord(tagging_id):
+    try:
+        with config.conn.cursor() as cursor:
+
+            if not checkDuplicateTags(tagging_id):
+                cursor.execute('UPDATE tagging SET delete_status = 0 WHERE tag_id = %s', (tagging_id,)) 
+                config.conn.commit()
+
+                if cursor.rowcount > 0:
+                    return 'success'
+            else:
+                return 'duplicate'
+            
+            return 'failed'
+    except Exception as e:
+            print('Recover data Error: ',e)
+
+def deleteRecord(tagging_id):
+    try:
+        with config.conn.cursor() as cursor:
+
+            cursor.execute('DELETE FROM tagging WHERE tag_id = %s', (tagging_id,)) 
+            rows_deleted = cursor.rowcount  # Get the number of affected rows
+            config.conn.commit()
+
+            if rows_deleted > 0:
+                    cursor.execute('DELETE FROM trashrecords WHERE records_id = %s', (tagging_id))
+                    config.conn.commit()
+
+                    return 'success'
+
+            return 'failed'
+        
+    except Exception as e:
+            print('Recover data Error: ',e)
+
 #fetch trash data for datatable
 @trashbin_data.route("/fetch-data/deleted-files/trash-list",methods=["POST","GET"])
 @login_required
 @admin_required
-def recycleBin():
+def fileRecycleBin():
     try:
         if request.method == 'POST':
             draw = request.form.get('draw') 
@@ -230,6 +284,75 @@ def recycleBin():
     except Exception as e:
         print('Fetch documents Error: ',e)
 
+#fetch trash data for datatable
+@trashbin_data.route("/fetch-data/deleted-tags-entries/trash-list",methods=["POST","GET"])
+@login_required
+@admin_required
+def tagsRecycleBin():
+    try:
+        if request.method == 'POST':
+            draw = request.form.get('draw') 
+            row = int(request.form.get('start'))
+            rowperpage = int(request.form.get('length'))
+            column_index = request.form.get('order[0][column]') # Column index
+            column_name = request.form.get('columns['+column_index+'][data]') # Column name
+            column_sort_order = request.form.get('order[0][dir]') # asc or desc
+
+            filterSearch = request.form.get('filterSearch')
+            
+            search_query = ""
+
+            if filterSearch:
+                search_terms = filterSearch.split(' ')
+                for term in search_terms:
+                    search_query += f" and (FullName like '%{term}%' or Filename like '%{term}%') "
+
+            with config.conn.cursor() as cursor:
+                # Total number of records without filtering
+                cursor.execute("SELECT count(*) as allcount from tags_trashtbl")
+                records = cursor.fetchone()
+                total_records = records['allcount']
+
+                # Total number of records with filtering
+                cursor.execute(f"SELECT count(*) as allcount from tags_trashtbl WHERE 1 {search_query}")
+                records = cursor.fetchone()
+                total_record_with_filter = records['allcount']
+
+                # Fetch records
+                if rowperpage == -1:  # If length is -1, then it's "All"
+                    stud_query = f"SELECT * FROM tags_trashtbl WHERE 1 {search_query} ORDER BY {column_name} {column_sort_order}"
+                    cursor.execute(stud_query)
+                    recordlist = cursor.fetchall()
+                # limite records
+                else:
+                    stud_query = f"SELECT * FROM tags_trashtbl WHERE 1 {search_query} ORDER BY {column_name} {column_sort_order} LIMIT {row},{rowperpage}"
+                    cursor.execute(stud_query)
+                    recordlist = cursor.fetchall()
+
+                data = []
+                if recordlist:
+                    for row in recordlist:
+                        
+                        data.append({
+                            'id': row['id'],
+                            'FullName': row['FullName'],
+                            'Filename': row['Filename'],
+                            'Trash_date': row['Trash_date'].strftime('%B %d, %Y'),
+                            'editor': row['editor'],
+                            'image_id': row['image_id'],
+                        })
+                    
+                response = {
+                    'draw': draw,
+                    'iTotalRecords': total_records,
+                    'iTotalDisplayRecords': total_record_with_filter,
+                    'aaData': data,
+                }
+
+                return jsonify(response)
+    except Exception as e:
+        print('Fetch documents Error: ',e)
+
 #preview document image
 @trashbin_data.route('/file/fetch_data/<image_id>', methods=['POST', 'GET'])
 @login_required
@@ -248,12 +371,12 @@ def previewDocument(image_id):
         return "No image data found", 404
 
 #restore file
-@trashbin_data.route('/item-document/restore-file', methods=['POST', 'GET'])
+@trashbin_data.route('/file-list/item-document/restore-file', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def restoreFile():
     if request.method == "POST":
-        document_id = request.form.get('document_id')
+        document_id = request.form.get('item_id')
         document_id = int(document_id)
         recover_query = restoreDocumentFile(document_id)
 
@@ -261,14 +384,40 @@ def restoreFile():
             return jsonify({'recover_query': recover_query})
 
 #permanent delete one item
-@trashbin_data.route('/item-document/push-delete-permanent', methods=['POST', 'GET'])
+@trashbin_data.route('/file-list/item-document/push-delete-permanent', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def permanent_deletion():
     if request.method == "POST":
-        document_id = request.form.get('document_id')
+        document_id = request.form.get('item_id')
         document_id = int(document_id)
         delete_query = deleteDocumentFile(document_id)
+
+        if delete_query:
+            return jsonify({'delete_query': delete_query})
+
+#restore file
+@trashbin_data.route('/document/tags-list/restore-records', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def restoreTags():
+    if request.method == "POST":
+        record_id = request.form.get('item_id')
+        record_id = int(record_id)
+        recover_query = restoreRecord(record_id)
+        print(record_id)
+        if recover_query:
+            return jsonify({'recover_query': recover_query})
+
+#permanent delete one item
+@trashbin_data.route('/document/tags-list/push-delete-permanent', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def permanent_deletion_tags():
+    if request.method == "POST":
+        record_id = request.form.get('item_id')
+        record_id = int(record_id)
+        delete_query = deleteRecord(record_id)
 
         if delete_query:
             return jsonify({'delete_query': delete_query})
