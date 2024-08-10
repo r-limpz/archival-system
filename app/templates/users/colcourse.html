@@ -267,11 +267,19 @@
 
 </script>
 <script>
+    function dynamicAppendCollege(){
+        let collegeName = $('#newcollege_name').val();
+        let collegeDescription = $('#newcollege_nameDescription').val();
+
+        $('#confirmation_college_name').text(collegeName);
+        $('#confirmation_college_description').text(collegeDescription);
+    }
 
     $('#confirm_addCollege').on('click', function (event) {
         event.preventDefault();
         let college_name = $('#newcollege_name').val();
         let newcollege_nameDescription = $('#newcollege_nameDescription').val()
+        
         let formData = {
             'newcollege_abbrev': college_name,
             'newcollege_name': newcollege_nameDescription,
@@ -386,12 +394,11 @@
         const course = college.courses.find(course => course.course_id === course_id);
 
         let inputFields = document.getElementsByClassName('moveCourse_target')[0];
-        inputFields.value = "";
         inputFields.value = "(" + course.course_name + ") " + course.course_description;
         inputFields.id = course_id;
 
-        let toCollege = document.getElementById('movetoCollege')[0];
-        toCollege.value = default_college;
+        let toCollege = document.getElementById('movetoCollege');
+        toCollege.value = college_id;
 
         $('#editCollege_modal').modal('hide');
         $('#moveCourses_modal').modal('show');
@@ -399,10 +406,7 @@
         let collegeText = document.getElementById('modal_collgeChangeText');
         let courseText = document.getElementById('modal_courseChangeText');
 
-        var selectedText = $('#movetoCollege option:selected').text();
-        $('#collegeText').text(selectedText);
-
-        collegeText.innerText = college.college_name;
+        collegeText.innerText = $('#movetoCollege option:selected').text();
         courseText.innerText = course.course_name;
 
         $('#confirm_changeCourse').on('click', function (event) {
