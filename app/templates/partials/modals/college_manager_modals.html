@@ -23,7 +23,7 @@
                 <div class="d-flex justify-content-end">
                     <button class="me-3 fs-medium fw-medium px-4" type="button" data-bs-dismiss="modal">Close</button>
                     <button class="btn-red fs-medium fw-medium px-4" data-bs-toggle="modal"
-                        data-bs-target="#addColleges_confirmation" type="button" id="button_showConfirmationAddColleges"
+                        data-bs-target="#addColleges_confirmation" type="button" id="button_showConfirmationAddColleges" onclick="dynamicAppendCollege()"
                         disabled>
                         Submit </button>
                 </div>
@@ -164,11 +164,13 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <div class="">
-                    <h5 class="fw-bold mb-3"> Add College data </h5>
-                    <p class="ms-2"> Please review all entered data are correct. Are you sure you want to add this
-                        college to
-                        the database?</p>
+                <div id="add_collegeConfirmationContainer">
+                    <h5 class="fw-bold mb-3">Add College Data</h5>
+                    <p class="ms-2">Please confirm that all the information is accurate before adding this college to
+                        the database.</p>
+                    <p class="ms-2"><strong>College Name:</strong> <span id="confirmation_college_name"></span></p>
+                    <p class="ms-2"><strong>Description:</strong> <span id="confirmation_college_description"></span>
+                    </p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -187,10 +189,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="fw-bold mb-3"> Add Courses data </h5>
-                <p class="ms-s"> Please review all entered data are correct. Are you sure you want to add this course to
-                    the
-                    database?</p>
+                <div id="add_collegeConfirmationContainer">
+                    <h5 class="fw-bold mb-3"> Add Courses data </h5>
+                    <p class="ms-s"> Please confirm that all the information is accurate before adding this course to
+                        the database.</p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3"
@@ -209,8 +212,9 @@
         <div class="modal-content">
             <div class="modal-body">
                 <h5 class="fw-bold mb-3"> Update College </h5>
-                <p class="ms-2">Please review all entered data are correct. Are you sure you want to change the college
-                    information?</p>
+                <p class="ms-2"> Please review the changes to the college’s details. This update includes modifications
+                    to the college information and its associated courses. Are you sure you want to proceed with these
+                    changes?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3"
@@ -229,10 +233,13 @@
         <div class="modal-content">
             <div class="modal-body">
                 <h5 class="fw-bold mb-3"> Move Course</h5>
-                <p class="ms-2"> Are you want to transer
+                <p class="ms-2 mb-2"> Are you sure you want to move the course
                     <span class="fw-medium" id="modal_courseChangeText"></span>
                     to
                     <span class="fw-medium" id="modal_collgeChangeText"></span>
+                    <span>. This action will update the system settings but will not affect the associated files. Are
+                        you sure
+                        you want to proceed?</span>
                 </p>
             </div>
             <div class="modal-footer">
@@ -252,10 +259,10 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-orange border-3">
             <div class="modal-body">
-                <h5 class="fw-bold mb-3">Are you sure to delete this course?</h5>
-                <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this course
-                    data
-                    in the database.</p>
+                <h5 class="fw-bold mb-3">Delete Course</h5>
+                <p class="ms-2" style="text-align: justify; text-justify: inter-word;">This action will permanently
+                    delete the course data from the database. Note that you cannot delete this course if it is
+                    associated with any documents. Are you sure you want to proceed?</p>
             </div>
             <div class="modal-footer ">
                 <button class="button me-3 fs-medium fw-medium px-4" type="button" data-bs-toggle="modal"
@@ -273,10 +280,10 @@
         <div class="modal-content border-orange border-3">
             <div class="modal-body">
                 <div class="">
-                    <h5 class="fw-bold mb-3">Are you sure to delete this College?</h5>
-                    <p class="ms-2" style="text-align: justify; text-justify: inter-word;">Permanently deleting this
-                        college
-                        data in the database.</p>
+                    <h5 class="fw-bold mb-3">Delete College?</h5>
+                    <p class="ms-2" style="text-align: justify; text-justify: inter-word;">This action will permanently
+                        delete the college data from the database. Note that you cannot delete this college if it
+                        is associated with any documents. Are you sure you want to proceed?</p>
                 </div>
             </div>
             <div class="modal-footer ">
