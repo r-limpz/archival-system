@@ -12,10 +12,16 @@
         <h5 class="fw-bold fs-def">Trash</h5>
         <p class="fs-medium fst-italic"> </p>
     </div>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
                 placeholder="Search...">
+        </div>
+        <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
+            <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Trashed Document</button>
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Trashed Records</button>
+            </div>
         </div>
     </div>
     <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default fs-medium'
@@ -32,8 +38,17 @@
 <script>
     var trashDataTable;
 
+    function initializeDataTable(options) {
+            if (trashDataTable) {
+                trashDataTable.destroy(); // Destroy the existing DataTable
+                $('#trashbinTable').empty(); // Clear the table HTML (optional, if needed)
+            }
+            trashDataTable = $('#trashbinTable').DataTable(options);
+        }
+</script>
+<script>
     function trashDocuments() {
-        trashDataTable = $('#trashbinTable').DataTable({
+        const options = {
             stripeClasses: [],
             language: {
                 paginate: {
@@ -139,7 +154,9 @@
                     $(api.table().container()).find('.dataTables_paginate').show();
                 }
             }
-        });
+        };
+
+        initializeDataTable(options);
 
         $('#trashbinTable tbody').on('dblclick', 'tr', function () {
             var data = trashDataTable.row(this).data();
@@ -153,7 +170,7 @@
 </script>
 <script>
     function trashRecords() {
-        trashDataTable = $('#trashbinTable').DataTable({
+        const options = {
             stripeClasses: [],
             language: {
                 paginate: {
@@ -194,7 +211,7 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'FullName', title: 'FullName', orderable: true, wrap: true, className: 'fw-medium', width: '300px' },
+                { data: 'FullName', title: 'Full Name', orderable: true, wrap: true, className: ' text-start fw-medium', width: '300px' },
                 {
                     'data': 'Filename',
                     title: 'File',
@@ -258,7 +275,9 @@
                     $(api.table().container()).find('.dataTables_paginate').show();
                 }
             }
-        });
+        };
+
+        initializeDataTable(options);
 
         $('#trashbinTable tbody').on('dblclick', 'tr', function () {
             var data = trashDataTable.row(this).data();
@@ -271,31 +290,67 @@
     }
 </script>
 <script>
-    let displayStatus = 'trash_records';
     var restoreUrl, deleteURL, restore_type, deleteType;
+    var restoreTitle, restoreText
+    var deleteTitle, deleteText;
 
-    switch (displayStatus) {
-        case 'trash_documents':
-            trashDocuments();
-            restoreUrl = '/admin/trash/manage/data/file-list/item-document/restore-file';
-            deleteURL = '/admin/trash/manage/data/file-list/item-document/push-delete-permanent';
-            restore_type = 'restoreFile';
-            deleteType = 'permanentDeleteFile';
-            break;
-        case 'trash_records':
-            trashRecords();
-            restoreUrl = '/admin/trash/manage/data/document/tags-list/restore-records';
-            deleteURL = '/admin/trash/manage/data/document/tags-list/push-delete-permanent';
-            restore_type = 'restoreRecord';
-            deleteType = 'permanentDeleteTag';
-            break;
-        default:
-            trashDocuments();
-            restoreUrl = '/admin/trash/manage/data/file-list/item-document/restore-file';
-            deleteURL = '/admin/trash/manage/data/file-list/item-document/push-delete-permanent';
-            restore_type = 'restoreFile';
-            deleteType = 'permanentDeleteTag';
+    function changeDisplayStatus(status) {
+        switch (status) {
+            case 'documents':
+                restoreUrl = '/admin/trash/manage/data/file-list/item-document/restore-file';
+                deleteURL = '/admin/trash/manage/data/file-list/item-document/push-delete-permanent';
+                restore_type = 'restoreFile';
+                deleteType = 'permanentDeleteFile';
+                restoreTitle = `Restore Document`;
+                restoreText = `You are about to restore this document from the trash bin. Restoring will move it back to its original location and make it accessible again. Are you sure you want to proceed with restoring this document?`;
+                deleteTitle = `Confirm Permanent Deletion`;
+                deleteText = ` You are about to permanently delete this document. This action cannot be undone, and the document will be removed from the system permanently. Are you absolutely sure you want to proceed with the permanent deletion?`;
+                break;
+            case 'records':
+                restoreUrl = '/admin/trash/manage/data/document/tags-list/restore-records';
+                deleteURL = '/admin/trash/manage/data/document/tags-list/push-delete-permanent';
+                restore_type = 'restoreRecord';
+                deleteType = 'permanentDeleteTag';
+                restoreTitle = `Restore Tag`;
+                restoreText = ` You are about to restore this tag from the trash bin. Restoring it will make it available again and re-associate it with the relevant document and student. Are you sure you want to proceed with this restoration?`;
+                deleteTitle = `Confirm Permanent Deletion`;
+                deleteText = `You are about to permanently delete this tag. This action will completely remove it from the system and it will no longer be linked to its document or student. This action cannot be undone. Are you sure you want to proceed with the permanent deletion?`;
+                break;
+        }
     }
+
+    function adjustButtonOpacity(clickedId) {
+        const container = document.querySelector('#statsFilterContainer');
+        const buttons = container.querySelectorAll('button');
+        buttons.forEach(button => {
+            if (button.id === clickedId) {
+                button.style.opacity = '1'; // 100% opacity for clicked button
+                button.classList.remove('fw-medium');
+                button.classList.add('fw-bold');
+            } else {
+                button.style.opacity = '0.5'; // 50% opacity for other buttons
+                button.classList.remove('fw-bold');
+                button.classList.add('fw-medium');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelector('#show_documents').addEventListener('click', function () {
+            adjustButtonOpacity('show_documents');
+            changeDisplayStatus('documents');
+            trashDocuments();
+        });
+        document.querySelector('#show_records').addEventListener('click', function () {
+            adjustButtonOpacity('show_records');
+            changeDisplayStatus('records');
+            trashRecords();
+        });
+    });
+
+    adjustButtonOpacity('show_documents');
+    changeDisplayStatus('documents');
+    trashDocuments();
 
     function preview(ImageID) {
         fetch('/admin/trash/manage/data/file/fetch_data/' + ImageID)
@@ -329,6 +384,9 @@
     }
 
     function restoreFile(itemID) {
+        document.getElementById('restoreItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${restoreTitle}</h5>
+                                                                    <p class="ms-2">${restoreText}</p>`;
+
         let modal = new bootstrap.Modal(document.getElementById('restoreFile_confirmation'));
         modal.show();
 
@@ -364,6 +422,8 @@
     }
 
     function deleteTrash(itemID) {
+        document.getElementById('deleteItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${deleteTitle}</h5>
+                                                                    <p class="ms-2">${deleteText}</p>`;
 
         let modal = new bootstrap.Modal(document.getElementById('deleteTrash_confirmation'));
         modal.show();

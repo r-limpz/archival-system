@@ -1,5 +1,5 @@
-<div class="modal fade backdrop-modal-present" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1" role="dialog"
-    aria-labelledby="showPreviewModal" aria-hidden="true">
+<div class="modal fade backdrop-modal-present" id="showPreviewModal" data-bs-keyboard="false" tabindex="-1"
+    role="dialog" aria-labelledby="showPreviewModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered border-0">
         <div class="modal-content p-0 border-0">
             <div class="modal-body" style="padding: 0px !important;">
@@ -15,9 +15,11 @@
     role="dialog" aria-labelledby="restoreFile_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-body ">
-                <h5 class="fw-bold mb-3"> Restore File</h5>
-                <p class="ms-2"> Are you sure you want to resotre this file?</p>
+            <div class="modal-body">
+                <div id="restoreItemMessage">
+                    <h5 class="fw-bold mb-3"> Restore File</h5>
+                    <p class="ms-2"> Are you sure you want to resotre this file?</p>
+                </div>
             </div>
             <div class="modal-footer ">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
@@ -32,7 +34,7 @@
 <div class="modal fade" id="restoreFileError" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     role="dialog" aria-labelledby="restoreFileError" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content  border-orange border-3">
+        <div class="modal-content border-orange border-3">
             <div class="modal-body">
                 <div class="">
                     <h5 class="fw-bold mb-3">Document Restoration Error </h5>
@@ -57,7 +59,7 @@
         <div class="modal-content">
             <div class="modal-body ">
                 <h5 class="fw-bold mb-3"> Custom Restore</h5>
-                
+
             </div>
             <div class="modal-footer ">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
@@ -74,8 +76,8 @@
     role="dialog" aria-labelledby="deleteTrash_confirmation" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content  border-orange border-3">
-            <div class="modal-body ">
-                <div class="">
+            <div class="modal-body">
+                <div id="deleteItemMessage">
                     <h5 class="fw-bold mb-3">Confirm Permanent Deletion</h5>
                     <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this file?
                     </p>
