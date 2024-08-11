@@ -235,8 +235,8 @@ def fileRecycleBin():
             if filterSearch:
                 search_terms = filterSearch.split(' ')
                 for term in search_terms:
-                    search_query += f" and (Filename like '%{term}%') "
-
+                    search_query += f" and (Filename like '%{term}%' or College like '%{term}%' or Course like '%{term}%' or Subject like '%{term}%' or SchoolYear like '%{term}%' or Semester like '%{term}%' or Unit like '%{term}%') "
+            
             with config.conn.cursor() as cursor:
                 # Total number of records without filtering
                 cursor.execute("SELECT count(*) as allcount from trashtbl")
@@ -266,8 +266,15 @@ def fileRecycleBin():
                         data.append({
                             'id': row['id'],
                             'Filename': row['Filename'],
-                            'Trash_date': row['Trash_date'].strftime('%B %d, %Y'),
+                            'College': row['College'],
+                            'Section': row['Course'] + '-' +  row['Section'],
+                            'Subject': row['Subject'],
+                            'Unit': row['Unit'],
+                            'Semester': row['Semester'],
+                            'SchoolYear': row['SchoolYear'],
                             'studentCount': row['studentCount'],
+                            'page_num': row['page_num'],
+                            'Trash_date': row['Trash_date'].strftime('%b %d, %Y'),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
                             'File_size': filesize_format(row['Filesize']),
@@ -305,7 +312,7 @@ def tagsRecycleBin():
             if filterSearch:
                 search_terms = filterSearch.split(' ')
                 for term in search_terms:
-                    search_query += f" and (FullName like '%{term}%' or Filename like '%{term}%') "
+                    search_query += f" and (FullName like '%{term}%' or Filename like '%{term}%' or College like '%{term}%' or Course like '%{term}%' or Subject like '%{term}%' or SchoolYear like '%{term}%' or Semester like '%{term}%' or Unit like '%{term}%') "
 
             with config.conn.cursor() as cursor:
                 # Total number of records without filtering
@@ -337,7 +344,13 @@ def tagsRecycleBin():
                             'id': row['id'],
                             'FullName': row['FullName'],
                             'Filename': row['Filename'],
-                            'Trash_date': row['Trash_date'].strftime('%B %d, %Y'),
+                            'College': row['College'],
+                            'Section': row['Course'] + '-' +  row['Section'],
+                            'Subject': row['Subject'],
+                            'Unit': row['Unit'],
+                            'Semester': row['Semester'],
+                            'SchoolYear': row['SchoolYear'],
+                            'Trash_date': row['Trash_date'].strftime('%b %d, %Y'),
                             'editor': row['editor'],
                             'image_id': row['image_id'],
                         })

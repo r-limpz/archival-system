@@ -8,21 +8,22 @@
 
 {% block content %}
 <section>
-    <div class="page-header-title p-2 mb-2">
-        <h5 class="fw-bold fs-def">Trash</h5>
-        <p class="fs-medium fst-italic"> </p>
+    <div class="page-header-title p-2 mb-2 d-flex gap-3 align-items-center">
+        <h5 class="fw-bold fs-def m-0">Trash</h5>
+        <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
+            <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Document</button>
+                /
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Records</button>
+            </div>
+        </div>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
                 placeholder="Search...">
         </div>
-        <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
-            <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
-                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Trashed Document</button>
-                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Trashed Records</button>
-            </div>
-        </div>
+
     </div>
     <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default fs-medium'
         cellspacing="0" width="100%">
@@ -39,16 +40,28 @@
     var trashDataTable;
 
     function initializeDataTable(options) {
-            if (trashDataTable) {
-                trashDataTable.destroy(); // Destroy the existing DataTable
-                $('#trashbinTable').empty(); // Clear the table HTML (optional, if needed)
-            }
-            trashDataTable = $('#trashbinTable').DataTable(options);
+        if (trashDataTable) {
+            trashDataTable.destroy(); // Destroy the existing DataTable
+            $('#trashbinTable').empty(); // Clear the table HTML (optional, if needed)
+            $('#trashbinTable').off(); // Remove any remaining event handlers
         }
+        trashDataTable = $('#trashbinTable').DataTable(options);
+
+        // Rebind events after initialization
+        $('#trashbinTable tbody').on('dblclick', 'tr', function () {
+            var data = trashDataTable.row(this).data();
+            preview(data.image_id);
+        });
+
+        // Unbind and rebind keyup event for search input
+        $('#filterSearch').off('keyup').on('keyup', function () {
+            trashDataTable.draw();
+        });
+    }
 </script>
 <script>
     function trashDocuments() {
-        const options = {
+        const document_option = {
             stripeClasses: [],
             language: {
                 paginate: {
@@ -89,38 +102,30 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                {
-                    'data': 'Filename',
-                    title: 'File',
-                    orderable: true,
-                    wrap: true,
-                    className: 'text-start',
-                    "render": function (data, type, row) {
-                        const student_name = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
-                    }
-                },
-                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '90px' },
+                { data: 'Filename', title: 'File', orderable: true, wrap: false, className: 'text-start', width: '500px' },
+                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '40px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '100px' },
+                { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 { data: 'File_size', title: 'File size ', orderable: false, wrap: false, className: 'text-center', width: '100px' },
+                { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '130px' },
                 {
                     data: 'editor',
                     title: 'Deleted by',
                     orderable: false,
                     wrap: false,
-                    className: 'text-center',
-                    width: '200px',
+                    className: 'text-start',
+                    width: '100px',
                     "render": function (data, type, row) {
-                        const editor = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem"></span>` + editor + `</div>`;
+                        const editor = '<span class="flex-grow-1">' + data + '</span>'
+                        return `<div class="ms-2 fw-medium d-flex align-items-center gap-2 p-0" ><span class="fa-solid fa-circle-user fs-def"></span>` + editor + `</div>`;
                     }
                 },
-                { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '120px' },
                 {
                     'data': 'id',
                     title: ' ',
                     orderable: false,
                     wrap: true,
-                    width: '80px',
+                    width: '50px',
                     "render": function (data, type, row) {
                         const recoverfile = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
@@ -156,21 +161,13 @@
             }
         };
 
-        initializeDataTable(options);
+        initializeDataTable(document_option);
 
-        $('#trashbinTable tbody').on('dblclick', 'tr', function () {
-            var data = trashDataTable.row(this).data();
-            preview(data.image_id);
-        });
-
-        $('#filterSearch').keyup(function () {
-            trashDataTable.draw();
-        });
     }
 </script>
 <script>
     function trashRecords() {
-        const options = {
+        const tags_option = {
             stripeClasses: [],
             language: {
                 paginate: {
@@ -211,37 +208,29 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'FullName', title: 'Full Name', orderable: true, wrap: true, className: ' text-start fw-medium', width: '300px' },
-                {
-                    'data': 'Filename',
-                    title: 'File',
-                    orderable: true,
-                    wrap: true,
-                    className: 'text-start',
-                    "render": function (data, type, row) {
-                        const student_name = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex"><span class="fa-solid fa-file-image me-4 fw-small align-self-center"></span>` + student_name + `</div>`;
-                    }
-                },
+                { data: 'FullName', title: 'Full Name', orderable: true, wrap: true, className: ' text-start fw-medium', width: '500px' },
+                { data: 'Filename', title: 'File', orderable: false, wrap: false, className: 'text-start', width: '300px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '100px' },
+                { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
+                { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '130px' },
                 {
                     data: 'editor',
                     title: 'Deleted by',
                     orderable: false,
                     wrap: false,
-                    className: 'text-center',
-                    width: '200px',
+                    className: 'text-start',
+                    width: '100px',
                     "render": function (data, type, row) {
-                        const editor = '<span>' + data + '</span>'
-                        return `<div class="fw-medium d-flex mx-auto" style="max-width:100px;"><span class="fa-solid fa-user me-3 fw-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem"></span>` + editor + `</div>`;
+                        const editor = '<span class="flex-grow-1">' + data + '</span>'
+                        return `<div class="ms-2 fw-medium d-flex align-items-center gap-2 p-0" ><span class="fa-solid fa-circle-user fs-def"></span>` + editor + `</div>`;
                     }
                 },
-                { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '120px' },
                 {
                     'data': 'id',
                     title: ' ',
                     orderable: false,
                     wrap: true,
-                    width: '80px',
+                    width: '50px',
                     "render": function (data, type, row) {
                         const recoverfile = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
@@ -277,16 +266,7 @@
             }
         };
 
-        initializeDataTable(options);
-
-        $('#trashbinTable tbody').on('dblclick', 'tr', function () {
-            var data = trashDataTable.row(this).data();
-            preview(data.image_id);
-        });
-
-        $('#filterSearch').keyup(function () {
-            trashDataTable.draw();
-        });
+        initializeDataTable(tags_option);
     }
 </script>
 <script>
@@ -349,9 +329,9 @@
     });
 
     adjustButtonOpacity('show_documents');
-    changeDisplayStatus('documents');
+    changeDisplayStatus('records');
     trashDocuments();
-
+    
     function preview(ImageID) {
         fetch('/admin/trash/manage/data/file/fetch_data/' + ImageID)
             .then(response => {
