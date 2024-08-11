@@ -126,34 +126,24 @@
             'scroller': true,
             'columns': [
                 { data: 'id', orderable: true, title: '#', width: '30px' },
-                {
-                    'data': 'Filename',
-                    title: 'File',
-                    orderable: true,
-                    wrap: true,
-                    class: 'text-start',
-                    width: '500px',
-                    "render": function (data, type, row) {
-                        const file_name = '<span>' + data + '</span>'
-                        return file_name;
-                    }
-                },
-                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '100px' },
+                { data: 'Filename', title: 'File', orderable: true, wrap: false, className: 'text-start', width: '500px' },
+                { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '40px' },
                 { data: 'College', title: 'College', orderable: true, wrap: false, className: '', width: '70px' },
-                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: '', width: '200px' },
+                { data: 'Section', title: 'Course', orderable: true, wrap: false, className: '', width: '100px' },
                 { data: 'Subject', title: 'Subject', orderable: false, wrap: true, width: '200px', },
-                { data: 'Semester', title: 'Sem', orderable: false, wrap: false, className: 'text-center', width: '75px' },
+                { data: 'Semester', title: 'Sem', orderable: false, wrap: false, className: 'text-center', width: '50px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 {
                     data: 'Uploader',
                     title: 'Uploader',
                     orderable: false,
                     wrap: false,
+                    className: 'text-start',
                     visible: visLog,
-                    width: '90px',
+                    width: '100px',
                     "render": function (data, type, row) {
                         const Uploader = '<span>' + data + '</span>'
-                        const htmlUploader = `<div class="fw-medium d-flex w-full gap-2" style="max-width:100px;"><span class="fa-solid fa-user fs-xsmall align-self-center border rounded-5 bg-light-gray" style="padding:0.25rem; width:0.75rem;height:0.75rem;"></span>` + Uploader + `</div>`;
+                        const htmlUploader = `<div class="ms-2 fw-medium d-flex align-items-center gap-2" ><span class="fa-solid fa-circle-user fs-def"></span>` + Uploader + `</div>`;
                         return data ? htmlUploader : null;
                     }
                 },
