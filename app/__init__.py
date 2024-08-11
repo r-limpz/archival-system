@@ -177,7 +177,6 @@ def checkConnection():
 #error handling of pages
 @app.errorhandler(Exception)
 def handle_error(e):
-    updater('all')
     code = 500
     print('ERROR HANDLER: ',e)
 
