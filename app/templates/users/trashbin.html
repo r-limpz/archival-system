@@ -8,22 +8,21 @@
 
 {% block content %}
 <section>
-    <div class="page-header-title p-2 mb-2 d-flex gap-3 align-items-center">
+    <div class="page-header-title p-2 mb-2 ">
         <h5 class="fw-bold fs-def m-0">Trash</h5>
-        <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
-            <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
-                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Document</button>
-                /
-                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Records</button>
-            </div>
-        </div>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="flex-grow-1" id="filtersearch_global" style="max-width: 40%;">
             <input type="text" class="form-control w-full text-truncate fs-medium" id="filterSearch"
                 placeholder="Search...">
         </div>
-
+        <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
+            <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Document</button>
+                <span>/</span>
+                <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Records</button>
+            </div>
+        </div>
     </div>
     <table id='trashbinTable' class='display dataTable table-borderless table-hover fc-default fs-medium'
         cellspacing="0" width="100%">
@@ -102,7 +101,7 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'Filename', title: 'File', orderable: true, wrap: false, className: 'text-start', width: '500px' },
+                { data: 'Filename', title: 'File', orderable: true, wrap: false, className: 'text-start', width: '100%' },
                 { data: 'studentCount', title: 'Students', orderable: true, wrap: false, className: 'text-center', width: '40px' },
                 { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '100px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
@@ -208,8 +207,8 @@
             'deferRender': true,
             'scroller': true,
             'columns': [
-                { data: 'FullName', title: 'Full Name', orderable: true, wrap: true, className: ' text-start fw-medium', width: '500px' },
-                { data: 'Filename', title: 'File', orderable: false, wrap: false, className: 'text-start', width: '300px' },
+                { data: 'FullName', title: 'Full Name', orderable: true, wrap: true, className: ' text-start fw-medium', width: '200px' },
+                { data: 'Filename', title: 'File', orderable: false, wrap: false, className: 'text-start', width: '100%' },
                 { data: 'Section', title: 'Course', orderable: true, wrap: false, className: 'text-center', width: '100px' },
                 { data: 'SchoolYear', title: 'Year', orderable: true, wrap: true, className: 'text-center', width: '100px' },
                 { data: 'Trash_date', title: 'Trashed date', orderable: true, wrap: false, className: 'text-center', width: '130px' },
@@ -329,9 +328,9 @@
     });
 
     adjustButtonOpacity('show_documents');
-    changeDisplayStatus('records');
+    changeDisplayStatus('documents');
     trashDocuments();
-    
+
     function preview(ImageID) {
         fetch('/admin/trash/manage/data/file/fetch_data/' + ImageID)
             .then(response => {
