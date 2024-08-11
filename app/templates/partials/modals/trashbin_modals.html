@@ -43,9 +43,10 @@
                 </div>
             </div>
             <div class="modal-footer ">
-                <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Custom
+                <button type="button" data-bs-toggle="modal" data-bs-target="#customRestoreFile"
+                    class="fs-medium fw-medium px-4 me-3 btn-orange">Custom
                     Restore</button>
-                <button id="customRestore" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                <button class=" fs-medium fw-medium px-4" data-bs-dismiss="modal">
                     Close
                 </button>
             </div>
@@ -57,13 +58,46 @@
     role="dialog" aria-labelledby="customRestoreFile" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-body ">
-                <h5 class="fw-bold mb-3"> Custom Restore</h5>
-
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h5 class="fw-bold mb-3"> Custom Restore</h5>
+                    <p class="ms-2">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
+                </div>
+                <div class="text-start d-flex flex-column gap-2 mx-2" id="selecOptionRestore">
+                    <div id="restore-default" class="p-3 gap-2 option-item bg-opacity-10 rounded-2 border-2 border-orange selected-option">
+                        <label class="mb-2 fc-orange" id="label_option">
+                            <span class="fs-medium  fw-bold">Restore </span>
+                            <span class="fs-small">(Default)</span>
+                        </label>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                            incididunt ut labore et dolore magna
+                            aliqua.
+                        </p>
+                    </div>
+                    <div id="restore-version" class="p-3 gap-2 option-item bg-opacity-10 rounded-2 border-2 border-white">
+                        <label class="mb-2 fs-medium fw-bold fc-def" id="label_option">Restore Old Version </label>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                            incididunt ut labore et dolore magna
+                            aliqua.
+                        </p>
+                    </div>
+                    <div id="restore-merge" class="p-3 gap-2 option-item bg-opacity-10 rounded-2 border-2 border-white">
+                        <label class="mb-2 fs-medium fw-bold fc-def" id="label_option">Merge Data </label>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                            incididunt ut labore et dolore magna
+                            aliqua.
+                        </p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer ">
                 <button type="button" data-bs-dismiss="modal" class="fs-medium fw-medium px-4 me-3">Cancel</button>
-                <button id="initial_restoreFile" class="btn-green fs-medium fw-medium px-4" data-bs-dismiss="modal">
+                <button id="selectOption_restoreFile" class="btn-orange fs-medium fw-medium px-4" data-bs-dismiss="modal">
                     Restore
                 </button>
             </div>
@@ -79,7 +113,8 @@
             <div class="modal-body">
                 <div id="deleteItemMessage">
                     <h5 class="fw-bold mb-3">Confirm Permanent Deletion</h5>
-                    <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this file?
+                    <p class="ms-2">This action cannot be undone. Are you sure you want to permanently delete this
+                        file?
                     </p>
                 </div>
             </div>

@@ -19,7 +19,6 @@
         <div class="d-flex justify-content-end rounded-3 p-2 align-items-center gap-3">
             <div class="d-flex justify-content-between gap-2" style="max-width: 400px;" id="statsFilterContainer">
                 <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_documents">Document</button>
-                <span>/</span>
                 <button type="button" class="btn-light fw-medium fs-medium px-4" id="show_records">Records</button>
             </div>
         </div>
@@ -126,7 +125,7 @@
                     wrap: true,
                     width: '50px',
                     "render": function (data, type, row) {
-                        const recoverfile = `<a id="deleteThis" class="flex-fill text-center" onclick="restoreFile(` + row['id'] + `)"
+                        const recoverfile = `<a id="deleteThis" class="flex-fill text-center" onclick="customRestore(` + row['id'] + `)"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="right"
                                                     data-bs-trigger="hover"
@@ -325,12 +324,41 @@
             changeDisplayStatus('records');
             trashRecords();
         });
+
+        const optionsContainer = document.getElementById('selecOptionRestore');
+        const optionItems = optionsContainer.querySelectorAll('.option-item');
+
+        // Function to update the active state
+        function updateActiveState(selectedItemId) {
+            optionItems.forEach(item => {
+                const label_option = item.querySelector('#label_option');
+                if (item.id === selectedItemId) {
+                    item.classList.remove('border-white');
+                    item.classList.add('border-orange','selected-option');
+                    label_option.classList.remove('fc-def');
+                    label_option.classList.add('fc-orange');
+                } else {
+                    item.classList.remove('border-orange', 'selected-option');
+                    item.classList.add('border-white');
+                    label_option.classList.remove('fc-orange');
+                    label_option.classList.add('fc-def');
+                }
+            });
+        }
+
+        optionItems.forEach(item => {
+            item.addEventListener('click', () => {
+                updateActiveState(item.id);
+            });
+        });
     });
 
     adjustButtonOpacity('show_documents');
     changeDisplayStatus('documents');
     trashDocuments();
 
+</script>
+<script>
     function preview(ImageID) {
         fetch('/admin/trash/manage/data/file/fetch_data/' + ImageID)
             .then(response => {
@@ -351,16 +379,38 @@
                 console.error('There has been a problem with your fetch operation:', error);
             });
     }
+</script>
+<script>
 
     function restoreError(documentID) {
         let modal = new bootstrap.Modal(document.getElementById('restoreFileError'));
         modal.show();
     }
 
-    function customRestore(documentID, customRestore) {
-        let modal = new bootstrap.Modal(document.getElementById('custom_restoreFile_confirmation'));
+    function customRestore(documentID) {
+        // Show the modal
+        let modal = new bootstrap.Modal(document.getElementById('customRestoreFile'));
         modal.show();
+
+        $('#selectOption_restoreFile').on('click', function (event) {
+            event.preventDefault();
+
+            const optionsContainer = document.getElementById('selecOptionRestore');
+            const optionItems = optionsContainer.querySelectorAll('.option-item');
+            let selectedOption = '';
+
+            optionItems.forEach(item => {
+                if (item.classList.contains('selected-option')) {
+                    selectedOption = item.id;
+                }
+            });
+
+            const inactive_file = documentID;
+
+            
+        });
     }
+
 
     function restoreFile(itemID) {
         document.getElementById('restoreItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${restoreTitle}</h5>
@@ -399,7 +449,8 @@
             });
         });
     }
-
+</script>
+<script>
     function deleteTrash(itemID) {
         document.getElementById('deleteItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${deleteTitle}</h5>
                                                                     <p class="ms-2">${deleteText}</p>`;
