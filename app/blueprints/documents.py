@@ -154,7 +154,7 @@ def documents_data():
                 search_terms = filterSearch.split(' ')
                 for term in search_terms:
                     search_query += f" and (Filename like '%{term}%' or College like '%{term}%' or Course like '%{term}%' or Subject like '%{term}%' or SchoolYear like '%{term}%' or Semester like '%{term}%' or Unit like '%{term}%') "
-            
+                    
             if filterCollege:
                 search_query += f" and (College = '{filterCollege}')"
             if filterCourse:
