@@ -43,9 +43,10 @@
                 </div>
             </div>
             <div class="modal-footer ">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#customRestoreFile"
-                    class="fs-medium fw-medium px-4 me-3 btn-orange">Custom
-                    Restore</button>
+                <button type="button" data-bs-dismiss="modal"
+                    class="fs-medium fw-medium px-4 me-3 btn-orange" id="toggle_customRestore">
+                    Custom Restore
+                </button>
                 <button class=" fs-medium fw-medium px-4" data-bs-dismiss="modal">
                     Close
                 </button>
@@ -66,17 +67,6 @@
                     </p>
                 </div>
                 <div class="text-start d-flex flex-column gap-2 mx-2" id="selecOptionRestore">
-                    <div id="restore-default" class="p-3 gap-2 option-item bg-opacity-10 rounded-2 border-2 border-orange selected-option">
-                        <label class="mb-2 fc-orange" id="label_option">
-                            <span class="fs-medium  fw-bold">Restore </span>
-                            <span class="fs-small">(Default)</span>
-                        </label>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                            incididunt ut labore et dolore magna
-                            aliqua.
-                        </p>
-                    </div>
                     <div id="restore-version" class="p-3 gap-2 option-item bg-opacity-10 rounded-2 border-2 border-white">
                         <label class="mb-2 fs-medium fw-bold fc-def" id="label_option">Restore Old Version </label>
                         <p>
