@@ -497,12 +497,51 @@
             },
             "failed": {
                 "title": "Restoration Failed",
-                "description": "Failed to restore the file. Please try again later or contact support if the issue persists.",
+                "description": "Failed to restore the file. Please try again later.",
                 "type": "error"
             },
             "error": {
                 "title": "Error",
                 "description": "An unexpected error occurred while restoring the file. Please try again later.",
+                "type": "error"
+            }
+        },
+        "restore-merge": {
+            "success": {
+                "title": "File Merge Restored",
+                "description": "The data from the inactive file has been successfully merged into the active file.",
+                "type": "success"
+            },
+            "empty": {
+                "title": "No Tags Found",
+                "description": "The inactive file did not contain any data to merge into the active file. Please check the contents and try again.",
+                "type": "warning"
+            },
+            "failed": {
+                "title": "Merge Restoration Failed",
+                "description": "Failed to merge the data from the inactive file into the active file. Please try again later.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while merging the data from the inactive file. Please try again later.",
+                "type": "error"
+            }
+        },
+        "restore-version": {
+            "success": {
+                "title": "Version Restored",
+                "description": "The trashed (inactive) file has been successfully restored, and the current active file has been deleted.",
+                "type": "success"
+            },
+            "failed": {
+                "title": "Version Restoration Failed",
+                "description": "Failed to restore the trashed file while deleting the current active file. Please try again later.",
+                "type": "error"
+            },
+            "error": {
+                "title": "Error",
+                "description": "An unexpected error occurred while restoring the trashed file and deleting the active file. Please try again later.",
                 "type": "error"
             }
         },
@@ -514,7 +553,7 @@
             },
             "failed": {
                 "title": "Deletion Failed",
-                "description": "Failed to permanently delete the file. Please try again later or contact support.",
+                "description": "Failed to permanently delete the file. Please try again later.",
                 "type": "error"
             },
             "error": {
@@ -531,7 +570,7 @@
             },
             "failed": {
                 "title": "Restoration Failed",
-                "description": "Failed to restore the record. Please try again later or contact support.",
+                "description": "Failed to restore the record. Please try again later.",
                 "type": "error"
             },
             "error": {
@@ -548,7 +587,7 @@
             },
             "failed": {
                 "title": "Deletion Failed",
-                "description": "Failed to permanently delete the tag. Please try again later or contact support if the issue persists.",
+                "description": "Failed to permanently delete the tag. Please try again later.",
                 "type": "error"
             },
             "error": {
