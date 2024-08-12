@@ -38,17 +38,12 @@ def checkDuplicateTags(tagging_id):
     except Exception as e:
         print('Check Duplicate Student tags Error:', e)
 
-def fetchTags(document_id, status):
+def fetchTags(document_id):
     try:
         with config.conn.cursor() as cursor:
-            delete_status = {0: 'trash', 1: 'active', 99 : 'all'}.get(status, 1)
-
-            if status == 'all':
-                cursor.execute('SELECT student FROM tagging WHERE document = %s', (document_id))
-                result = cursor.fetchall()
-            else:
-                cursor.execute('SELECT student FROM tagging WHERE document = %s AND delete_status = %s', (document_id, delete_status))
-                result = cursor.fetchall()
+          
+            cursor.execute('SELECT student FROM tagging WHERE document = %s AND delete_status = 0', (document_id))
+            result = cursor.fetchall()
                 
             if result:
                 return result
@@ -57,15 +52,15 @@ def fetchTags(document_id, status):
     except Exception as e:
         print('fetchTags Error:', e)
 
-def restoreVersion(document_id, activeFile):
+def restoreVersion(inactiveFile, activeFile):
     try:
         with config.conn.cursor() as cursor:
 
-            cursor.execute('DELETE FROM documents WHERE delete_status = 1 AND docs_id = %s', (activeFile,)) 
+            cursor.execute('DELETE FROM documents WHERE docs_id = %s', (activeFile,)) 
             config.conn.commit()
 
             if cursor.rowcount > 0:
-                cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (document_id,)) 
+                cursor.execute('UPDATE documents SET delete_status = 0 WHERE docs_id = %s', (inactiveFile,)) 
                 config.conn.commit()
                 return 'success'
 
@@ -73,72 +68,73 @@ def restoreVersion(document_id, activeFile):
     except Exception as e:
             print('Recover data Error: ',e)
 
-def restoreAsCopy(document_id, activeFile):
+def restoreAsCopy(inactiveFile, activeFile):
     try:
         with config.conn.cursor() as cursor:
             activeFile = checkDuplicateFile(activeFile)
 
             if cursor.rowcount > 0:
-                cursor.execute("UPDATE documents SET filename = CONCAT(filename, '-copy'), delete_status = 0 WHERE docs_id = %s", (document_id,))
+                cursor.execute("UPDATE documents SET filename = CONCAT(filename, '-copy'), delete_status = 0 WHERE docs_id = %s", (inactiveFile,))
                 config.conn.commit()
                 return 'success'
 
             return 'failed'
     except Exception as e:
-            print('Recover data Error: ',e)
+            print('Recover Copy Error: ',e)
 
-def restoreMerge(document_id, activeFile, restoreType):
+def restoreMerge(inactiveFile, activeFile):
     try:
         with config.conn.cursor() as cursor:
-            trashed_tags = fetchTags(document_id, restoreType)
-            active_tags = fetchTags(activeFile, restoreType)
+            trashed_tags = fetchTags(inactiveFile)
+            active_tags = fetchTags(activeFile)
 
-            trash_tagsList = []
+            if len(active_tags)> 0 and len(trashed_tags)> 0:
+                inactive_list = {item['student']: item for item in active_tags}
+                tagging = []
 
-            for trashed_item in trashed_tags:
-                for active_item in active_tags:
-                    if not trashed_item['student'] == active_item['student']:
-                        trash_tagsList.append(trashed_item['student'])
-                    else:
-                        break
+                for active_tags in trashed_tags:
+                    inactive = active_tags['student']
 
-            success_counter = 0
+                    if inactive in inactive_list:
+                        del inactive_list[inactive]
 
-            if trash_tagsList:
-                for item in trash_tagsList:
-                    try:
-                        cursor.execute('INSERT INTO tagging (student, document) VALUES (%s, %s)', (item, activeFile))
+                if len(inactive_list)  > 0:
+                    for entry in inactive_list:
+                        cursor.execute('INSERT INTO tagging (student, document) VALUES (%s, %s)', (entry, activeFile))
                         config.conn.commit()
-                        success_counter += 1
+                        tagging.append(cursor.lastrowid)
 
-                    except Exception as insert_error:
-                        config.conn.rollback()  # Rollback on failure
-                        print(f"Failed to insert {item} into tagging table: {insert_error}")
+                    if len(tagging) > 0:
+                        cursor.execute('DELETE FROM documents WHERE docs_id = %s', (inactiveFile,)) 
+                        config.conn.commit()
 
-                if success_counter == len(trash_tagsList) or success_counter > 0:
-                    return 'success'
-                else:
-                    return 'failed'
-                
-            return 'no changes'
+                        return 'success'
+                    else:
+                        return 'failed'
+                    
+                return 'noChanges'
+            return 'empty'
     except Exception as e:
-        print('Recover data Error: ', e)
+        print('Recover Merge Error: ', e)
         return 'failed'
 
 # This will restore the record and update the existing record with the same details, including merging linked items.    
-def restoreActionType(reference_document, customFile):
+def restoreActionType(reference_document, restore_selector):
     try:
         activeFile = checkDuplicateFile(reference_document)
 
-        if activeFile and customFile:
-            match customFile:
-                case 'default': # Restore will delete new version to restore trashed version
-                    return restoreVersion(reference_document, activeFile)
-                case 'merge': # Restore will merge records tags
-                    return restoreMerge(reference_document, activeFile)
-                case 'copy': # Restore will merge records tags
-                    return restoreAsCopy(reference_document, activeFile)
+        print(reference_document, restore_selector)
 
+        if activeFile and restore_selector:
+            match restore_selector:
+                case 'restore-version': # Restore will delete new version to restore trashed version
+                    return restoreVersion(reference_document, activeFile)
+                case 'restore-merge': # Restore will merge records tags
+                    return restoreMerge(reference_document, activeFile)
+                case 'restore-copy': # Restore will merge records tags
+                    return restoreAsCopy(reference_document, activeFile)
+                
+        return 'error'
     except Exception as e:
             print('Recover default Error: ',e)
 
@@ -396,6 +392,24 @@ def restoreFile():
         if recover_query:
             return jsonify({'recover_query': recover_query})
 
+#custom restore file
+@trashbin_data.route('/file-list/item-document/restore-custom/restore-file', methods=['POST', 'GET'])
+@login_required
+@admin_required
+def advance_restoreFile():
+    if request.method == "POST":
+        document_id = request.form.get('inactive_file')
+        selector = request.form.get('option')
+        document_id = int(document_id)
+
+        if selector == 'restore-default':
+            recover_query = restoreDocumentFile(document_id)
+        else:
+            recover_query = restoreActionType(document_id, selector)
+
+        if recover_query:
+            return jsonify({'recover_query': recover_query})
+        
 #permanent delete one item
 @trashbin_data.route('/file-list/item-document/push-delete-permanent', methods=['POST', 'GET'])
 @login_required
