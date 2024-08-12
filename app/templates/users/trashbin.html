@@ -269,7 +269,8 @@
 </script>
 <script>
     var restoreUrl, deleteURL, restore_type, deleteType;
-    var restoreTitle, restoreText
+    var restoreTitle, restoreText;
+    var restoreErrorTitle, restoreErrorText;
     var deleteTitle, deleteText;
 
     function changeDisplayStatus(status) {
@@ -281,7 +282,9 @@
                 deleteType = 'permanentDeleteFile';
                 restoreTitle = `Restore Document`;
                 restoreText = `You are about to restore this document from the trash bin. Restoring will move it back to its original location and make it accessible again. Are you sure you want to proceed with restoring this document?`;
-                deleteTitle = `Confirm Permanent Deletion`;
+                restoreErrorTitle = `Document Restoration Error `;
+                restoreErrorText = `It appears that a document with similar content is already active in the database. Please review the existing documents before proceeding with restoration.`;
+                deleteTitle = `Permanent Document Deletion`;
                 deleteText = ` You are about to permanently delete this document. This action cannot be undone, and the document will be removed from the system permanently. Are you absolutely sure you want to proceed with the permanent deletion?`;
                 break;
             case 'records':
@@ -291,10 +294,19 @@
                 deleteType = 'permanentDeleteTag';
                 restoreTitle = `Restore Tag`;
                 restoreText = ` You are about to restore this tag from the trash bin. Restoring it will make it available again and re-associate it with the relevant document and student. Are you sure you want to proceed with this restoration?`;
-                deleteTitle = `Confirm Permanent Deletion`;
+                restoreErrorTitle = `Tags Restoration Error `;
+                restoreErrorText = `It appears that a tag with similar content is already active in the database. Please review the existing tag data before proceeding with restoration.`;
+                deleteTitle = ` Permanent Tag Deletion`;
                 deleteText = `You are about to permanently delete this tag. This action will completely remove it from the system and it will no longer be linked to its document or student. This action cannot be undone. Are you sure you want to proceed with the permanent deletion?`;
                 break;
         }
+
+        document.getElementById('restoreTitle').innerText = restoreTitle;
+        document.getElementById('restoreDescription').innerText = restoreText;
+        document.getElementById('deleteTitle').innerText = deleteTitle;
+        document.getElementById('deleteDescription').innerText = deleteText;
+        document.getElementById('errorTitle').innerText = restoreErrorTitle;
+        document.getElementById('errorDescription').innerText = restoreErrorText;
     }
 
     function adjustButtonOpacity(clickedId) {
@@ -382,14 +394,20 @@
 </script>
 <script>
 
-    function restoreError(documentID) {
+    function restoreError(documentID, restoreCondition) {
         let modal = new bootstrap.Modal(document.getElementById('restoreFileError'));
-        modal.show();
+        const footerModal = document.querySelector('#restoreFileError .modal-footer');
 
-        $('#toggle_customRestore').on('click', function (event) {
-            event.preventDefault();
-            customRestore(documentID);
-        });
+        if (restoreCondition == 'file') {
+            footerModal.classList.remove('d-none');
+            $('#toggle_customRestore').on('click', function (event) {
+                event.preventDefault();
+                customRestore(documentID);
+            });
+        } else {
+            footerModal.classList.add('d-none');
+        }
+        modal.show();
     }
 
     function customRestore(documentID) {
@@ -425,7 +443,7 @@
                     trashDataTable.draw();
                     switch (data.recover_query) {
                         case 'duplicate':
-                            restoreError(documentID);
+                            restoreError(documentID, 'file');
                             break;
                         default:
                             generateNotification(selectedOption, data.recover_query);
@@ -444,9 +462,6 @@
 
 
     function restoreFile(itemID) {
-        document.getElementById('restoreItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${restoreTitle}</h5>
-                                                                    <p class="ms-2">${restoreText}</p>`;
-
         let modal = new bootstrap.Modal(document.getElementById('restoreFile_confirmation'));
         modal.show();
 
@@ -465,7 +480,7 @@
                     trashDataTable.draw();
                     switch (data.recover_query) {
                         case 'duplicate':
-                            restoreError(item_id);
+                            restoreError(item_id, 'tags');
                             break;
                         default:
                             generateNotification(restore_type, data.recover_query);
@@ -483,9 +498,6 @@
 </script>
 <script>
     function deleteTrash(itemID) {
-        document.getElementById('deleteItemMessage').innerHTML = `<h5 class="fw-bold mb-3">${deleteTitle}</h5>
-                                                                    <p class="ms-2">${deleteText}</p>`;
-
         let modal = new bootstrap.Modal(document.getElementById('deleteTrash_confirmation'));
         modal.show();
 
