@@ -397,6 +397,10 @@ h6 {
     border: 1px solid var(--border-light);
 }
 
+.border-white {
+    border: 1px solid #ffffff;
+}
+
 .border-red {
     border: 1px solid var(--border-red);
 }
