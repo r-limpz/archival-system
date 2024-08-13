@@ -5,6 +5,9 @@ from flask_login import LoginManager, login_required, current_user, AnonymousUse
 from flask_argon2 import Argon2
 from flask_session_captcha import FlaskSessionCaptcha
 from werkzeug.exceptions import HTTPException
+from datetime import timedelta
+import os
+
 from app.secure.login_form import LoginForm
 from app.database import config
 from app.secure.user_logs import updateDB
@@ -22,19 +25,11 @@ from app.blueprints.trashbin import trashbin_data
 from app.blueprints.upload_manager import uploader_manager
 from app.blueprints.ocr_app import ocr_App
 from app.blueprints.benchmark_manager import benchmark_manager
-from datetime import timedelta
-import os
+
 
 # Create Flask app
 app = Flask(__name__, static_folder='static')
-app.config['SECRET_KEY'] = "ABCDEFG12345"
-app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "strict"
-app.config["SESSION_COOKIE_SECURE"] = True
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["REMEMBER_COOKIE_SAMESITE"] = "strict"
-app.config["REMEMBER_COOKIE_SECURE"] = True
-app.config['REMEMBER_COOKIE_DURATION'] =  timedelta(days=1)
+app.config.from_object('config.Config')
 
 app.config['CAPTCHA_ENABLE'] = True
 app.config['CAPTCHA_LENGTH'] = 6
