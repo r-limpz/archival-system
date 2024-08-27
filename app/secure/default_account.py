@@ -33,7 +33,8 @@ def generateAdmin():
             if admin_user:
                 if argon2.check_password_hash(admin_user['password'], default_admin_password):
                     return True
-                
+                else:
+                    return False
             return create_defaultAdmin(default_admin_password)
     except Exception as e:
         print(f"Search Admin: {e}")
