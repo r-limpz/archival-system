@@ -132,7 +132,7 @@ def detectStudentNames(raw_data_string):
             if obj.surname != '' and obj.firstname != '' and not any(o.surname == obj.surname and o.firstname == obj.firstname and o.middlename == obj.middlename and o.suffix == obj.suffix for o in StudentNamesList):
                 StudentNamesList.append(obj)
 
-        print('Detected Name Entries: ',len(StudentNamesList))
+        print('Filtered Entries: ',len(input_name))
         return StudentNamesList
     except Exception as e:
         print(f"detectStudentNames Error: {e}")
