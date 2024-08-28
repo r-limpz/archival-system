@@ -32,7 +32,18 @@ def CropTable(image, filename_crop):
             return False
 
         try:
-            img = np.array(Image.open(image))
+            png = Image.open(image)  # Convert image to RGB
+
+            # Check if the image is already in RGB format
+            if png.mode != 'RGB':
+                png.load()
+                raw_image = Image.new("RGB", png.size, (255, 255, 255))
+                raw_image.paste(png, mask=png.split()[3])  # Use alpha channel as mask
+            else:
+                raw_image = png
+
+            img = np.array(raw_image)
+
             # Cropping
             cropped_image = img[y1:y2, x1:x2]
             cropped_image = Image.fromarray(cropped_image)
