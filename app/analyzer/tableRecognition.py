@@ -104,9 +104,9 @@ def fetchStudentList(out_array):
 
         if raw_names:
             #format the raw_names into object of formatted names
-            students = detectStudentNames(raw_names)
+            studentsList = detectStudentNames(raw_names)
             #displayResult(raw_names, students)
-            return students
+            return studentsList
         return None
     except Exception as e:
         print('fetchStudentList Error: ',e)
