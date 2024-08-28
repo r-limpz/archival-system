@@ -2,6 +2,45 @@ import numpy as np
 from PIL import Image
 from ultralyticsplus import YOLO
 
+import numpy as np
+from PIL import Image
+
+def convert_to_rgb(img):
+    try:
+        # If the image is already in RGB mode, return it directly
+        if img.mode == 'RGB':
+            print('Matrix : RGB')
+            return img
+
+        # Convert image to RGBA if it has an alpha channel
+        if img.mode == 'RGBA':
+            print('Matrix : RGBA')
+            # Convert the image to a NumPy array
+            img_array = np.array(img)
+            
+            # Split into RGB and Alpha channels
+            rgb_array, alpha_channel = img_array[:, :, :3], img_array[:, :, 3]
+
+            # Create a white background
+            white_background = np.ones_like(rgb_array) * 255
+
+            # Composite the image onto the white background based on the alpha channel
+            alpha_factor = alpha_channel[:, :, np.newaxis] / 255.0
+            composite = rgb_array * alpha_factor + white_background * (1 - alpha_factor)
+            composite = composite.astype(np.uint8)
+
+            # Convert back to a PIL Image and return it
+            return Image.fromarray(composite, 'RGB')
+
+        # Convert other modes directly to RGB
+        rgb_image = img.convert('RGB')
+        return rgb_image
+    
+    except Exception as e:
+        print("Error converting image to RGB format:", e)
+        return None
+
+
 def CropTable(image, filename_crop):
     model = YOLO('foduucom/table-detection-and-extraction')
 
@@ -32,17 +71,8 @@ def CropTable(image, filename_crop):
             return False
 
         try:
-            png = Image.open(image)  # Convert image to RGB
-
-            # Check if the image is already in RGB format
-            if png.mode != 'RGB':
-                png.load()
-                raw_image = Image.new("RGB", png.size, (255, 255, 255))
-                raw_image.paste(png, mask=png.split()[3])  # Use alpha channel as mask
-            else:
-                raw_image = png
-
-            img = np.array(raw_image)
+            rgb_img = convert_to_rgb(Image.open(image))
+            img = np.array(rgb_img)
 
             # Cropping
             cropped_image = img[y1:y2, x1:x2]
