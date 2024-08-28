@@ -97,8 +97,7 @@ def detectNameFormat(unstructured_nameformat):
         # Assign cleaned values to structured_nameformat
         structured_nameformat['surname'] = temp_surname
         structured_nameformat['firstname'] = temp_firstname
-        
-        print(structured_nameformat)
+
         # Check if both surname and firstname are non-empty
         if structured_nameformat['surname'] and structured_nameformat['firstname']:
             return structured_nameformat
