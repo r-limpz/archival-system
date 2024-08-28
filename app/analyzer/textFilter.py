@@ -79,7 +79,6 @@ def filterdata(out_array):
                 entries.append(joined_row) # Append the joined string to entries list
                 
             print('No# of Entries: ',len(out_array))
-            print('Processing Entries: ',len(entries))
 
             return entries
 

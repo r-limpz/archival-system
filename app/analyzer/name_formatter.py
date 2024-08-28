@@ -116,8 +116,10 @@ def detectStudentNames(raw_data_string):
         
         #iterate the filteredData to populate student list
         for input_name in filteredData:
+            
             #only accept non empty elements
             if input_name != '':
+                
                 #generate a dictionary of name foramt from raw string
                 name_result = detectNameFormat(input_name)
                 if name_result:
@@ -130,7 +132,7 @@ def detectStudentNames(raw_data_string):
             if obj.surname != '' and obj.firstname != '' and not any(o.surname == obj.surname and o.firstname == obj.firstname and o.middlename == obj.middlename and o.suffix == obj.suffix for o in StudentNamesList):
                 StudentNamesList.append(obj)
 
-        print('Filtered Entries: ',len(filteredData))
+        print('Detected Name Entries: ',len(StudentNamesList))
         return StudentNamesList
     except Exception as e:
         print(f"detectStudentNames Error: {e}")
