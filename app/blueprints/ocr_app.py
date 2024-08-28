@@ -72,7 +72,7 @@ def scanner(auto):
             
             else:
                 print('no list found')
-                return None
+                return jsonify(students)
             
         except Exception as e:
             return jsonify(e)
