@@ -41,7 +41,6 @@ def deleteFile(filepath):
 def scanner(auto):
     filenameCrop = hashName(current_user.id) + ".jpg"  
     image_path = "./app/analyzer/" + filenameCrop
-    students = []
     
     if 'document_image' not in request.files:
         return jsonify('noFile')
@@ -66,7 +65,7 @@ def scanner(auto):
                 
             deleteFile(image_path)
             
-            if len(students) > 0:
+            if students:
                 print('Names detected:',len(students))
                 return jsonify([student.__dict__ for student in students])
             
