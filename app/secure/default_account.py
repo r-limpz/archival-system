@@ -32,9 +32,12 @@ def generateAdmin():
             
             if admin_user:
                 if argon2.check_password_hash(admin_user['password'], default_admin_password):
-                    return True
+                    print('Default Admin already Exist, password Changed')
                 else:
-                    return False
+                    print('Default Admin already Exist')
+
+                return False
+        
             return create_defaultAdmin(default_admin_password)
     except Exception as e:
         print(f"Search Admin: {e}")
