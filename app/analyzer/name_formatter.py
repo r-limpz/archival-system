@@ -83,19 +83,22 @@ def detectNameFormat(unstructured_nameformat):
                 temp_firstname = ' '.join(array_name[dela_index + 1:])
             # If no specific markers, assume first element is surname
             else:
-                temp_surname = array_name[0].title()
+                temp_surname = array_name[0]
                 temp_firstname = ' '.join(array_name[1:])
         
         # Clean up surname and firstname
         temp_surname = re.sub(r'[^A-Za-z]', ' ', temp_surname)  # Replace non-alphabetic characters with spaces
         temp_surname = re.sub(r'\s+', ' ', temp_surname).strip()  # Replace multiple spaces with single space and strip leading/trailing spaces
+        temp_surname = temp_surname.upper()
         temp_firstname = re.sub(r'[^A-Za-z\.]', ' ', temp_firstname)  # Replace non-alphabetic and non-dot characters with spaces
         temp_firstname = re.sub(r'\s+', ' ', temp_firstname).strip()  # Replace multiple spaces with single space and strip leading/trailing spaces
+        temp_firstname = temp_firstname.title()
 
         # Assign cleaned values to structured_nameformat
-        structured_nameformat['surname'] = temp_surname.title()
-        structured_nameformat['firstname'] = temp_firstname.title()
-
+        structured_nameformat['surname'] = temp_surname
+        structured_nameformat['firstname'] = temp_firstname
+        
+        print(structured_nameformat)
         # Check if both surname and firstname are non-empty
         if structured_nameformat['surname'] and structured_nameformat['firstname']:
             return structured_nameformat

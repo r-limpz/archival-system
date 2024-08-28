@@ -32,11 +32,16 @@ def removeUnwantedCharacters(raw_inputArray):
                 else: # If no space is found, take the rest of the string as the next word
                     next_word = cleaned_name[next_word_start:]
 
+                temp_surname = cleaned_name[:period_index].title()
+                temp_firstname = re.sub(r'([A-Z])', r' \1', temp_surname)
+                
+                temp_firstname = cleaned_name[period_index + 1:].title()
+                temp_firstname = re.sub(r'([A-Z])', r' \1', temp_firstname)
+
                 # If the next word is at least 3 characters long, replace dot with comma
                 if len(next_word) >= 3:
-                    cleaned_name = cleaned_name[:period_index] + ',' + cleaned_name[period_index + 1:]  # Replace the dot with a comma
+                    cleaned_name = temp_surname + ',' + temp_firstname  # Replace the dot with a comma
 
-        cleaned_name = re.sub(r'([A-Z])', r' \1', cleaned_name) # Add single space after every Uppercase
         cleaned_name = re.sub(r',', ' , ', cleaned_name) # Add leading and trailing space between commas
         cleaned_name = re.sub(r'\.', '. ', cleaned_name) # Add trailing space after period
         cleaned_name = re.sub(r'\s+', ' ', cleaned_name) # Replace multiple spaces with single space 
