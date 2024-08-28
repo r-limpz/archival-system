@@ -41,7 +41,8 @@ def deleteFile(filepath):
 def scanner(auto):
     filenameCrop = hashName(current_user.id) + ".jpg"  
     image_path = "./app/analyzer/" + filenameCrop
-
+    students = []
+    
     if 'document_image' not in request.files:
         return jsonify('noFile')
     
@@ -57,7 +58,7 @@ def scanner(auto):
                 print("auto-scan")
                 if CropTable(file, filenameCrop):
                     students = tableDataAnalyzer(filenameCrop)
-                    
+                
             else:
                 print("manual-scan")
                 file.save(image_path)
@@ -65,7 +66,7 @@ def scanner(auto):
                 
             deleteFile(image_path)
             
-            if students:
+            if len(students) > 0:
                 print('Names detected:',len(students))
                 return jsonify([student.__dict__ for student in students])
             
