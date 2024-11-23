@@ -1,4 +1,5 @@
-# OCR-based Table Detection and Text Extraction System (Web Application)
+# (ARDS) - Archival Record Digitization System 
+OCR-based Table Detection and Text Extraction System (Web Application)
 
 ## Overview
 This system is a web-based application designed to automate the archival process by converting scanned document images into structured digital text. It leverages Optical Character Recognition (OCR) and table detection algorithms to extract data, which can be stored in a database. The application is specifically targeted for academic settings, such as universities or colleges, to assist registrars in managing student data.
