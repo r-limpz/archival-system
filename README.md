@@ -1,62 +1,77 @@
-# (ARDS) - Archival Record Digitization System 
-OCR-based Table Detection and Text Extraction System (Web Application)
+# **Archival Record Digitization System (ARDS)**  
+**OCR-based Table Detection and Text Extraction Web Application**
 
-## Overview
-This system is a web-based application designed to automate the archival process by converting scanned document images into structured digital text. It leverages Optical Character Recognition (OCR) and table detection algorithms to extract data, which can be stored in a database. The application is specifically targeted for academic settings, such as universities or colleges, to assist registrars in managing student data.
+## **Overview**
+The Archival Record Digitization System (ARDS) is a web-based application that streamlines the process of converting scanned document images into structured digital data. Using advanced Optical Character Recognition (OCR) and table detection algorithms, the system efficiently extracts and organizes data into a database. It is tailored for academic institutions, such as universities and colleges, to assist registrars in managing student records with greater accuracy and efficiency.
 
-## Tools and Technologies Used
+## **Key Features**
+- **Web Interface**: Upload scanned images via a user-friendly Flask-based web interface.
+- **Advanced Table Detection**: Automatically detects and extracts tables from scanned documents using YOLO.
+- **Accurate Text Recognition**: Extracts text from images with high precision using PaddleOCR.
+- **Data Cleaning & Filtering**: Processes extracted data to ensure accuracy and readability.
+- **Interactive Data Table**: Displays extracted data in a sortable, searchable, and paginated format using DataTables (jQuery).
 
-1. **Flask**: A lightweight Python web framework used to build the web application.
-2. **DataTables (jQuery)**: Used to display the extracted tabular data in an interactive table format, allowing users to sort, search, and paginate the results.
-3. **Table Detection**:
-   - The system uses [YOLO Table Detection Model](https://huggingface.co/foduucom/table-detection-and-extraction) to detect and extract tables from scanned documents.
-4. **Text Recognition**: 
-   - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) is integrated to recognize and extract text from scanned documents.
+## **Tools and Technologies**
+1. **Flask**: Lightweight Python framework for building the web application.
+2. **DataTables (jQuery)**: Provides an interactive tabular view of extracted data, enabling sorting, searching, and pagination.
+3. **YOLO Table Detection**:  
+   - Utilizes the [YOLO Table Detection Model](https://huggingface.co/foduucom/table-detection-and-extraction) for detecting tables in scanned documents.
+4. **PaddleOCR**:  
+   - Integrates [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) for text recognition and extraction.
 
-## Features
+## **Purpose**
+ARDS addresses the challenges of digitizing archival records in academic settings. By automating the process, it reduces manual effort, improves data accuracy, and ensures that student records are systematically archived and easily retrievable.
 
-- **Web Interface**: Upload scanned images through the Flask web interface.
-- **Table Detection**: Extracts tables from the document using YOLO.
-- **Text Recognition**: Extracts textual data from images using PaddleOCR.
-- **Data Filtering**: Cleans and processes extracted text for better accuracy.
-- **Interactive Data Table**: Displays the extracted data in an interactive table using DataTables and jQuery.
+---
 
-## Purpose
-This system is designed for academic settings where the registrar needs to process and store student data. It simplifies the process of digitizing scanned records, transforming them into structured data for easy management, archival, and retrieval.
+## **Installation Guide**
 
-## Installation
-
-1. Clone the repository:
+### **1. Clone the Repository**
+```bash
 git clone https://github.com/xrlimpz/archival-system.git
-
-2. Install dependencies:
-- You will need Python 3.x and the required libraries listed in the `requirements.txt` file:
-  ```bash
-  pip install -r requirements.txt
-  ```
-
-3. Set up PaddleOCR and YOLO models:
-- Follow the instructions on their respective repositories for installation and model setup:
-  - [PaddleOCR installation guide]([https://github.com/PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/main/README_en.md))
-  - [YOLO Table Detection setup](https://huggingface.co/foduucom/table-detection-and-extraction)
-
-4. Ensure that your `serve.py` script is ready to run the Flask server.
-
-## Running the Web Server
-
-1. **Start the Flask server**:
-To run the Flask application, execute the `serve.py` script:
-```bash
-python serve.py
 ```
 
-2. **Access the Web Application**:
-After the server is running, you can access the web application by navigating to:
+### **2. Install Dependencies**
+Ensure you have Python 3.x installed, then install the required libraries using the `requirements.txt` file:
 ```bash
-127.0.0.1/8080
+pip install -r requirements.txt
 ```
 
-## Acknowledgments
-[YOLO Table Detection Model](https://huggingface.co/foduucom/table-detection-and-extraction)
-[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR?tab=readme-ov-file)
-[DataTables jQuery](https://datatables.net/)
+### **3. Set Up PaddleOCR and YOLO Models**
+Follow the setup guides from their official repositories:
+- [PaddleOCR Installation Guide](https://github.com/PaddlePaddle/PaddleOCR/blob/main/README_en.md)
+- [YOLO Table Detection Setup](https://huggingface.co/foduucom/table-detection-and-extraction)
+
+### **4. Verify Application Setup**
+Ensure the `serve.py` script is correctly configured to run the Flask application.
+
+---
+
+## **Running the Web Application**
+
+1. **Start the Flask Server**  
+   Execute the `serve.py` script to start the server:
+   ```bash
+   python serve.py
+   ```
+
+2. **Access the Application**  
+   Once the server is running, open your browser and navigate to:
+   ```text
+   http://127.0.0.1:8080
+   ```
+
+---
+
+## **Acknowledgments**
+This system leverages the following technologies and tools:  
+- [YOLO Table Detection Model](https://huggingface.co/foduucom/table-detection-and-extraction)  
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)  
+- [DataTables jQuery](https://datatables.net/)  
+
+---
+
+### **License**
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
