@@ -35,7 +35,7 @@ ARDS addresses the limitations of manual record-keeping by providing a secure, e
 
 ### **1. Clone the Repository**
 ```bash
-git clone https://github.com/rxrlimpz/archival-system.git
+git clone https://github.com/r-limpz/archival-system.git
 ```
 
 ### **2. Install Dependencies**
