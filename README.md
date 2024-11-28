@@ -79,13 +79,17 @@ Ensure the `serve.py` script is correctly set up to launch the Flask server.
 
 ---
 
-## **Acknowledgments**
-This project was made possible through the collaborative efforts of:  
-- **Adviser**: Dr. Maureen M. Villamor  
-- Faculty and staff of the College of Information and Computing, USeP  
-- Panelists: Nancy S. Mozo, MIT, and Leah O. Pelias, DBM-IS  
+Acknowledgments
+This project was made possible through the collaborative efforts of:
 
-Special thanks to the developers Ken Jerold Y. Arellano, Rex Xyriel R. Limpangog, and Earl Lemuel S. Egos.
+Adviser: Dr. Maureen M. Villamor
+Faculty and staff of the College of Information and Computing, USeP
+Panelists: Nancy S. Mozo, MIT, and Leah O. Pelias, DBM-IS
+Special thanks to the developers for their contributions:
+
+Ken Jerold Y. Arellano: Project Manager and Assistant Back-End Developer
+Rex Xyriel R. Limpangog: Programming Lead
+Earl Lemuel S. Egos: Technical Writer
 
 ---
 
