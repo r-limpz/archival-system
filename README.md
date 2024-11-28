@@ -87,9 +87,9 @@ Faculty and staff of the College of Information and Computing, USeP
 Panelists: Nancy S. Mozo, MIT, and Leah O. Pelias, DBM-IS
 Special thanks to the developers for their contributions:
 
-Ken Jerold Y. Arellano: Project Manager and Assistant Back-End Developer
-Rex Xyriel R. Limpangog: Programming Lead
-Earl Lemuel S. Egos: Technical Writer
+- Ken Jerold Y. Arellano: Project Manager and Assistant Back-End Developer
+- Rex Xyriel R. Limpangog: Programming Lead
+- Earl Lemuel S. Egos: Technical Writer
 
 ---
 
